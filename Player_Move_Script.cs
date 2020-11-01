@@ -9,6 +9,14 @@ using UnityEngine.UI;
 // 파스칼 : 대문자 시작 ( 특수한 경우 ex 클래스 이름 스태틱변수나 함수일경우 ) 
 
 
+    // 플레이어 죽음
+    // 기본적인 ui
+    // 보스 죽음
+
+
+    // 전체적인 게임느낌이 중요함.
+    // 잡몹들 넣기                  
+
 enum PlayerState
 {
   idle,
@@ -34,7 +42,6 @@ public class Player_Move_Script : MonoBehaviour
     float vAxis;
     Vector3 moveVec;
 
-
     Animator playerAnimator;
     Player_Animation_Script playerAnimationScript;
     RectTransform playerRectTransform;
@@ -43,7 +50,6 @@ public class Player_Move_Script : MonoBehaviour
     PlayerState state;
     [SerializeField]
     MousePlace mousePlace;
-
 
     // 연속 공격
     int noOfClicks = 0;
@@ -62,9 +68,14 @@ public class Player_Move_Script : MonoBehaviour
     bool playerDodgeCoolTime = false;
 
 
+    [SerializeField]
+    BoxCollider playerSwordBoxCollider;
+
+
+
     //======================================================
-  //  const float resetStateToidleTime = 1f;
-    const float dodgeOutTime = 0.5f;
+    //  const float resetStateToidleTime = 1f;
+    const float dodgeOutTime = 0.7f;
     const float dodgeCoolTime = 1.5f;
 
     GameObject stunParticleObj;
@@ -80,7 +91,6 @@ public class Player_Move_Script : MonoBehaviour
         playerRectTransform = GetComponent<RectTransform>();
         playerRigid = GetComponent<Rigidbody>();
         playerAnimationScript = GetComponent<Player_Animation_Script>();
-
         cam = FindObjectOfType<Camera>();
 
         state = PlayerState.idle;
@@ -88,6 +98,8 @@ public class Player_Move_Script : MonoBehaviour
 
         stunParticleObj = transform.Find("paticlePos").gameObject;
         stunParticleObj.SetActive(false);
+
+        playerSwordBoxCollider.enabled = false;
     }
 
     // Update is called once per frame
@@ -101,7 +113,7 @@ public class Player_Move_Script : MonoBehaviour
             // 인터넷으로 동작하는 방식을 보기 
 
             case PlayerState.idle:     
-                inputProcessIdle();
+                inputProcessIdleAndNormalAttacked();
                 lookAtCam();
                 break;
 
@@ -117,10 +129,13 @@ public class Player_Move_Script : MonoBehaviour
                 lookAtCam();
                 break;
 
-          //=========================================이동 불가 
+        
             case PlayerState.normalAttacked:
+                inputProcessIdleAndNormalAttacked();
+                lookAtCam();
                 break;
 
+            //=========================================이동 불가 
             case PlayerState.airborneAttacked:
                 // 공중에 떠야함 
                 // 조정 불가 
@@ -135,7 +150,7 @@ public class Player_Move_Script : MonoBehaviour
 
     //  상태에 따라 입력 가능이 바뀜  
     //======================================================
-    void inputProcessIdle()
+    void inputProcessIdleAndNormalAttacked()
     {
         checkRotationAndKeyDownToAniCon();
 
@@ -222,7 +237,6 @@ public class Player_Move_Script : MonoBehaviour
 
         Invoke("dodgeOut", dodgeOutTime);
         StartCoroutine("resetDodgeCoolTime");
-
         switch (wayPoint)
         {
             case 1:
@@ -319,7 +333,6 @@ public class Player_Move_Script : MonoBehaviour
         resetStateToidle();
         speed = 5 ;       
         playerAnimationScript.playerAniRollReset();
-
     }
 
     IEnumerator resetDodgeCoolTime()
@@ -341,15 +354,15 @@ public class Player_Move_Script : MonoBehaviour
             case PlayerState.normalAttacked  :
                 playerAnimationScript.attackedAni(1);
 
-                Invoke("resetStateToidle", 1f);
-                Invoke("attackedAniReset", 0.2f);
+                Invoke("resetStateToidle", 1.5f);
+                Invoke("attackedAniReset", 0.3f);
                 break;
 
             case PlayerState.airborneAttacked :
                 playerAnimationScript.attackedAni(2);
 
                 Invoke("resetStateToidle", 2f);
-                Invoke("attackedAniReset", 0.2f);
+                Invoke("attackedAniReset", 0.3f);
                 break;
 
             case PlayerState.stunAttacked:
@@ -359,7 +372,7 @@ public class Player_Move_Script : MonoBehaviour
                 Invoke("turnOffStunParticle",2.3f);
 
                 Invoke("resetStateToidle", 2.1f);
-                Invoke("attackedAniReset", 0.2f);
+                Invoke("attackedAniReset", 0.3f);
                 break;
         }
     }
@@ -388,6 +401,7 @@ public class Player_Move_Script : MonoBehaviour
     void attack()
     {
         state = PlayerState.attack;
+        playerSwordBoxCollider.enabled = true;
 
         attackCoolTime = true;
         lastClickedTime = Time.time;
@@ -402,15 +416,15 @@ public class Player_Move_Script : MonoBehaviour
         if (state != PlayerState.attack)
         {
             noOfClicks = 0;
+            playerSwordBoxCollider.enabled = false;
             attackCoolTime = false;
             playerAnimationScript.playerAniAttackLeftCombo(0);
             maxComboDelay = 2f;
         }
-        //if (attackCoolTime == false) return;
-
         else if (Time.time - lastClickedTime > maxComboDelay)
         {
             noOfClicks = 0;
+            playerSwordBoxCollider.enabled = false;
             attackCoolTime = false;
             playerAnimationScript.playerAniAttackLeftCombo(0);
             maxComboDelay = 2f;
@@ -425,17 +439,30 @@ public class Player_Move_Script : MonoBehaviour
     }
     void checkCombo2()
     {
-        if (noOfClicks >= 2) playerAnimationScript.playerAniAttackLeftCombo(2);
+        if (noOfClicks >= 2)
+        {
+            playerSwordBoxCollider.enabled = true;
+            playerAnimationScript.playerAniAttackLeftCombo(2);
+        }
     }
     void checkCombo3()
     {
-        if (noOfClicks == 3) playerAnimationScript.playerAniAttackLeftCombo(3);
+        if (noOfClicks == 3)
+        {
+            playerSwordBoxCollider.enabled = true;
+            playerAnimationScript.playerAniAttackLeftCombo(3);
+        }
         maxComboDelay = 0.8f;
+    }
+    void onOffSwordCollider()
+    {
+        playerSwordBoxCollider.enabled = false;
     }
 
 
 
 
+    // 따로 할 이유없음.
     // 에어본인 경우 
     //======================================================
     void playerPosUp()
@@ -460,31 +487,48 @@ public class Player_Move_Script : MonoBehaviour
    
     private void OnTriggerEnter(Collider other)
     {
+        // 죽었을떄도 넣기 // 
         if (state == PlayerState.normalAttacked || state == PlayerState.dodge
             || state == PlayerState.airborneAttacked || state == PlayerState.airborneAttackedCoolTime
             ) return;
 
-        if (other.gameObject.tag == "enemyWeapon")
+        if (other.gameObject.tag == "enemyWeapon"|| other.gameObject.tag == "TrapType2FireAttack"
+            || other.gameObject.tag == "TrapType3BoomAttack")
         {
             state = PlayerState.normalAttacked;
-            playerAttacked(state);
-
             Debug.Log("hitted");
         }
         else if(other.gameObject.tag == "pattern08")
         {
             state = PlayerState.airborneAttacked;
-            playerAttacked(state);
-
             Debug.Log("hit_pattern08");
         }
         else if (other.gameObject.tag == "enemyStun")
         {
             state = PlayerState.stunAttacked;
-            playerAttacked(state);
-
             Debug.Log("stuned");
         }
+        else if (other.gameObject.tag == "NextStageDoor")
+        {
+            StageManager.Instance.checkPlayerStageAndWrap();
+        }
+        playerAttacked(state);
+    }
+
+
+    private void OnTriggerStay(Collider other)
+    {
+        // 죽었을떄도 넣기 // 
+        if (state == PlayerState.normalAttacked || state == PlayerState.dodge
+            || state == PlayerState.airborneAttacked || state == PlayerState.airborneAttackedCoolTime
+            ) return;
+
+        if (other.gameObject.tag == "TrapType1Thorn" )
+        {
+            state = PlayerState.normalAttacked;
+            Debug.Log("TrapType1Thornhitted");
+        }
+        playerAttacked(state);
     }
 }
 

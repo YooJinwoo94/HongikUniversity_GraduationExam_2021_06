@@ -183,21 +183,21 @@ public class Boss_Move_Script : MonoBehaviour
 
             ifBossPatternEnd();
             yield return new WaitForSeconds(3f);
-       //     pattern01();
+            pattern01();
             yield return new WaitForSeconds(3f);
-       //     pattern03();       
+            pattern03();       
         }  
         yield return new WaitForSeconds(3.5f);
-        // checkDistenceFromPlayer();
-        pattern03();
+         checkDistanceFromPlayer();
+        //pattern03();
 
         StopCoroutine("BossController");
     }
 
 
-
+    //철자
     //거리를 계산해보겠어유
-    void checkDistenceFromPlayer()
+    void checkDistanceFromPlayer()
     {
         //만약 거리가 가까우면
         if (Vector3.Distance(bossTransform.position, playerTransform.position) < bossCheckAreaDistance) ifclosePatternChoice(); 
@@ -225,14 +225,14 @@ public class Boss_Move_Script : MonoBehaviour
     {       
        switch (bossPatternRandomStorage)
         {
-          
+          /*
             case 1:
                 if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern01) iffarPatternChoice();
                 break;
             case 2:
                 if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern02) iffarPatternChoice();
                 break;
-      
+           */
            //=======================================================================
 
             case 3:
