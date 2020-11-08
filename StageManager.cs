@@ -1,50 +1,49 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
+using UnityEngine.UI;
 
 enum StageState
 {
-    state01,
-    state02,
-    state03,
-    state04,
-    state05,
-    state06,
-    state07,
-    state08,
-    state09,
-    state10,
+    weaponStage,
+    hpStage,
+    moreGoldStage,
+    playerStateChangeStage,
+    bossStage,
 }
-
 
 
 public class StageManager : MonoBehaviour
 {
-    //한 던전내  1개의 스태이지 매니저를 가진다 
-    // enum으로 각각의 스태이지를 구분한다.
-    // 
+    List<int> nowStageCountList = new List<int>();
+    //Stack<int> nowStageCountStack = new Stack<int>();
+    // List<StageCount> stageCountList = new List<StageCount>();
+    // List<StageState> stageStateList = new List<StageState>();
 
-    StageState StageState;
+    // StageCount StageCount;
+    // StageState StageState;
 
-    [SerializeField]
-    BoxCollider[] nextStageCollider;
     [SerializeField]
     Transform[] transformPos;
     [SerializeField]
     Transform playerPos;
-
-    //[SerializeField]
-    // 싱글턴 형식
-    private static StageManager instance = null ;
-
+    [SerializeField]
+    Button[] uiButtons;
+    [SerializeField]
+    GameObject StageMoveMapUI;
+    private static StageManager instance = null;
+    int[] count ;
 
 
 
     void Start()
     {
-        StageState = StageState.state01;
+        StageMoveMapUI.SetActive(false);
+        uiButtons[2].interactable = false;
+        uiButtons[3].interactable = false;
+        uiButtons[4].interactable = false;
+        uiButtons[5].interactable = false;
+
         instance = this;
 
         if (null == instance)
@@ -72,71 +71,128 @@ public class StageManager : MonoBehaviour
 
 
     void moveTo(int StageState)
-    {     
-        playerPos.position = transformPos[StageState].position;
-        Debug.Log("stagemove");
+    {
+        playerPos.position = transformPos[StageState-1].position;
     }
 
-
-
-    public void checkPlayerStageAndWrap()
+    //버튼 눌렀으면 적용
+    //현재 위치값을 가져온다 스위치로비교를 하여 현재 내 상황을 비교한다.
+    //버튼을 구별해야 한다.
+    // 스택으로 현재 위치값을 구하고 넣어준다.
+    public void makeStageCountList(int buttonPosCheck)
     {
-        switch (StageState)
+        /*
+        switch (buttonPosCheck)
         {
-            case StageState.state01:
-                moveTo(0);
+            case 1:
+                uiButtons[0].enabled = false;
+                uiButtons[1].interactable = false;
+                uiButtons[2].interactable = true;
+                uiButtons[3].interactable = true;
+                uiButtons[4].interactable = false;
+                uiButtons[5].interactable = false;
                 break;
-            case StageState.state02:
-                moveTo(1);
+            case 2:
+                uiButtons[0].interactable = false;
+                uiButtons[1].enabled = false;
+                uiButtons[2].interactable = false;
+                uiButtons[3].interactable = true;
+                uiButtons[4].interactable = true;
+                uiButtons[5].interactable = false;
                 break;
-            case StageState.state03:
-                moveTo(2);
+            case 3:
+                if (nowStageCountStack.Peek() == 1)
+                {
+                    uiButtons[0].enabled = false;
+                    uiButtons[1].interactable = false;
+                    uiButtons[2].enabled = false;
+                    uiButtons[3].interactable = false;
+                    uiButtons[4].interactable = false;
+                    uiButtons[5].interactable = true;
+                }
                 break;
-            case StageState.state04:
+            case 4:
+                if (nowStageCountStack.Peek() == 1)
+                {
+                    uiButtons[0].enabled = false;
+                    uiButtons[1].interactable = false;
+                    uiButtons[2].interactable = false;
+                    uiButtons[3].enabled = false;
+                    uiButtons[4].interactable = false;
+                    uiButtons[5].interactable = true;
+                }
+                else if (nowStageCountStack.Peek() == 2)
+                {
+                    uiButtons[0].interactable = false;
+                    uiButtons[1].enabled = false;
+                    uiButtons[2].interactable = false;
+                    uiButtons[3].enabled = false;
+                    uiButtons[4].interactable = false;
+                    uiButtons[5].interactable = true;
+                }
                 break;
-            case StageState.state05:
+            case 5:
+                if (nowStageCountStack.Peek() == 2)
+                {
+                    uiButtons[0].interactable = false;
+                    uiButtons[1].enabled = false;
+                    uiButtons[2].interactable = false;
+                    uiButtons[3].interactable = false;
+                    uiButtons[4].enabled = false;
+                    uiButtons[5].interactable = true;
+                }
                 break;
-            case StageState.state06:
-                break;
-            case StageState.state07:
-                break;
-            case StageState.state08:
-                break;
-            case StageState.state09:
-                break;
+            case 6:
+                break;          
         }
-    }
-
-
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag != "Player") return;
-
-       switch (StageState)
+        */
+        moveTo(buttonPosCheck);
+        //nowStageCountStack.Push(buttonPosCheck);
+        nowStageCountList.Add(buttonPosCheck);
+        for (int i = 0; i < nowStageCountList.Count; i++)
         {
-            case StageState.state01 :
-                moveTo(0);
-                Debug.Log("ad");
+            switch (nowStageCountList[i])
+            {
+                case 1:
+                    uiButtons[0].enabled = false;
+                    uiButtons[1].interactable = false;
+                    uiButtons[2].interactable = true;
+                    uiButtons[3].interactable = true;
                     break;
-            case StageState.state02:
-                moveTo(1);
-                break;
-            case StageState.state03:
-                moveTo(2);
-                break;
-            case StageState.state04:
-                break;
-            case StageState.state05:
-                break;
-            case StageState.state06:
-                break;
-            case StageState.state07:
-                break;
-            case StageState.state08:
-                break;
-            case StageState.state09:
-                break;
+                case 2:
+                    uiButtons[0].interactable = false;
+                    uiButtons[1].enabled = false;
+                    uiButtons[3].interactable = true;
+                    uiButtons[4].interactable = true;
+                    break;
+                case 3:
+                    uiButtons[2].enabled = false;
+                    uiButtons[3].interactable = false;
+                    uiButtons[5].interactable = true;
+                    break;
+                case 4:
+                    uiButtons[2].interactable = false;
+                    uiButtons[3].enabled = false;
+                    uiButtons[4].interactable = false;
+                    uiButtons[5].interactable = true;
+                    break;
+                case 5:
+                    uiButtons[3].interactable = false;
+                    uiButtons[4].enabled = false;
+                    uiButtons[5].interactable = true;
+                    break;
+                case 6:
+                    break;
+            }
+           
         }
+        StageMoveMapUI.SetActive(false);
+    }
+
+
+
+    public void playerStageMapUI()
+    {
+        StageMoveMapUI.SetActive(true);
     }
 }

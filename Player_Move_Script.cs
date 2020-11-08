@@ -25,7 +25,8 @@ enum PlayerState
     airborneAttackedCoolTime,
     stunAttacked,
     dodge,
-    attack
+    attack,
+    waitForMove
 }
 enum MousePlace
 {
@@ -143,6 +144,9 @@ public class Player_Move_Script : MonoBehaviour
                 break;
 
             case PlayerState.stunAttacked:
+                break;
+
+            case PlayerState.waitForMove:
                 break;
         }
     }
@@ -510,11 +514,19 @@ public class Player_Move_Script : MonoBehaviour
         }
         else if (other.gameObject.tag == "NextStageDoor")
         {
-            StageManager.Instance.checkPlayerStageAndWrap();
+            state = PlayerState.waitForMove;
+            StageManager.Instance.playerStageMapUI();
         }
         playerAttacked(state);
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "NextStageDoor")
+        {
+            state = PlayerState.idle;
+        }
+    }
 
     private void OnTriggerStay(Collider other)
     {
