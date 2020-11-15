@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 enum StageState
 {
@@ -16,12 +17,6 @@ enum StageState
 public class StageManager : MonoBehaviour
 {
     List<int> nowStageCountList = new List<int>();
-    //Stack<int> nowStageCountStack = new Stack<int>();
-    // List<StageCount> stageCountList = new List<StageCount>();
-    // List<StageState> stageStateList = new List<StageState>();
-
-    // StageCount StageCount;
-    // StageState StageState;
 
     [SerializeField]
     Transform[] transformPos;
@@ -35,39 +30,23 @@ public class StageManager : MonoBehaviour
     int[] count ;
 
 
-
-    void Start()
+    void Awake()
     {
         StageMoveMapUI.SetActive(false);
-        uiButtons[2].interactable = false;
-        uiButtons[3].interactable = false;
-        uiButtons[4].interactable = false;
-        uiButtons[5].interactable = false;
-
         instance = this;
-
         if (null == instance)
         {
             instance = this;
-            DontDestroyOnLoad(this.gameObject);
         }
     }
     public static StageManager Instance
     {
         get
         {
-            if (null == instance)
-            {
-                return null;
-            }
+            if (null == instance) return null;
             return instance;
         }
     }
-
-
-
-
-
 
 
     void moveTo(int StageState)
@@ -81,73 +60,7 @@ public class StageManager : MonoBehaviour
     // 스택으로 현재 위치값을 구하고 넣어준다.
     public void makeStageCountList(int buttonPosCheck)
     {
-        /*
-        switch (buttonPosCheck)
-        {
-            case 1:
-                uiButtons[0].enabled = false;
-                uiButtons[1].interactable = false;
-                uiButtons[2].interactable = true;
-                uiButtons[3].interactable = true;
-                uiButtons[4].interactable = false;
-                uiButtons[5].interactable = false;
-                break;
-            case 2:
-                uiButtons[0].interactable = false;
-                uiButtons[1].enabled = false;
-                uiButtons[2].interactable = false;
-                uiButtons[3].interactable = true;
-                uiButtons[4].interactable = true;
-                uiButtons[5].interactable = false;
-                break;
-            case 3:
-                if (nowStageCountStack.Peek() == 1)
-                {
-                    uiButtons[0].enabled = false;
-                    uiButtons[1].interactable = false;
-                    uiButtons[2].enabled = false;
-                    uiButtons[3].interactable = false;
-                    uiButtons[4].interactable = false;
-                    uiButtons[5].interactable = true;
-                }
-                break;
-            case 4:
-                if (nowStageCountStack.Peek() == 1)
-                {
-                    uiButtons[0].enabled = false;
-                    uiButtons[1].interactable = false;
-                    uiButtons[2].interactable = false;
-                    uiButtons[3].enabled = false;
-                    uiButtons[4].interactable = false;
-                    uiButtons[5].interactable = true;
-                }
-                else if (nowStageCountStack.Peek() == 2)
-                {
-                    uiButtons[0].interactable = false;
-                    uiButtons[1].enabled = false;
-                    uiButtons[2].interactable = false;
-                    uiButtons[3].enabled = false;
-                    uiButtons[4].interactable = false;
-                    uiButtons[5].interactable = true;
-                }
-                break;
-            case 5:
-                if (nowStageCountStack.Peek() == 2)
-                {
-                    uiButtons[0].interactable = false;
-                    uiButtons[1].enabled = false;
-                    uiButtons[2].interactable = false;
-                    uiButtons[3].interactable = false;
-                    uiButtons[4].enabled = false;
-                    uiButtons[5].interactable = true;
-                }
-                break;
-            case 6:
-                break;          
-        }
-        */
         moveTo(buttonPosCheck);
-        //nowStageCountStack.Push(buttonPosCheck);
         nowStageCountList.Add(buttonPosCheck);
         for (int i = 0; i < nowStageCountList.Count; i++)
         {
@@ -158,38 +71,59 @@ public class StageManager : MonoBehaviour
                     uiButtons[1].interactable = false;
                     uiButtons[2].interactable = true;
                     uiButtons[3].interactable = true;
+
+                    StageMoveMapUI.SetActive(false);
+                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
+                    SceneManager.LoadScene("Stage_01");
                     break;
                 case 2:
                     uiButtons[0].interactable = false;
                     uiButtons[1].enabled = false;
                     uiButtons[3].interactable = true;
                     uiButtons[4].interactable = true;
+
+                    StageMoveMapUI.SetActive(false);
+                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
+                    SceneManager.LoadScene("Stage_02");
                     break;
                 case 3:
                     uiButtons[2].enabled = false;
                     uiButtons[3].interactable = false;
                     uiButtons[5].interactable = true;
+
+                    StageMoveMapUI.SetActive(false);
+                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
+                   
+                    SceneManager.LoadScene("Stage_03");
                     break;
                 case 4:
                     uiButtons[2].interactable = false;
                     uiButtons[3].enabled = false;
                     uiButtons[4].interactable = false;
                     uiButtons[5].interactable = true;
+
+                    StageMoveMapUI.SetActive(false);
+                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
+                    SceneManager.LoadScene("Stage_04");
                     break;
                 case 5:
                     uiButtons[3].interactable = false;
                     uiButtons[4].enabled = false;
                     uiButtons[5].interactable = true;
+
+                    StageMoveMapUI.SetActive(false);
+                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
+                    SceneManager.LoadScene("Stage_05");
                     break;
                 case 6:
+                    StageMoveMapUI.SetActive(false);
+                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
+                    PlayerCamManager.Instance.bossStageCam();
+                    SceneManager.LoadScene("Stage_06");
                     break;
             }
-           
-        }
-        StageMoveMapUI.SetActive(false);
+        }      
     }
-
-
 
     public void playerStageMapUI()
     {

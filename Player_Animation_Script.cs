@@ -141,23 +141,21 @@ public class Player_Animation_Script : MonoBehaviour
     //  공격 받은 경우 
     //======================================================
 
-        public void attackedAni(int attackCount)
+    public void attackedAni(int attackCount)
     {
         switch (attackCount)
         {
             case 1:
                 playerAnimator.SetBool("Bool_Player_Normal_Attacked", true);
-                ifAttackedTurnOffOtherAni();
                 break;
             case 2:
                 playerAnimator.SetBool("Bool_Player_Airborne_Attacked", true);
-                ifAttackedTurnOffOtherAni();
                 break;
             case 3:
                 playerAnimator.SetBool("Bool_Player_Stun_Attacked", true);
-                ifAttackedTurnOffOtherAni();
                 break;
         }
+        ifAttackedTurnOffOtherAni();
     }
     void ifAttackedTurnOffOtherAni()
     {

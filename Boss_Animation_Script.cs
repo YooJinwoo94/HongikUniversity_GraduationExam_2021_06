@@ -8,9 +8,9 @@ public class Boss_Animation_Script : MonoBehaviour
     private Boss_Move_Script bossMoveScript;
 
 
-    const float restartPatternTime = 2f;
-    const float resetPatternTime = 0.5f;
 
+    const float resetPatternTime = 0.5f;
+    const float restartPatternTime = 2f;
 
 
 
@@ -146,14 +146,8 @@ public class Boss_Animation_Script : MonoBehaviour
     // 작업을 해야할때는 
     // 패턴 1~2개로 하고 넘어가서 남은 부분을 해서 전체적인 완성도를 
     // 올려야 한다.
-
-     void restartPattern()
-    {
-        bossMoveScript.ifBossPatternEnd();
-        bossMoveScript.bossConRestartBossPattern();
-    }
     void resetPattern()
-    { 
+    {
         bossAnimator.SetBool("Bool_Boss_Waiting", true);
 
         bossAnimator.SetBool("boolBossPattern02", false);
@@ -165,4 +159,10 @@ public class Boss_Animation_Script : MonoBehaviour
         bossAnimator.SetBool("boolBossPattern08", false);
         bossAnimator.SetBool("boolBossPattern09", false);
     }
+    void restartPattern()
+    {
+        bossMoveScript.ifBossPatternEnd();
+        bossMoveScript.bossConRestartBossPattern();
+    }
+
 }

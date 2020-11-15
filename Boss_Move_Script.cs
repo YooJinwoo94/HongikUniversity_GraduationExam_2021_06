@@ -5,6 +5,13 @@ using UnityEngine;
 
 
 
+
+enum BossState
+{
+    idle,
+    attacked,
+}
+
 // 기존에 했었던 패턴 기억
 enum BossPatternStorageToCheckLastOne
 {
@@ -37,10 +44,11 @@ public class Boss_Move_Script : MonoBehaviour
 
     private Boss_Animation_Script bossAnimationScript;
 
+    BossState BossState;
     BossPatternStorageToCheckLastOne bossPatternStorageToCheckLastOneState;
     int bossPatternNow;
 
-    bool stopChase;
+    bool ischaseStart;
     bool bossDistanceCheck;
     bool coroutineBossOncePattern;
     int bossPatternRandomStorage;
@@ -50,6 +58,10 @@ public class Boss_Move_Script : MonoBehaviour
 
     [SerializeField]
     GameObject weaponSword;
+
+    [SerializeField]
+    HealthScript HealthScript;
+
 
 
 
@@ -88,9 +100,10 @@ public class Boss_Move_Script : MonoBehaviour
          bossAnimationScript = GetComponent<Boss_Animation_Script>();
          pattern02BossAttackAreaTransform = GameObject.FindGameObjectWithTag("pattern02BossAttackAreaSprite").transform;
 
+        BossState = BossState.idle;
         bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.bossWait;
 
-        stopChase = false;
+        ischaseStart = false;
         bossDistanceCheck = false;
         coroutineBossOncePattern = false;
         bossPatternRandomStorage = 0;
@@ -106,58 +119,58 @@ public class Boss_Move_Script : MonoBehaviour
 
 
     private void FixedUpdate()
-    {
+    { 
         rotateBoss();  
         switch (bossPatternStorageToCheckLastOneState)
         {
             case (BossPatternStorageToCheckLastOne.pattern02):
-                if (bossDistanceCheck == true || bossPatternNow == 0 || stopChase == false) break;
+                if (bossDistanceCheck == true || bossPatternNow == 0 || ischaseStart == false) break;
                 resetNowStateToStopFollowing(bossPattern02Distance);
                 transform.position = Vector3.Lerp(transform.position, playerTransform.position, bossAttackSpeedPattern02);
                 break;
 
             case (BossPatternStorageToCheckLastOne.pattern03):            
-                if (bossDistanceCheck == true || bossPatternNow == 0 || stopChase == false) break;
+                if (bossDistanceCheck == true || bossPatternNow == 0 || ischaseStart == false) break;
 
                 resetNowStateToStopFollowing(bossPattern03Distance);
                 transform.position = Vector3.Lerp(transform.position, playerTransform.position, bossAttackSpeedPattern03);
                 break;
 
             case (BossPatternStorageToCheckLastOne.pattern04):
-                if (bossDistanceCheck == true || bossPatternNow == 0 || stopChase == false) break;
+                if (bossDistanceCheck == true || bossPatternNow == 0 || ischaseStart == false) break;
 
                 transform.position = Vector3.Lerp(transform.position, playerTransform.position, bossAttackSpeedPattern04);
                 break;
 
             case (BossPatternStorageToCheckLastOne.pattern05):
-                if (bossDistanceCheck == true || bossPatternNow == 0 || stopChase == false) break;
+                if (bossDistanceCheck == true || bossPatternNow == 0 || ischaseStart == false) break;
                 resetNowStateToStopFollowing(bossPattern06Distance);
                 transform.position = Vector3.Lerp(transform.position, playerTransform.position, bossAttackSpeedPattern05);
                 break;
 
             case (BossPatternStorageToCheckLastOne.pattern06):        
-                if (bossDistanceCheck == true || bossPatternNow == 0 || stopChase == false) break;
+                if (bossDistanceCheck == true || bossPatternNow == 0 || ischaseStart == false) break;
 
                 resetNowStateToStopFollowing(bossPattern06Distance);
                 transform.position = Vector3.Lerp(transform.position, playerTransform.position, bossAttackSpeedPattern06);
                 break;
 
             case (BossPatternStorageToCheckLastOne.pattern07):
-                if (bossDistanceCheck == true || bossPatternNow == 0 || stopChase == false) break;
+                if (bossDistanceCheck == true || bossPatternNow == 0 || ischaseStart == false) break;
 
                 resetNowStateToStopFollowing(bossPattern07Distance);
                 transform.position = Vector3.Lerp(transform.position, playerTransform.position, bossAttackSpeedPattern07);
                 break;
 
             case (BossPatternStorageToCheckLastOne.pattern08):
-                if (bossDistanceCheck == true || bossPatternNow == 0 || stopChase == false) break;
+                if (bossDistanceCheck == true || bossPatternNow == 0 || ischaseStart == false) break;
 
                 resetNowStateToStopFollowing(bossPattern08Distance);
                 transform.position = Vector3.Lerp(transform.position, playerTransform.position, bossAttackSpeedPattern08);
                 break;
 
             case (BossPatternStorageToCheckLastOne.pattern09):           
-                if (bossDistanceCheck == true || bossPatternNow == 0 || stopChase == false) break;
+                if (bossDistanceCheck == true || bossPatternNow == 0 || ischaseStart == false) break;
 
                 resetNowStateToStopFollowing(bossPattern09Distance);
                 transform.position = Vector3.Lerp(transform.position, playerTransform.position, bossAttackSpeedPattern09);
@@ -200,19 +213,19 @@ public class Boss_Move_Script : MonoBehaviour
     void checkDistanceFromPlayer()
     {
         //만약 거리가 가까우면
-        if (Vector3.Distance(bossTransform.position, playerTransform.position) < bossCheckAreaDistance) ifclosePatternChoice(); 
-        else  iffarPatternChoice(); 
+        if (Vector3.Distance(bossTransform.position, playerTransform.position) < bossCheckAreaDistance) ifClosePatternChoice(); 
+        else  ifFarPatternChoice(); 
     }
     //먼가유?
-    void iffarPatternChoice()
+    void ifFarPatternChoice()
     {
-        bossPatternRandomStorage = Random.Range(1, 3);
+        bossPatternRandomStorage = Random.Range(2, 3);
         patternChoice(bossPatternRandomStorage);
 
         Debug.Log(bossPatternRandomStorage);
     }
     //가까운가유?
-    void ifclosePatternChoice()
+    void ifClosePatternChoice()
     {
         //   bossPatternRandomStorage = Random.Range(3, 10);
          bossPatternRandomStorage = Random.Range(3, 7);
@@ -236,25 +249,25 @@ public class Boss_Move_Script : MonoBehaviour
            //=======================================================================
 
             case 3:
-                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern03) ifclosePatternChoice();
+                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern03) ifClosePatternChoice();
                 break;
             case 4:
-                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern04) ifclosePatternChoice();
+                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern04) ifClosePatternChoice();
                 break;
             case 5:
-                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern05) ifclosePatternChoice();
+                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern05) ifClosePatternChoice();
                 break;
             case 6:
-                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern06) ifclosePatternChoice();
+                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern06) ifClosePatternChoice();
                 break;
             case 7:
-                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern07) ifclosePatternChoice();
+                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern07) ifClosePatternChoice();
                 break;
             case 8:
-                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern08) ifclosePatternChoice();
+                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern08) ifClosePatternChoice();
                 break;
             case 9:
-                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern09) ifclosePatternChoice();
+                if (bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.pattern09) ifClosePatternChoice();
                 break;
         }     
     }
@@ -491,10 +504,14 @@ public class Boss_Move_Script : MonoBehaviour
     // 돌진찌르기
     void pattern02()
     {
+        ischaseStart = true;
+
         bossPatternNow = 2;
         colliderOn();
-         bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern02; 
-        bossAnimationScript.bossPatternChoice(2);       
+        bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern02; 
+        bossAnimationScript.bossPatternChoice(2);
+
+        Invoke("stopAttackTracking", 1f);
     }
     // 화살표 그려주기 
     void pattern02AttackAreaSprite()
@@ -511,7 +528,7 @@ public class Boss_Move_Script : MonoBehaviour
     // 2번 방패로 때리기
     void pattern03()
     {
-        stopChase = true;
+        ischaseStart = true;
 
         bossPatternNow = 3;
         colliderOn();
@@ -519,12 +536,13 @@ public class Boss_Move_Script : MonoBehaviour
         bossAnimationScript.bossPatternChoice(3);
 
         Invoke("stopAttackTracking", 0.8f);
+        Debug.Log("ad");
     }
 
     // 3연격 (1)
     void pattern04()
     {
-        stopChase = true;
+        ischaseStart = true;
 
         bossPatternNow = 4;
         colliderOn();
@@ -537,7 +555,7 @@ public class Boss_Move_Script : MonoBehaviour
     // 3연격 (2)
     void pattern05()
     {
-        stopChase = true;
+        ischaseStart = true;
 
         bossPatternNow = 5;
         colliderOn();
@@ -550,7 +568,7 @@ public class Boss_Move_Script : MonoBehaviour
     // 점프후 내려찍기 
     void pattern06()
     {
-        stopChase = true;
+        ischaseStart = true;
 
         bossPatternNow = 6;
         colliderOn();
@@ -563,7 +581,7 @@ public class Boss_Move_Script : MonoBehaviour
     // 플레이어 방향으로 구르고 내려찍기
     void pattern07()
     {
-        stopChase = true;
+        ischaseStart = true;
 
         bossPatternNow = 7;
         colliderOn();
@@ -576,7 +594,7 @@ public class Boss_Move_Script : MonoBehaviour
     // 올려치기 
     void pattern08()
     {
-        stopChase = true;
+        ischaseStart = true;
 
         bossPatternNow = 8;
         colliderOn();
@@ -590,7 +608,7 @@ public class Boss_Move_Script : MonoBehaviour
     // 구르고 방패로 2번 떄리기 
     void pattern09()
     {
-        stopChase = true;
+        ischaseStart = true;
 
         bossPatternNow = 9;
         colliderOn();
@@ -609,6 +627,24 @@ public class Boss_Move_Script : MonoBehaviour
     }
     void stopAttackTracking()
     {
-        stopChase = false;
+        ischaseStart = false;
+    }
+
+
+
+    void stateChange()
+    {
+        BossState = BossState.idle;
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (BossState == BossState.attacked) return;
+
+        if (other.gameObject.tag == "PlayerSword")
+        {
+            HealthScript.enemyDamagedAndImageChange(0.2f);
+            BossState = BossState.attacked;
+            Invoke("stateChange", 0.2f);
+        }
     }
 }

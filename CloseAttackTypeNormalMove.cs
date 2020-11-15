@@ -6,7 +6,6 @@ enum CloseAttackTypeNormalState
 {
     idle,
     attacked,
-    attack,
 }
 enum CloseAttackTypeNormalPattern
 {
@@ -23,6 +22,7 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
 
     Transform playerTransform;
     Transform enemyTransform;
+    CloseAttackTypeNormalState CloseAttackTypeNormalState;
     CloseAttackTypeNormalPattern EnemyPattern;
 
     bool enemyDistanceCheck;
@@ -35,7 +35,8 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
     int enemyHp;
 
     private CloseAttackTypeNormalAni closeAttackTypeNormalAniScript;
-
+    [SerializeField]
+    HealthScript HealthScript;
 
 
 
@@ -47,8 +48,9 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
         closeAttackTypeNormalAniScript = GetComponent<CloseAttackTypeNormalAni>();
 
         EnemyPattern = CloseAttackTypeNormalPattern.patternZero;
-       
-        enemyHp = 5;
+        CloseAttackTypeNormalState = CloseAttackTypeNormalState.idle;
+
+         enemyHp = 5;
         bossWeaponSword.enabled = false;
         enemyDistanceCheck = false;
       //  stopChase = false;
@@ -120,6 +122,7 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
     public void MakeEnemyPatternIdle()
     {
         EnemyPattern = CloseAttackTypeNormalPattern.patternIdle;
+        CloseAttackTypeNormalState = CloseAttackTypeNormalState.idle;
     }
 
 
@@ -159,5 +162,22 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
     void resetNowStateToStopFollowing(float distance ,float enemyAttackSpeed)
     {
         if (Vector3.Distance(enemyTransform.position, playerTransform.position) >= distance) transform.position = Vector3.Lerp(transform.position, playerTransform.position, enemyAttackSpeed);
+    }
+
+
+    void stateChange()
+    {
+        CloseAttackTypeNormalState = CloseAttackTypeNormalState.idle;
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (CloseAttackTypeNormalState == CloseAttackTypeNormalState.attacked) return;
+
+        if (other.gameObject.tag == "PlayerSword")
+        {
+            HealthScript.enemyDamagedAndImageChange(0.2f);
+            CloseAttackTypeNormalState = CloseAttackTypeNormalState.attacked;
+            Invoke("stateChange", 0.2f);
+        }
     }
 }

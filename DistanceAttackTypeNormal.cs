@@ -2,6 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
+
+enum DistanceAttackTypeNormalState
+{
+    idle,
+    attacked,
+}
 enum DistanceAttackTypeNormalPattern
 {
     patternZero,
@@ -24,10 +33,14 @@ public class DistanceAttackTypeNormal : MonoBehaviour
 
     int enemyHp;
     bool enemyDistanceCheck;
+    DistanceAttackTypeNormalState  DistanceAttackTypeNormalState;
     DistanceAttackTypeNormalPattern DistanceAttackTypeNormalPattern;
     const float enemyAttackCheckAreaDistance = 5f;
     const float enemyAttackSpeedPatternFar = 0.02f;
     const float isFarOrCloseDistance = 6f;
+    [SerializeField]
+    HealthScript HealthScript;
+
 
 
     private void Awake()
@@ -36,6 +49,7 @@ public class DistanceAttackTypeNormal : MonoBehaviour
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         //closeAttackTypeNormalAniScript = GetComponent<CloseAttackTypeNormalAni>();
 
+        DistanceAttackTypeNormalState = DistanceAttackTypeNormalState.idle;
         DistanceAttackTypeNormalPattern = DistanceAttackTypeNormalPattern.patternZero;
         enemyHp = 5;  
         enemyDistanceCheck = false;
@@ -97,5 +111,22 @@ public class DistanceAttackTypeNormal : MonoBehaviour
         }
         DistanceAttackTypeNormalPattern = DistanceAttackTypeNormalPattern.patternIdle;
         StartCoroutine("DistanceAttackTypeNormalController");
+    }
+
+
+    void stateChange()
+    {
+        DistanceAttackTypeNormalState = DistanceAttackTypeNormalState.idle;
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (DistanceAttackTypeNormalState == DistanceAttackTypeNormalState.attacked) return;
+
+        if (other.gameObject.tag == "PlayerSword")
+        {
+            HealthScript.enemyDamagedAndImageChange(0.2f);
+            DistanceAttackTypeNormalState = DistanceAttackTypeNormalState.attacked;
+            Invoke("stateChange", 0.2f);
+        }
     }
 }
