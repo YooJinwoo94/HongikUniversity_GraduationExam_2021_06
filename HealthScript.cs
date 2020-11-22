@@ -15,8 +15,13 @@ public class HealthScript : MonoBehaviour
     {
         currentHealth = maxHealth;
     }
-    
-   public void healthUp(int amount)
+
+    private void Update()
+    {
+        transform.eulerAngles = new Vector3(transform.rotation.x, 0.0f, transform.rotation.z);
+    }
+
+    public void healthUp(int amount)
     {
         currentHealth += amount;
     }

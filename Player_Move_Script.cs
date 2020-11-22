@@ -89,8 +89,7 @@ public class Player_Move_Script : MonoBehaviour
 
     [SerializeField]
     float recoverSpeed = 1;//HP per second
-
-
+       
 
 
 
@@ -129,11 +128,12 @@ public class Player_Move_Script : MonoBehaviour
         }
     }
 
-    public void playerStateChageFromStageManger(int stageCount)
+    
+    public void playerStateChageFromStageManger()
     {
-     if (stageCount == 6) state = PlayerState.stopForCutSceen;
-     else    state = PlayerState.idle;
+        state = PlayerState.idle;
     }
+    
     public void ifBossCutSceenEnd()
     {
          state = PlayerState.idle;
@@ -180,7 +180,16 @@ public class Player_Move_Script : MonoBehaviour
 
             case PlayerState.waitForMoveNextStage:
                 break;
+            //stopForCutSceen
+            case PlayerState.stopForCutSceen:
+                break;
         }
+    }
+
+
+    void stateChageToIdle()
+    {
+        state = PlayerState.idle;
     }
 
 
@@ -238,6 +247,7 @@ public class Player_Move_Script : MonoBehaviour
     //======================================================
     void lookAtCam()
     {
+
         Ray rayCam = cam.ScreenPointToRay(Input.mousePosition);
         Plane groundPlae = new Plane(Vector3.up, Vector3.zero);
 
@@ -249,6 +259,7 @@ public class Player_Move_Script : MonoBehaviour
             // Debug.DrawLine(rayCam.origin, pointToLook, Color.blue);
             transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
         }
+
     }
     void checkRotationAndKeyDownToAniCon()
 
@@ -380,7 +391,7 @@ public class Player_Move_Script : MonoBehaviour
 
 
 
-
+    /*
     //  공격 받은 경우 
     //======================================================
     public void Damage(int amount)
@@ -391,7 +402,7 @@ public class Player_Move_Script : MonoBehaviour
 
         if (HP <= 0) HP = maxHP;
     }
-
+    */
 
 
     void playerAttacked(PlayerState state)
@@ -568,10 +579,9 @@ public class Player_Move_Script : MonoBehaviour
             || state == PlayerState.airborneAttacked || state == PlayerState.airborneAttackedCoolTime
             ) return;
         // 구르기로 도피시 슬로우 모션
-        if (state == PlayerState.dodge && playerDodgeCoolTime == true
-            && other.gameObject.tag == "enemyWeapon" )
+        if (state == PlayerState.dodge && playerDodgeCoolTime == true )
         {
-            if (other.gameObject.tag == "TrapType2FireAttack"
+            if (other.gameObject.tag == "TrapType2FireAttack" || other.gameObject.tag == "enemyWeapon"
             || other.gameObject.tag == "TrapType3BoomAttack" || other.gameObject.tag == "pattern08"
             || other.gameObject.tag == "enemyStun")
             {
@@ -581,17 +591,17 @@ public class Player_Move_Script : MonoBehaviour
         }
 
         //공격당함 1
-        if (other.gameObject.tag == "enemyWeapon"|| other.gameObject.tag == "TrapType2FireAttack"
+        if (other.gameObject.tag == "enemyWeapon" || other.gameObject.tag == "TrapType2FireAttack"
             || other.gameObject.tag == "TrapType3BoomAttack" || other.gameObject.tag == "TrapType1Thorn")
         {
-          //  PlayerCamManager.Instance.shack();
-          //  CamState CamState = CamState.playerFollow;
+            //  PlayerCamManager.Instance.shack();
+            //  CamState CamState = CamState.playerFollow;
             state = PlayerState.normalAttacked;
-            Damage(20);
+            // Damage(20);
         }
-        else if(other.gameObject.tag == "pattern08")
+        else if (other.gameObject.tag == "pattern08")
         {
-            Damage(20);
+            // Damage(20);
             state = PlayerState.airborneAttacked;
         }
         else if (other.gameObject.tag == "enemyStun")
@@ -602,6 +612,14 @@ public class Player_Move_Script : MonoBehaviour
         {
             state = PlayerState.waitForMoveNextStage;
             StageManager.Instance.playerStageMapUI();
+        }
+        else if (other.gameObject.tag == "BossStageSceneManager")
+        {
+            state = PlayerState.stopForCutSceen;
+
+            Debug.Log(state);
+
+            Invoke("stateChageToIdle", 5f);
         }
         playerAttacked(state);
     }

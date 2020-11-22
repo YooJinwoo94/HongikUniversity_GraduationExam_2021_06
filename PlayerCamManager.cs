@@ -13,6 +13,7 @@ enum CamState
 
 public class PlayerCamManager : MonoBehaviour
 {
+    
     [SerializeField]
     Transform target;
     [SerializeField]
@@ -23,6 +24,8 @@ public class PlayerCamManager : MonoBehaviour
 
     float shakeAmount = 0 ;
     Vector3 orginPos;
+    
+
 
     private static PlayerCamManager instance = null;
 
@@ -37,43 +40,41 @@ public class PlayerCamManager : MonoBehaviour
     private void Awake()
     {
         PlayerCamAni = GetComponent<Animator>();
-        PlayerCamAni.enabled = false;
-        instance = this;
         CamState = CamState.playerFollow;
+        PlayerCamAni.enabled = false;
 
-        if (null == instance)
-        {
-            instance = this;
-        }
+        instance = this;
+        if (null == instance) instance = this;
     }
 
 
     // Update is called once per frame
     void Update()
-    {
+    {      
+        
         if (CamState != CamState.playerFollow) return;
         transform.position = target.position + offSet;
+        
     }
 
 
-   public  void bossStageCam()
-    {
-        PlayerCamAni.enabled = true;
-        orginPos = transform.position;
+ 
 
-        CamState = CamState.bossStageCam;
 
-        transform.position = new Vector3(0,0,0 );
-        Invoke("camFollowOff", 1.95f);
-    }
 
-    void camFollowOff()
-    {
-         CamState = CamState.playerFollow;
-        PlayerCamAni.enabled = false;
-        Player_Move_Script.Instance.ifBossCutSceenEnd();
-        transform.rotation = Quaternion.Euler(48, 0, 0);
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     /*
     public void shack(float amt = 0.05f , float length = 0.15f )
     {

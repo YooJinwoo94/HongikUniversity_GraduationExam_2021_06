@@ -73,7 +73,6 @@ public class StageManager : MonoBehaviour
                     uiButtons[3].interactable = true;
 
                     StageMoveMapUI.SetActive(false);
-                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
                     SceneManager.LoadScene("Stage_01");
                     break;
                 case 2:
@@ -83,7 +82,6 @@ public class StageManager : MonoBehaviour
                     uiButtons[4].interactable = true;
 
                     StageMoveMapUI.SetActive(false);
-                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
                     SceneManager.LoadScene("Stage_02");
                     break;
                 case 3:
@@ -91,9 +89,7 @@ public class StageManager : MonoBehaviour
                     uiButtons[3].interactable = false;
                     uiButtons[5].interactable = true;
 
-                    StageMoveMapUI.SetActive(false);
-                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
-                   
+                    StageMoveMapUI.SetActive(false);                
                     SceneManager.LoadScene("Stage_03");
                     break;
                 case 4:
@@ -103,7 +99,6 @@ public class StageManager : MonoBehaviour
                     uiButtons[5].interactable = true;
 
                     StageMoveMapUI.SetActive(false);
-                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
                     SceneManager.LoadScene("Stage_04");
                     break;
                 case 5:
@@ -112,17 +107,17 @@ public class StageManager : MonoBehaviour
                     uiButtons[5].interactable = true;
 
                     StageMoveMapUI.SetActive(false);
-                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
                     SceneManager.LoadScene("Stage_05");
                     break;
                 case 6:
                     StageMoveMapUI.SetActive(false);
-                    Player_Move_Script.Instance.playerStateChageFromStageManger(nowStageCountList[i]);
-                    PlayerCamManager.Instance.bossStageCam();
+        
+                //    PlayerCamManager.Instance.bossStageCam();
                     SceneManager.LoadScene("Stage_06");
                     break;
             }
-        }      
+        }
+        Player_Move_Script.Instance.playerStateChageFromStageManger();
     }
 
     public void playerStageMapUI()
