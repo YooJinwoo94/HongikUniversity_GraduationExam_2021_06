@@ -13,12 +13,20 @@ public class BossStageSceneManager : MonoBehaviour
     [SerializeField]
     Animator playerDoorAni;
 
+    // [SerializeField]
+    // GameObject bossCamSet1;
+    //  [SerializeField]
+    //  GameObject bossCamSet2;
+    //  [SerializeField]
+    //  GameObject bossCamSet3;
+    //  [SerializeField]
+    //  GameObject bossCamSet4;
+
+      [SerializeField]
+      GameObject[] bossCamSet;
+
     [SerializeField]
-    GameObject bossCamSet1;
-    [SerializeField]
-    GameObject bossCamSet2;
-    [SerializeField]
-    GameObject bossCamSet3;
+     GameObject playerCam;
 
     [SerializeField]
     Transform bossSwapnArea;
@@ -48,11 +56,15 @@ public class BossStageSceneManager : MonoBehaviour
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider>();
+      //  playerCam = GameObject.FindWithTag("Camera");
+        // bossCamSet1.SetActive (false);
+        //  bossCamSet2.SetActive(false);
+        //  bossCamSet3.SetActive(false);
+        //  bossCamSet4.SetActive(false);
 
-        bossCamSet1.SetActive (false);
-        bossCamSet2.SetActive(false);
+        for (int i =0; i< 4; i++) bossCamSet[i].SetActive(false);
 
-        doorClose = false;
+          doorClose = false;
         stageFinsh = false;
        // StartCoroutine("DoorCoroutine");
     }
@@ -76,21 +88,27 @@ public class BossStageSceneManager : MonoBehaviour
 
     IEnumerator CamSetting()
     {
-       // bossCamSet3.SetActive(true);
-        bossCamSet1.SetActive(true);
-        bossCamSet2.SetActive(false);
-        yield return new WaitForSeconds(0.5f);
-        Instantiate(bossGameObj, bossSwapnArea);
-     
+        playerCam.SetActive(false);
+        bossCamSet[0].SetActive(true);
+        yield return new WaitForSeconds(2f);
+        bossCamSet[0].SetActive(false);
+        bossCamSet[1].SetActive(true);
         yield return new WaitForSeconds(1f);
+        Instantiate(bossGameObj, bossSwapnArea);
+        yield return new WaitForSeconds(2f);
         bossDoorAni.SetBool("isDoorClose", true);
-        yield return new WaitForSeconds(0.5f);
-        bossCamSet1.SetActive(false);
-        bossCamSet2.SetActive(true);
-        yield return new WaitForSeconds(1.5f);
-        bossCamSet2.SetActive(false);
-        yield return new WaitForSeconds(1.5f);
-        bossCamSet3.SetActive(false);
+        bossCamSet[1].SetActive(false);
+        bossCamSet[2].SetActive(true);
+        yield return new WaitForSeconds(1f);
+
+        yield return new WaitForSeconds(1f);
+        bossCamSet[2].SetActive(false);
+        bossCamSet[3].SetActive(true);
+        yield return new WaitForSeconds(2f);
+        bossCamSet[3].SetActive(false);
+
+       
+       // playerCam.SetActive(false);
         StopCoroutine("CamSetting");
     }
 

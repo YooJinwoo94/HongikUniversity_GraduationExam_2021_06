@@ -60,9 +60,9 @@ public class Boss_Move_Script : MonoBehaviour
     GameObject weaponSword;
 
     [SerializeField]
-    HealthScript HealthScript;
-
-
+    HpPostionScript HpPostionScript;
+    GameObject Health;
+    //EnemyHealthScript EnemyHealthScript;
 
 
     //=======================================================
@@ -99,6 +99,9 @@ public class Boss_Move_Script : MonoBehaviour
          bossTransform = GetComponent<Transform>();
          bossAnimationScript = GetComponent<Boss_Animation_Script>();
          pattern02BossAttackAreaTransform = GameObject.FindGameObjectWithTag("pattern02BossAttackAreaSprite").transform;
+
+
+        HpPostionScript = GetComponent<HpPostionScript>();
 
         BossState = BossState.idle;
         bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.bossWait;
@@ -642,9 +645,9 @@ public class Boss_Move_Script : MonoBehaviour
 
         if (other.gameObject.tag == "PlayerSword")
         {
-            HealthScript.enemyDamagedAndImageChange(0.2f);
+            HpPostionScript.enemyDamagedAndImageChange(0.2f);
             BossState = BossState.attacked;
-            Invoke("stateChange", 0.2f);
+            Invoke("stateChange", 0.4f);
         }
     }
 }

@@ -47,7 +47,7 @@ public class TrapType2Fire : MonoBehaviour
     {
         yield return null;
         // 애니메이션 작동 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.2f);
         rendererColor.material.color = Color.yellow;
         yield return new WaitForSeconds(0.5f);
         rendererColor.material.color = Color.red;
@@ -55,7 +55,7 @@ public class TrapType2Fire : MonoBehaviour
         attack();
      
         rendererColor.material.color = Color.white;  
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
         TrapType2State = TrapType2State.normal;
         StopCoroutine("StartTrapType2Thorn");
     }

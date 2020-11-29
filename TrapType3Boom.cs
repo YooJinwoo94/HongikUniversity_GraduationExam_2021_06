@@ -19,6 +19,8 @@ public class TrapType3Boom : MonoBehaviour
     Transform boomParticleAndBoomAreaPos;
     [SerializeField]
     GameObject boomAreaGameObject;
+    [SerializeField]
+    GameObject track_03_PartObj;
 
 
     TrapType3State TrapType3State;
@@ -52,8 +54,10 @@ public class TrapType3Boom : MonoBehaviour
         rendererColor.material.color = Color.red;
         yield return new WaitForSeconds(0.5f);
         boom();
+      //  Instantiate(track_03_PartObj);
         boomAreaGameObject.SetActive(false);
         yield return new WaitForSeconds(1f);
+       
         Destroy(gameObject);
 
         StopCoroutine("StartTrapType3Thorn");

@@ -13,31 +13,40 @@ enum TrapType1State{
 
 public class TrapType1Thorn : MonoBehaviour
 {
+
+    [SerializeField]
+    Animator trapType1AttackAni;
+
     Renderer rendererColor;
     TrapType1State TrapType1State;
    // BoxCollider trapType1ThornCollider;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         //  trapType1ThornCollider = GetComponent<BoxCollider>();
         //trapType1ThornCollider.enabled = true;
         rendererColor = gameObject.GetComponent<Renderer>();
         TrapType1State = TrapType1State.normal;
         gameObject.tag = "Untagged";
+
+        
     }
 
 
     void attack()
     {
-        rendererColor.material.color = Color.red;
+        //rendererColor.material.color = Color.red;
+
         gameObject.tag = "TrapType1Thorn";
         TrapType1State = TrapType1State.attack;
     }
 
       void reset()
     {
-        rendererColor.material.color = Color.white;
+        //rendererColor.material.color = Color.white;
+
+        trapType1AttackAni.SetBool("trapType1Attack", false);
         TrapType1State = TrapType1State.normal;
         gameObject.tag = "Untagged";
     }
@@ -50,11 +59,11 @@ public class TrapType1Thorn : MonoBehaviour
         yield return null;
         // 애니메이션 작동 
         yield return new WaitForSeconds(0.5f);
-        rendererColor.material.color = Color.yellow;
+        trapType1AttackAni.SetBool("trapType1Attack", true);
         yield return new WaitForSeconds(1f);
         attack();
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.6f);
         reset();
         StopCoroutine("StartTrapType1Thorn");
     }
