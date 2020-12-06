@@ -19,6 +19,8 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
 {
     [SerializeField]
     BoxCollider bossWeaponSword;
+    [SerializeField]
+    EnemyHpPostionScript EnemyHpPostionScript;
 
     Transform playerTransform;
     Transform enemyTransform;
@@ -35,8 +37,8 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
     int enemyHp;
 
     private CloseAttackTypeNormalAni closeAttackTypeNormalAniScript;
-    [SerializeField]
-    HealthScript HealthScript;
+
+    bool trap01;
 
 
 
@@ -46,10 +48,12 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
         enemyTransform = GetComponent<Transform>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         closeAttackTypeNormalAniScript = GetComponent<CloseAttackTypeNormalAni>();
+        EnemyHpPostionScript = GetComponent<EnemyHpPostionScript>();
 
         EnemyPattern = CloseAttackTypeNormalPattern.patternZero;
         CloseAttackTypeNormalState = CloseAttackTypeNormalState.idle;
 
+        trap01 = false;
          enemyHp = 5;
         bossWeaponSword.enabled = false;
         enemyDistanceCheck = false;
@@ -169,15 +173,55 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
     {
         CloseAttackTypeNormalState = CloseAttackTypeNormalState.idle;
     }
+    void isTrap01CoolTimeOn()
+    {
+        trap01 = false;
+    }
     private void OnTriggerExit(Collider other)
     {
         if (CloseAttackTypeNormalState == CloseAttackTypeNormalState.attacked) return;
 
         if (other.gameObject.tag == "PlayerSword")
         {
-            HealthScript.enemyDamagedAndImageChange(0.2f);
-            CloseAttackTypeNormalState = CloseAttackTypeNormalState.attacked;
-            Invoke("stateChange", 0.2f);
+            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+
+            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
+
+            else
+            {
+                CloseAttackTypeNormalState = CloseAttackTypeNormalState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
+        }
+
+     
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (trap01 == true) return;
+
+        if (other.gameObject.tag == "TrapType2FireAttack"
+         || other.gameObject.tag == "TrapType3BoomAttack")
+        {
+            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+
+            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
+
+            else Invoke("isTrap01CoolTimeOn", 2f);
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (trap01 == true) return;
+
+        if ( other.gameObject.tag == "TrapType1Thorn")
+        {
+            trap01 = true;
+            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+
+            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
+
+            else Invoke("isTrap01CoolTimeOn", 2f);
         }
     }
 }

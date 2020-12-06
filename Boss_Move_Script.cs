@@ -60,7 +60,7 @@ public class Boss_Move_Script : MonoBehaviour
     GameObject weaponSword;
 
     [SerializeField]
-    HpPostionScript HpPostionScript;
+    Boss01HpPostionScript HpPostionScript;
     GameObject Health;
     //EnemyHealthScript EnemyHealthScript;
 
@@ -101,7 +101,7 @@ public class Boss_Move_Script : MonoBehaviour
          pattern02BossAttackAreaTransform = GameObject.FindGameObjectWithTag("pattern02BossAttackAreaSprite").transform;
 
 
-        HpPostionScript = GetComponent<HpPostionScript>();
+        HpPostionScript = GetComponent<Boss01HpPostionScript>();
 
         BossState = BossState.idle;
         bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.bossWait;

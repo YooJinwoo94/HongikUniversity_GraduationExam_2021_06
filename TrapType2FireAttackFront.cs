@@ -36,7 +36,10 @@ public class TrapType2FireAttackFront : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.gameObject.tag == "Wall" || other.gameObject.tag == "TrapType2Fire")
+        if (other.gameObject.tag == "Wall" 
+            || other.gameObject.tag == "TrapType2Fire"
+            ||other.gameObject.tag == "CloseAttackEnemy01"
+            || other.gameObject.tag == "DistanceAttackEnemy01")
         {
             boxCollider.enabled = false;
             meshRenderer.enabled = false;
@@ -45,8 +48,11 @@ public class TrapType2FireAttackFront : MonoBehaviour
             boomParticle.SetActive(true);
             Destroy(gameObject, 3);
         }
+
         else if (other.gameObject.tag == "Player")
         {
+            if (Player_Move_Script.Instance.isDodge == true) return;
+
             boxCollider.enabled = false;
             meshRenderer.enabled = false;
             rid.velocity = gameObject.transform.forward * 0;

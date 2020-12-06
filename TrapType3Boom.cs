@@ -19,8 +19,7 @@ public class TrapType3Boom : MonoBehaviour
     Transform boomParticleAndBoomAreaPos;
     [SerializeField]
     GameObject boomAreaGameObject;
-    [SerializeField]
-    GameObject track_03_PartObj;
+
 
 
     TrapType3State TrapType3State;
@@ -67,7 +66,8 @@ public class TrapType3Boom : MonoBehaviour
     {
         if (TrapType3State != TrapType3State.normal) return;
 
-        if (other.gameObject.tag == "PlayerSword")
+        if (other.gameObject.tag == "PlayerSword" 
+            || other.gameObject.tag == "enemyWeapon")
         {
             boomAreaGameObject.SetActive(true);
             TrapType3State = TrapType3State.boomReady;

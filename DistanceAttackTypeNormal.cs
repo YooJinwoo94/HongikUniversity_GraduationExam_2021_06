@@ -39,8 +39,8 @@ public class DistanceAttackTypeNormal : MonoBehaviour
     const float enemyAttackSpeedPatternFar = 0.02f;
     const float isFarOrCloseDistance = 6f;
     [SerializeField]
-    HealthScript HealthScript;
-
+    EnemyHpPostionScript EnemyHpPostionScript;
+    bool trap01;
 
 
     private void Awake()
@@ -54,6 +54,7 @@ public class DistanceAttackTypeNormal : MonoBehaviour
         enemyHp = 5;  
         enemyDistanceCheck = false;
         attackAreaTransform.GetComponent<SpriteRenderer>().enabled = false;
+        trap01 = false;
         //Instantiate(fireAttack, firePos.position, firePos.rotation);
         StartCoroutine("WaitForPlayer");
     }
@@ -118,15 +119,62 @@ public class DistanceAttackTypeNormal : MonoBehaviour
     {
         DistanceAttackTypeNormalState = DistanceAttackTypeNormalState.idle;
     }
+    void isTrap01CoolTimeOn()
+    {
+        trap01 = false;
+    }
+
+
+
+
     private void OnTriggerExit(Collider other)
     {
         if (DistanceAttackTypeNormalState == DistanceAttackTypeNormalState.attacked) return;
 
         if (other.gameObject.tag == "PlayerSword")
         {
-            HealthScript.enemyDamagedAndImageChange(0.2f);
-            DistanceAttackTypeNormalState = DistanceAttackTypeNormalState.attacked;
-            Invoke("stateChange", 0.2f);
+            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+
+            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
+
+            else
+            {
+                DistanceAttackTypeNormalState = DistanceAttackTypeNormalState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (trap01 == true) return;
+
+       else if (other.gameObject.tag == "TrapType2FireAttack"
+      || other.gameObject.tag == "TrapType3BoomAttack")
+        {
+            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+
+            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
+
+            else Invoke("isTrap01CoolTimeOn", 2f);
+            
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (trap01 == true) return;
+
+       else if (other.gameObject.tag == "TrapType1Thorn")
+        {
+            trap01 = true;
+
+            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+
+            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
+
+            else Invoke("isTrap01CoolTimeOn", 2f);
+
         }
     }
 }

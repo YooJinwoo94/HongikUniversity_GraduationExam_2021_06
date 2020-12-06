@@ -21,7 +21,7 @@ public class DoorOpenManager : MonoBehaviour
     {
         if (other.tag =="Player")
         {
-            particleDoorEffect.SetActive(true);
+          //  particleDoorEffect.SetActive(true);
             doorOpenAnimator01.SetBool("doorOpen", true);
             doorOpenAnimator02.SetBool("doorOpen", true);
         }

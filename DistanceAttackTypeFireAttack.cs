@@ -25,9 +25,9 @@ public class DistanceAttackTypeFireAttack : MonoBehaviour
 
         fireBallTransform = GetComponent<Transform>();
 
-       
 
-       boxCollider = GetComponent<BoxCollider>();
+
+        boxCollider = GetComponent<BoxCollider>();
         boxCollider.enabled = true;
 
 
@@ -45,16 +45,9 @@ public class DistanceAttackTypeFireAttack : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.gameObject.tag == "Wall" || other.gameObject.tag == "TrapType2Fire")
-        {
-            boxCollider.enabled = false;
-            meshRenderer.enabled = false;
-            // rid.velocity = gameObject.transform.forward * 0;
-            isStop = true;
-            boomParticle.SetActive(true);
-            Destroy(gameObject, 3);
-        }
-        else if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Wall"
+            || other.gameObject.tag == "TrapType2Fire"
+            || other.gameObject.tag == "Player")
         {
             boxCollider.enabled = false;
             meshRenderer.enabled = false;

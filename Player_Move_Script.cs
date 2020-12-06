@@ -89,7 +89,7 @@ public class Player_Move_Script : MonoBehaviour
 
     [SerializeField]
     float recoverSpeed = 1;//HP per second
-       
+    public bool isDodge;  // trapType2FireAttack을 피하기 위한것
 
 
 
@@ -97,6 +97,7 @@ public class Player_Move_Script : MonoBehaviour
 
     void Awake()
     {
+        isDodge = false;
         HP = maxHP;
        playerAnimator = GetComponent<Animator>();
         playerRectTransform = GetComponent<RectTransform>();
@@ -132,11 +133,13 @@ public class Player_Move_Script : MonoBehaviour
     public void playerStateChageFromStageManger()
     {
         state = PlayerState.idle;
+
     }
     
     public void ifBossCutSceenEnd()
     {
          state = PlayerState.idle;
+
     }
 
 
@@ -156,6 +159,7 @@ public class Player_Move_Script : MonoBehaviour
                 break;
 
             case PlayerState.dodge:
+                isDodge = true;
                 lookAtCam();
                 inputProcessDodge();          
                 break;
@@ -380,6 +384,7 @@ public class Player_Move_Script : MonoBehaviour
         resetStateToidle();
         speed = 5 ;       
         playerAnimationScript.playerAniRollReset();
+        isDodge = false;
     }
 
     IEnumerator resetDodgeCoolTime()
@@ -578,7 +583,8 @@ public class Player_Move_Script : MonoBehaviour
     {
         // 죽었을떄도 넣기 // 
         if (state == PlayerState.normalAttacked 
-            || state == PlayerState.airborneAttacked || state == PlayerState.airborneAttackedCoolTime
+            || state == PlayerState.airborneAttacked 
+            || state == PlayerState.airborneAttackedCoolTime
             ) return;
         // 구르기로 도피시 슬로우 모션
         if (state == PlayerState.dodge && playerDodgeCoolTime == true )
@@ -593,13 +599,16 @@ public class Player_Move_Script : MonoBehaviour
         }
 
         //공격당함 1
-        if (other.gameObject.tag == "enemyWeapon" || other.gameObject.tag == "TrapType2FireAttack"
-            || other.gameObject.tag == "TrapType3BoomAttack" || other.gameObject.tag == "TrapType1Thorn")
+        if (other.gameObject.tag == "enemyWeapon"
+            || other.gameObject.tag == "DistanceAttackTypeFireAttack01"
+            || other.gameObject.tag == "TrapType2FireAttack"
+            || other.gameObject.tag == "TrapType3BoomAttack" 
+            || other.gameObject.tag == "TrapType1Thorn")
         {
             //  PlayerCamManager.Instance.shack();
             //  CamState CamState = CamState.playerFollow;
-            state = PlayerState.normalAttacked;
             // Damage(20);
+            state = PlayerState.normalAttacked;         
         }
         else if (other.gameObject.tag == "pattern08")
         {
@@ -639,11 +648,7 @@ public class Player_Move_Script : MonoBehaviour
             || state == PlayerState.airborneAttacked || state == PlayerState.airborneAttackedCoolTime
             ) return;
 
-        if (other.gameObject.tag == "TrapType1Thorn" )
-        {
-            state = PlayerState.normalAttacked;
-            Debug.Log("TrapType1Thornhitted");
-        }
+        if (other.gameObject.tag == "TrapType1Thorn") state = PlayerState.normalAttacked;
         playerAttacked(state);
     }
 }

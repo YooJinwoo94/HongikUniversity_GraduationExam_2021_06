@@ -29,8 +29,6 @@ public class TrapType1Thorn : MonoBehaviour
         rendererColor = gameObject.GetComponent<Renderer>();
         TrapType1State = TrapType1State.normal;
         gameObject.tag = "Untagged";
-
-        
     }
 
 
@@ -73,7 +71,11 @@ public class TrapType1Thorn : MonoBehaviour
     {
         if (TrapType1State != TrapType1State.normal) return;
 
-        if (other.gameObject.tag == "Player" || other.gameObject.tag == "Enemy")
+        if (other.gameObject.tag == "Player" 
+            || other.gameObject.tag == "CloseAttackEnemy01"
+            || other.gameObject.tag == "CloseAttackEnemy02"
+            || other.gameObject.tag == "DistanceAttackEnemy01"
+            || other.gameObject.tag == "DistanceAttackEnemy02")
         {
             TrapType1State = TrapType1State.readyForAttack;
             StartCoroutine("StartTrapType1Thorn");

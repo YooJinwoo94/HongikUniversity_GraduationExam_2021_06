@@ -27,10 +27,8 @@ public class CamCheckWall : MonoBehaviour
 
         capsuleCollider = GetComponent<CapsuleCollider>();
 
-        skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0f);
-        skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0f);
-
-
+       // skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0f);
+       // skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0f);
     }
 
 
@@ -131,8 +129,8 @@ public class CamCheckWall : MonoBehaviour
                     renderer.material.SetColor("_Color", new Color(prevColor.r, prevColor.g, prevColor.b, 0.5f));
 
                    
-                    skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0.15f);
-                    skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0.15f);
+                 //   skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0.15f);
+                 //   skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0.15f);
                     /*
                    Debug.Log("dd");
                    */
@@ -154,8 +152,8 @@ public class CamCheckWall : MonoBehaviour
                 renderer.material.SetColor("_Color", new Color(prevColor.r, prevColor.g, prevColor.b, 1f));
 
                
-                skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0f);
-                skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0f);
+              //  skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0f);
+              //  skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0f);
                 /*
                Debug.Log("xx");
                */
@@ -167,8 +165,8 @@ public class CamCheckWall : MonoBehaviour
         
         if (stayCheck == false)
         {
-            skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0f);
-            skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0f);
+          //  skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0f);
+          //  skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0f);
         }
         
     }

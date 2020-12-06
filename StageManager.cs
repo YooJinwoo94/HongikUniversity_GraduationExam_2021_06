@@ -124,4 +124,9 @@ public class StageManager : MonoBehaviour
     {
         StageMoveMapUI.SetActive(true);
     }
+
+    public int returnNowStageCount()
+    {
+        return nowStageCountList[nowStageCountList.Count-1];
+    }
 }
