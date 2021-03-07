@@ -15,11 +15,13 @@ public class Player_Animation_Script : MonoBehaviour
     }
 
 
-    public void playerAniIdel()
+
+
+
+    public void playerAniWait()
     {
         playerAnimator.SetBool("Bool_Player_Waiting", true);
         playerAnimator.SetBool("Bool_Player_Walking", false);
-        playerAnimator.SetBool("Bool_Player_Roll_Front", false);
 
         playerAnimator.SetBool("Bool_Player_Attack_01", false);
         playerAnimator.SetBool("Bool_Player_Attack_02", false);
@@ -29,13 +31,10 @@ public class Player_Animation_Script : MonoBehaviour
     {
         playerAnimator.SetBool("Bool_Player_Waiting", false);
         playerAnimator.SetBool("Bool_Player_Walking", true);
-        playerAnimator.SetBool("Bool_Player_Roll_Front", false);
 
         playerAnimator.SetBool("Bool_Player_Attack_01", false);
         playerAnimator.SetBool("Bool_Player_Attack_02", false);
         playerAnimator.SetBool("Bool_Player_Attack_03", false);
-
-        playerAniRollReset();
     }
 
     //  구른 경우 
@@ -73,8 +72,9 @@ public class Player_Animation_Script : MonoBehaviour
         playerAnimator.SetBool("Bool_Player_Roll_Right", false);
     }
 
-    public void playerAniRollReset()
+    public void playerDodgeAniReset()
     {
+        //playerAnimator.SetBool("Bool_Player_Waiting", true);
         playerAnimator.SetBool("Bool_Player_Roll_Front", false);
         playerAnimator.SetBool("Bool_Player_Roll_Left", false);
         playerAnimator.SetBool("Bool_Player_Roll_Right", false);
@@ -90,7 +90,7 @@ public class Player_Animation_Script : MonoBehaviour
             case 1 :
                 playerAnimator.SetBool("Bool_Player_Waiting", false);
                 playerAnimator.SetBool("Bool_Player_Walking", false);
-                playerAnimator.SetBool("Bool_Player_Roll_Front", false);
+
                 //====================================================================
                 playerAnimator.SetBool("Bool_Player_Attack_01", true);
                 //====================================================================
@@ -101,7 +101,6 @@ public class Player_Animation_Script : MonoBehaviour
             case 2:
                 playerAnimator.SetBool("Bool_Player_Waiting", false);
                 playerAnimator.SetBool("Bool_Player_Walking", false);
-                playerAnimator.SetBool("Bool_Player_Roll_Front", false);
 
                 playerAnimator.SetBool("Bool_Player_Attack_01", false);
                 //====================================================================
@@ -113,7 +112,6 @@ public class Player_Animation_Script : MonoBehaviour
             case 3:
                 playerAnimator.SetBool("Bool_Player_Waiting", false);
                 playerAnimator.SetBool("Bool_Player_Walking", false);
-                playerAnimator.SetBool("Bool_Player_Roll_Front", false);
 
                 playerAnimator.SetBool("Bool_Player_Attack_01", false);
                 playerAnimator.SetBool("Bool_Player_Attack_02", false);
@@ -123,15 +121,10 @@ public class Player_Animation_Script : MonoBehaviour
                 break;
 
             case 0:
-                playerAnimator.SetBool("Bool_Player_Waiting", false);
-                playerAnimator.SetBool("Bool_Player_Walking", false);
-                playerAnimator.SetBool("Bool_Player_Roll_Front", false);
-
+                playerAnimator.SetBool("Bool_Player_Waiting", true);
                 playerAnimator.SetBool("Bool_Player_Attack_01", false);
                 playerAnimator.SetBool("Bool_Player_Attack_02", false);
                 playerAnimator.SetBool("Bool_Player_Attack_03", false);
-
-                playerAnimator.SetBool("Bool_Player_Waiting", true);
                 break;
         }
     }
@@ -143,6 +136,7 @@ public class Player_Animation_Script : MonoBehaviour
 
     public void attackedAni(int attackCount)
     {
+        ifAttackedTurnOffOtherAni();
         switch (attackCount)
         {
             case 1:
@@ -155,11 +149,11 @@ public class Player_Animation_Script : MonoBehaviour
                 playerAnimator.SetBool("Bool_Player_Stun_Attacked", true);
                 break;
         }
-        ifAttackedTurnOffOtherAni();
     }
     void ifAttackedTurnOffOtherAni()
     {
         playerAnimator.SetBool("Bool_Player_Waiting", false);
+        playerAnimator.SetBool("Bool_Player_Walking", false);
         playerAnimator.SetBool("Bool_Player_Roll_Front", false);
         playerAnimator.SetBool("Bool_Player_Roll_Left", false);
         playerAnimator.SetBool("Bool_Player_Roll_Right", false);
