@@ -4,25 +4,6 @@ using UnityEngine;
 
 public class TimeManager : MonoBehaviour
 {
-    private static TimeManager instance = null;
-
-    public static TimeManager Instance
-    {
-        get
-        {
-            if (null == instance) return null;
-            return instance;
-        }
-    }
-    private void Awake()
-    {
-        instance = this;
-        if (null == instance)
-        {
-            instance = this;
-        }
-    }
-
     public void playerDodgeTime()
     {
         StartCoroutine("DodgeSlowTimeCheck");
@@ -34,5 +15,15 @@ public class TimeManager : MonoBehaviour
         yield return new WaitForSeconds(0.07f);
         Time.timeScale = 1f;
         StopCoroutine("DodgeSlowTimeCheck");
+    }
+
+
+    public void playerUITimeOn ()
+    {
+        Time.timeScale = 0f;
+    }
+    public void playerUITimeOff()
+    {
+        Time.timeScale = 1f;
     }
 }
