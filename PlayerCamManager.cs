@@ -7,7 +7,6 @@ using UnityEngine;
 enum CamState
 {
    playerFollow,
-   bossStageCam,
 }
 
 
@@ -37,15 +36,16 @@ public class PlayerCamManager : MonoBehaviour
             return instance;
         }
     }
-    private void Awake()
+    private void Start()
     {
-        PlayerCamAni = GetComponent<Animator>();
+         PlayerCamAni = GetComponent<Animator>();
         CamState = CamState.playerFollow;
         PlayerCamAni.enabled = false;
 
         instance = this;
         if (null == instance) instance = this;
     }
+
 
 
     // Update is called once per frame

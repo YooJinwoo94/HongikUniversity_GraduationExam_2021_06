@@ -40,7 +40,7 @@ public class NormalStageManager : MonoBehaviour
                 for (int i = 0; i < 1; i++) StageBoolSetting[i] = false;
                 break;
 
-           // boss stage Pass
+            // boss stage Pass
             case 6:
                 break;
         }

@@ -19,6 +19,10 @@ public class StageManager : MonoBehaviour
     List<int> nowStageCountList = new List<int>();
 
     [SerializeField]
+    PlayerUISeletManger playerUiSelectMangerScript;
+    [SerializeField]
+    PlayerInputScript playerMoveScript;
+    [SerializeField]
     Transform[] transformPos;
     [SerializeField]
     Transform playerPos;
@@ -70,9 +74,7 @@ public class StageManager : MonoBehaviour
                     uiButtons[0].enabled = false;
                     uiButtons[1].interactable = false;
                     uiButtons[2].interactable = true;
-                    uiButtons[3].interactable = true;
-
-                    StageMoveMapUI.SetActive(false);
+                    uiButtons[3].interactable = true;                  
                     SceneManager.LoadScene("Stage_01");
                     break;
                 case 2:
@@ -80,16 +82,12 @@ public class StageManager : MonoBehaviour
                     uiButtons[1].enabled = false;
                     uiButtons[3].interactable = true;
                     uiButtons[4].interactable = true;
-
-                    StageMoveMapUI.SetActive(false);
                     SceneManager.LoadScene("Stage_02");
                     break;
                 case 3:
                     uiButtons[2].enabled = false;
                     uiButtons[3].interactable = false;
-                    uiButtons[5].interactable = true;
-
-                    StageMoveMapUI.SetActive(false);                
+                    uiButtons[5].interactable = true;            
                     SceneManager.LoadScene("Stage_03");
                     break;
                 case 4:
@@ -97,27 +95,21 @@ public class StageManager : MonoBehaviour
                     uiButtons[3].enabled = false;
                     uiButtons[4].interactable = false;
                     uiButtons[5].interactable = true;
-
-                    StageMoveMapUI.SetActive(false);
                     SceneManager.LoadScene("Stage_04");
                     break;
                 case 5:
                     uiButtons[3].interactable = false;
                     uiButtons[4].enabled = false;
                     uiButtons[5].interactable = true;
-
-                    StageMoveMapUI.SetActive(false);
                     SceneManager.LoadScene("Stage_05");
                     break;
                 case 6:
-                    StageMoveMapUI.SetActive(false);
-        
-                //    PlayerCamManager.Instance.bossStageCam();
                     SceneManager.LoadScene("Stage_06");
                     break;
             }
         }
-        Player_Move_Script.Instance.playerStateChageFromStageManger();
+        StageMoveMapUI.SetActive(false);
+        playerMoveScript.state = PlayerState.idle;
     }
 
     public void playerStageMapUI()
