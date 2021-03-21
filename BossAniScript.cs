@@ -129,7 +129,7 @@ public class BossAniScript : MonoBehaviour
         ani.SetBool("boolBossPattern08", true);
 
         Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime);
+        Invoke("restartPattern", restartPatternTime-1f);
     }
      void bossAniPattern09()
     {
@@ -142,10 +142,6 @@ public class BossAniScript : MonoBehaviour
 
 
 
-
-    // 작업을 해야할때는 
-    // 패턴 1~2개로 하고 넘어가서 남은 부분을 해서 전체적인 완성도를 
-    // 올려야 한다.
     void resetPattern()
     {
         ani.SetBool("Bool_Boss_Waiting", true);

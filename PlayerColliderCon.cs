@@ -6,14 +6,15 @@ public class PlayerColliderCon : MonoBehaviour
 {
     [SerializeField]
     Animator camAni;
+
+    [SerializeField]
+    PlayerCamManager playerCamManagerScript;
     [SerializeField]
     PlayerGetWeaponUINNo5 playerGetWeaponUINNo5;
     [SerializeField]
     PlayerCurseUI playerCurseScript;
     [SerializeField]
     PlayerHpManager playerHpManagerScript;
-    [SerializeField]
-    PlayerUISeletManger playerUiSelectMangerScript;
     [SerializeField]
     PlayerUISeletManger playerUISeletMangerScript;
     [SerializeField]
@@ -26,7 +27,8 @@ public class PlayerColliderCon : MonoBehaviour
     [SerializeField]
     GameObject stunParticle;
 
-    GameObject a;
+    [HideInInspector]
+    public GameObject checkWhatItis = null;
 
     private void Start()
     {
@@ -36,16 +38,14 @@ public class PlayerColliderCon : MonoBehaviour
         inputScript = GetComponent<PlayerInputScript>();
     }
 
- 
+    private void FixedUpdate()
+    {
+        Debug.Log(inputScript.state);   
+    }
 
 
     //  공격 받은 경우
     #region
-    void playerAttacked(PlayerState state)
-    {
-        StartCoroutine("PlayerAttackedCoroutine");
-    }
-
     void resetStateToidle()
     {
         inputScript.state = PlayerState.idle;
@@ -66,7 +66,7 @@ public class PlayerColliderCon : MonoBehaviour
                 aniConScript.attackedAni(1);
                 yield return new WaitForSeconds(0.3f);
                 aniConScript.attackedAniReset();
-                yield return new WaitForSeconds(1.7f);
+                yield return new WaitForSeconds(0.7f);
                 resetStateToidle();
                 break;
 
@@ -74,7 +74,7 @@ public class PlayerColliderCon : MonoBehaviour
                 aniConScript.attackedAni(2);
                 yield return new WaitForSeconds(0.3f);
                 aniConScript.attackedAniReset();
-                yield return new WaitForSeconds(1.7f);
+                yield return new WaitForSeconds(0.3f);
                 resetStateToidle();
                 break;
 
@@ -89,7 +89,7 @@ public class PlayerColliderCon : MonoBehaviour
                 turnOffStunParticle();
                 break;
         }
-        StopCoroutine("PlayerAttackedCoroutine");
+        StopCoroutine(PlayerAttackedCoroutine());
     }
     #endregion
 
@@ -141,57 +141,65 @@ public class PlayerColliderCon : MonoBehaviour
             || other.gameObject.tag == "TrapType1Thorn")
         {
             //  PlayerCamManager.Instance.shack();
-            //  CamState CamState = CamState.playerFollow;
-            // Damage(20);
-
-            
-
-
-            playerHpManagerScript.isPlayerDamaged(0.1f);
             inputScript.state = PlayerState.normalAttacked;
+
+            playerCamManagerScript.shake();
+            playerHpManagerScript.isPlayerDamaged(0.1f);
+            playerCurseScript.isplayerCursed(0.2f);
+
+            StartCoroutine(PlayerAttackedCoroutine());
             return;
         }
         if (other.gameObject.tag == "pattern08")
         {
-            // Damage(20);
             inputScript.state = PlayerState.airborneAttacked;
+
+            playerCamManagerScript.shake();
+            playerCurseScript.isplayerCursed(0.2f);
+            playerHpManagerScript.isPlayerDamaged(0.1f);
+
+            StartCoroutine(PlayerAttackedCoroutine());
             return;
         }
         if (other.gameObject.tag == "enemyStun")
         {
             inputScript.state = PlayerState.stunAttacked;
+
+            StartCoroutine(PlayerAttackedCoroutine());
             return;
         }
         if (other.gameObject.tag == "NextStageDoor")
         {
             inputScript.state = PlayerState.waitForMoveNextStage;
+
             aniConScript.playerDodgeAniReset();
             aniConScript.playerAniWait();
             StageManager.Instance.playerStageMapUI();
             return;
         }
-         if (other.gameObject.tag == "BossStageSceneManager")
+        if (other.gameObject.tag == "BossStageSceneManager")
         {
-            camAni.enabled = true;
-            camAni.SetBool("bossStage01Start",true);
             inputScript.state = PlayerState.stopForCutSceen;
+
             aniConScript.playerAniWait();
-            playerUiSelectMangerScript.turnOnOffIngameUi();
+            playerUISeletMangerScript.turnOnOffIngameUi();
             Invoke("waitForBossStage", 6.5f);
             return;
         }
-
-
         if (other.gameObject.tag == "PlayerWeaponDroped")
         {
+            checkWhatItis = other.gameObject;
             playerGetWeaponUINNo5.dropWeaponObj = other.gameObject;
-
-            playerCurseScript.isplayerCursed(0.2f);
-            playerHpManagerScript.isPlayerDamaged(0.1f);
             playerUISeletMangerScript.turnOnOffImageE();
+            Debug.Log(checkWhatItis);
             return;
         }
-            playerAttacked(inputScript.state);
+        if(other.gameObject.tag == "PlayerPowerGetSet")
+        {
+            playerUISeletMangerScript.turnOnOffImageE();
+            checkWhatItis = other.gameObject;
+            return;
+        }
     }
     private void OnTriggerExit(Collider other)
     {
@@ -202,12 +210,18 @@ public class PlayerColliderCon : MonoBehaviour
         }
         if (other.gameObject.tag == "PlayerWeaponDroped")
         {
+            checkWhatItis = null;
+            playerGetWeaponUINNo5.dropWeaponObj = null;
+
             playerUISeletMangerScript.turnOnOffImageE();
             return;
         }
-        if (other.gameObject.tag == "PlayerWeaponDroped")
+        if (other.gameObject.tag == "PlayerPowerGetSet")
         {
+            checkWhatItis = null;
             playerGetWeaponUINNo5.dropWeaponObj = null;
+
+            playerUISeletMangerScript.turnOnOffImageE();
             return;
         }
     }
@@ -221,15 +235,13 @@ public class PlayerColliderCon : MonoBehaviour
         if (other.gameObject.tag == "TrapType1Thorn")
         {
             inputScript.state = PlayerState.normalAttacked;
+
+            playerCamManagerScript.shake();
+            playerCurseScript.isplayerCursed(0.2f);
+            playerHpManagerScript.isPlayerDamaged(0.1f);
+
+            StartCoroutine(PlayerAttackedCoroutine());
             return;
         }
-
-        if (other.gameObject.tag == "PlayerWeaponDroped")
-        {
-           // playerGetWeaponUINNo5.dropWeaponObj = other.gameObject;
-            return;
-        }
-
-        playerAttacked(inputScript.state);
     }
 }

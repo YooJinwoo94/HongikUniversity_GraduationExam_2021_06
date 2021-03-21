@@ -29,25 +29,33 @@ public class PlayerUISeletManger : MonoBehaviour
 
 
     // 무기를 얻었을떄 뜨는 ui용
-
+    [SerializeField]
+    PlayerWeaponInGameUI playerWeaponInGameUiScript;
+    [SerializeField]
+    PlayerPowerGetUINo2 playerPowerGetUiNo2Script;
     [SerializeField]
     PlayerHaveWeaponUINo4 playerHaveWeaponUINo4;
     [SerializeField]
-    PlayerGetWeaponUINNo5 playerGetWeaponUINo5;
+    PlayerGetWeaponUINNo5 playerGetWeaponUINo5Script;
     [SerializeField]
-    GameObject[] whenGetWeaponThisWillTurnOn;
+    PlayerPowerDataBase playerPowerDataBaseScript;
+
     [SerializeField]
     Button[] leftRightButtonToSwitchTheBoxWhenGetWeapon;
     [SerializeField]
     Animator[] playerUiSetGetWeaponAnimator;
-    [SerializeField]
-    public GameObject imageWhenPlayerTouchTheWeapon;
+
+
+    int playerChoose = 99;
+
+
 
 
 
 
     private void Start()
     {
+
         invenPageCount = 0;
     }
 
@@ -71,6 +79,15 @@ public class PlayerUISeletManger : MonoBehaviour
         playerIngameUiSet.transform.localScale = new Vector3(1f, 1f, 1f);
         StopCoroutine("ifTurnOnIngameUiStayPlz");
     }
+
+
+
+
+
+
+
+
+
 
     //I를 눌렀을때 이미지 컨트롤
     public void playerInputI(int buttonCleck = 0)
@@ -139,12 +156,20 @@ public class PlayerUISeletManger : MonoBehaviour
     }
 
 
-    //무기에 다가갈경우 E이미지 컨트롤
+
+
+
+
+
+
+
+
+    //무기에 다가갈경우 혹은 강화내용에 다가갈 경우 E이미지 컨트롤
     public void turnOnOffImageE()
     {
-        if (imageWhenPlayerTouchTheWeapon.activeInHierarchy == false)
+        if (playerGetWeaponUINo5Script.imageWhenPlayerTouchTheWeapon.activeInHierarchy == false)
         {
-            imageWhenPlayerTouchTheWeapon.SetActive(true);
+            playerGetWeaponUINo5Script.imageWhenPlayerTouchTheWeapon.SetActive(true);
 
             leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable = true;
             leftRightButtonToSwitchTheBoxWhenGetWeapon[1].interactable = true;
@@ -161,16 +186,16 @@ public class PlayerUISeletManger : MonoBehaviour
             playerUiSetGetWeaponAnimator[2].SetBool("RightMove_0", false);
         }
 
-        else imageWhenPlayerTouchTheWeapon.SetActive(false);
+        else playerGetWeaponUINo5Script.imageWhenPlayerTouchTheWeapon.SetActive(false);
     }
     //무기를 얻었을때 이미지 컨트롤
     public void whenGetWeaponConTheUISet(int buttonClick = 0)
     {
         timeManagerScript.playerUITimeOn();
         playerUIBackGround.SetActive(true);
-        whenGetWeaponThisWillTurnOn[0].SetActive(true);
-        playerGetWeaponUINo5.settingNameAndSprite();
-        playerGetWeaponUINo5.whatIsThisWeapon();
+        playerGetWeaponUINo5Script.bgUiNo5Obj.SetActive(true);
+        playerGetWeaponUINo5Script.settingNameAndSprite();
+        playerGetWeaponUINo5Script.whatIsThisWeapon();
 
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -178,7 +203,7 @@ public class PlayerUISeletManger : MonoBehaviour
             timeManagerScript.playerUITimeOff();
             playerInputScript.playerUIState = PlayerUI.getWeaponUiOff;
             playerUIBackGround.SetActive(false);
-            whenGetWeaponThisWillTurnOn[0].SetActive(false);
+            playerGetWeaponUINo5Script.bgUiNo5Obj.SetActive(false);
             return;
         }
         if (Input.GetKeyDown(KeyCode.A)  || buttonClick == -1)
@@ -210,54 +235,80 @@ public class PlayerUISeletManger : MonoBehaviour
             return;
         }
         if (Input.GetKeyDown(KeyCode.Return))
-        {
+        {    
             if (leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable == true && leftRightButtonToSwitchTheBoxWhenGetWeapon[1].interactable == true) return;
 
-            // 현재 위치는 왼쪽에 있음 
-            if (leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable == false)
-            {
-                // 플레이어의 무기이미지 및 텍스트 교체
-                switch (playerGetWeaponUINo5.dropedWeaponName.text)
-                {
-                    case "저주받은 진소의 검":
-                        playerHaveWeaponUINo4.changePlayersWeapon(0, 0);
-                        break;
-                    case "삼천호검":
-                        playerHaveWeaponUINo4.changePlayersWeapon(0, 1);
-                        break;
-                    case "최후의 섬광":
-                        playerHaveWeaponUINo4.changePlayersWeapon(0, 2);
-                        break;
-                }
-            }
-            // 현재 위치는 오른쪽에 있음 
+
+
+
+            if (leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable == false) playerChoose = 0;
             if (leftRightButtonToSwitchTheBoxWhenGetWeapon[1].interactable == false)
             {
-                if (playerGetWeaponUINo5.playersWeaponImage[1].enabled == false) playerGetWeaponUINo5.playersWeaponImage[1].enabled = true;
-        
-                // 플레이어의 무기이미지 교체
-                switch (playerGetWeaponUINo5.dropedWeaponName.text)
-                {
-                    case "저주받은 진소의 검":
-                        playerHaveWeaponUINo4.changePlayersWeapon(1, 0);
-                        break;
-                    case "삼천호검":
-                        playerHaveWeaponUINo4.changePlayersWeapon(1, 1);
-                        break;
-                    case "최후의 섬광":
-                        playerHaveWeaponUINo4.changePlayersWeapon(1, 2);
-                        break;
-                }
+                playerChoose = 1;
+                playerGetWeaponUINo5Script.playersWeaponImage[playerChoose].enabled = true;
+            }
+
+            // 플레이어의 무기이미지 및 텍스트 교체
+            switch (playerGetWeaponUINo5Script.dropedWeaponName.text)
+            {
+                case "저주받은 진소의 검":
+                    playerHaveWeaponUINo4.changePlayersWeapon(playerChoose, 0);
+                    playerWeaponInGameUiScript.ifPlayerGetWeaponChangeIngameWeaponImage(0);
+                    break;
+                case "삼천호검":
+                    playerHaveWeaponUINo4.changePlayersWeapon(playerChoose, 1);
+                    playerWeaponInGameUiScript.ifPlayerGetWeaponChangeIngameWeaponImage(1);
+                    break;
+                case "최후의 섬광":
+                    playerHaveWeaponUINo4.changePlayersWeapon(playerChoose, 2);
+                    playerWeaponInGameUiScript.ifPlayerGetWeaponChangeIngameWeaponImage(2);
+                    break;
             }
            
             timeManagerScript.playerUITimeOff();
             playerInputScript.playerUIState = PlayerUI.getWeaponUiOff;
             playerUIBackGround.SetActive(false);
-            whenGetWeaponThisWillTurnOn[0].SetActive(false);
+            playerGetWeaponUINo5Script.bgUiNo5Obj.SetActive(false);
 
             return;
         }
 
         playerAniScript.playerAniWait();
+    }
+
+
+
+
+
+
+
+
+
+
+    //강화내용을 눌렀을때 
+    public void whenPlayerTouchPower()
+    {
+        playerPowerDataBaseScript.changeTextToMakeSameWithInven();
+        timeManagerScript.playerUITimeOn();
+        playerUIBackGround.SetActive(true);
+        playerPowerGetUiNo2Script.bg.SetActive(true);
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            timeManagerScript.playerUITimeOff();
+            playerInputScript.playerUIState = PlayerUI.getPowerUiOff;
+            playerUIBackGround.SetActive(false);
+            playerPowerGetUiNo2Script.bg.SetActive(false);
+            return;
+        }
+
+        playerAniScript.playerAniWait();
+    }
+    public void resetPlayerPowerGetUiSet()
+    {
+        timeManagerScript.playerUITimeOff();
+        playerInputScript.playerUIState = PlayerUI.getPowerUiOff;
+        playerUIBackGround.SetActive(false);
+        playerPowerGetUiNo2Script.bg.SetActive(false);
     }
 }

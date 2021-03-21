@@ -6,51 +6,20 @@ using UnityEngine.UI;
 
 public class Boss01HpPostionScript : MonoBehaviour
 {
-   //ws EnemyHealthScript enemyHealthScript;
-   // float updateSpeed = 0.5f;
-    int maxHealth = 100;
-    int currentHealth;
-
-
     [SerializeField]
-    Image prefabUi;
-
-
+    Image[] bossHpBarImage;
     Image uiUse;
 
-    GameObject cam;
-    [SerializeField]
-    Camera playerCamera;
-
-    private Transform headPos;
-    Vector3 offSet = new Vector3(0, 2f, 0);
 
 
 
-    void instanceHpTime()
+
+    private void Start()
     {
-        uiUse.enabled = true;
-    }
-
-
-    private void Awake()
-    {
-        uiUse = Instantiate(prefabUi, FindObjectOfType<Canvas>().transform).GetComponent<Image>();
-
-        cam = GameObject.FindWithTag("Camera");
-        playerCamera = cam.GetComponent<Camera>();
-
-        currentHealth = maxHealth;
+        Instantiate(bossHpBarImage[0], FindObjectOfType<Canvas>().transform);
+        uiUse = Instantiate(bossHpBarImage[1], FindObjectOfType<Canvas>().transform).GetComponent<Image>();
 
         uiUse.fillAmount = 1;
-        uiUse.enabled = false;
-
-        Invoke("instanceHpTime", 3.5f);
-    }
-
-    private void Update()
-    {
-        uiUse.transform.position = playerCamera.WorldToScreenPoint(transform.position + offSet);
     }
 
 
@@ -64,17 +33,4 @@ public class Boss01HpPostionScript : MonoBehaviour
     {
         uiUse.fillAmount -= amount;     
     }
-
-
-    /*
-    IEnumerator HpCon(float amount)
-    {
-        yield return null;
-
-        //float nowHp = prefabUi.fillAmount;
-
-        prefabUi.fillAmount -= amount;
-        StopCoroutine("HpCon");
-    }
-    */
 }

@@ -11,21 +11,12 @@ public class PlayerHaveWeaponUINo4 : MonoBehaviour
     PlayerItemDataBase playerItemDataBase;
 
     [HideInInspector]
-    public enum Num1WeaponType
+    public enum PlayersWeaponType
     {
-        None,
+        none,
         weaponType1,
         weaponType2,
-        weaponType3,
-    }
-
-    [HideInInspector]
-    public enum Num2WeaponType
-    {
-        None,
-        weaponType1,
-        weaponType2,
-        weaponType3,
+        weaponType3
     }
 
     [SerializeField]
@@ -38,18 +29,19 @@ public class PlayerHaveWeaponUINo4 : MonoBehaviour
     public Text[] playerWeaponDetails;
 
 
-    [HideInInspector]
-    public Num1WeaponType num1WeaponType = Num1WeaponType.weaponType1;
+    public PlayersWeaponType[] playersWeaponType;
 
-    [HideInInspector]
-    public Num2WeaponType num2WeaponType = Num2WeaponType.None;
 
     //무기들의 이미지 보관
     [SerializeField]
     Sprite[] weaponImageSetToChangeInvenWeaponImage;
 
 
-
+    private void Start()
+    {
+        playersWeaponType[0] = PlayersWeaponType.weaponType1;
+        playersWeaponType[1] = PlayersWeaponType.none;
+    }
 
 
 
@@ -57,41 +49,21 @@ public class PlayerHaveWeaponUINo4 : MonoBehaviour
     // 플레이어의 무기이미지 및 텍스트 교체
     public void changePlayersWeapon(int weaponSlot = 0,int weaponNum = 0)
     {
-        if (weaponSlot == 0)
+        if (playersWeaponImage[1].enabled == false) playersWeaponImage[1].enabled = true;
+
+        switch (weaponNum)
         {
-            switch (weaponNum)
-            {
-                case 0:      
-                    num1WeaponType = Num1WeaponType.weaponType1;
-                    break;
+            case 0:
+                playersWeaponType[weaponSlot] = PlayersWeaponType.weaponType1;
+                break;
 
-                case 1:
-                    num1WeaponType = Num1WeaponType.weaponType2;
-                    break;
+            case 1:
+                playersWeaponType[weaponSlot] = PlayersWeaponType.weaponType2;
+                break;
 
-                case 2:
-                    num1WeaponType = Num1WeaponType.weaponType3;
-                    break;
-            }  
-        }
-        else
-        {
-            if (playersWeaponImage[1].enabled == false) playersWeaponImage[1].enabled = true; 
-
-            switch (weaponNum)
-            {
-                case 0:           
-                    num2WeaponType = Num2WeaponType.weaponType1;
-                    break;
-
-                case 1:    
-                    num2WeaponType = Num2WeaponType.weaponType2;
-                    break;
-
-                case 2:
-                    num2WeaponType = Num2WeaponType.weaponType3;
-                    break;
-            }
+            case 2:
+                playersWeaponType[weaponSlot] = PlayersWeaponType.weaponType3;
+                break;
         }
 
         weaponNameSetting(weaponSlot, weaponNum);

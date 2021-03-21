@@ -13,8 +13,6 @@ public class EnemyHpPostionScript : MonoBehaviour
 
     [SerializeField]
     Image prefabUi;
-
-    [SerializeField]
     Camera playerCamera;
 
 

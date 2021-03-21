@@ -5,6 +5,9 @@ using UnityEngine;
 public class PlayerItemDataBase : MonoBehaviour
 {
     [SerializeField]
+    public Sprite[] ingameWeaponImages;
+
+    [SerializeField]
     public Sprite[] playerWeaponImage;
     [HideInInspector]
     public string[] playerWeaponNameSpace = null;

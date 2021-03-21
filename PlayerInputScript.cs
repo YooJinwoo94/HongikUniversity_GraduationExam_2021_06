@@ -11,6 +11,9 @@ public enum PlayerUI
 
     getWeaponUiOn,
     getWeaponUiOff,
+
+    getPowerUiOn,
+    getPowerUiOff,
 }
 [HideInInspector]
 public enum PlayerState
@@ -37,6 +40,9 @@ public enum MousePlace
 public class PlayerInputScript : MonoBehaviour
 {
     #region
+
+    [SerializeField]
+    PlayerGetWeaponUINNo5 playerGetWeaponUINo5Script;
     [SerializeField]
     PlayerUISeletManger playerUISeletMangerScript;
     [SerializeField]
@@ -49,8 +55,10 @@ public class PlayerInputScript : MonoBehaviour
 
     static PlayerInputScript instance = null;
     [Header("플레이어의 현재 소지하고 있는 물건을 보여주는 ui 변화를 위한 스크립트입니다.")]
+
     [SerializeField]
-    PlayerWeaponInGameUI playerWeaponUIScript;
+    PlayerWeaponInGameUI weaponInGameUIScript;
+    PlayerColliderCon playerColliderConScript;
     PlayerDodgeCon dodgeConScript;
     PlayerAttackCon attackConScript;
     PlayerSpCon spConScript;
@@ -85,6 +93,7 @@ public class PlayerInputScript : MonoBehaviour
 
     private void Start()
     {
+        playerColliderConScript = GetComponent<PlayerColliderCon>();
         rectTransform = GetComponent<RectTransform>();
         rigid = GetComponent<Rigidbody>();
         dodgeConScript = GetComponent<PlayerDodgeCon>();
@@ -122,13 +131,20 @@ public class PlayerInputScript : MonoBehaviour
     #region
     void Update()
     {
+        if (state == PlayerState.airborneAttacked)
+        {
+            rigid.AddForce(Vector3.up * 0.35f, ForceMode.Impulse);
+            return;
+        }
+
         if (state == PlayerState.idle || state == PlayerState.dodge ||
            state == PlayerState.attack || state == PlayerState.normalAttacked) lookAtCam();
 
         inputProcessInven();
         inputProcessE();
        
-        if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn) return;
+        if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn 
+            || playerUIState == PlayerUI.getPowerUiOn) return;
 
         switch (state)
         {
@@ -151,15 +167,11 @@ public class PlayerInputScript : MonoBehaviour
 
             //=========================================이동 불가 
             case PlayerState.airborneAttacked:
-                playerPosUp();
                 break;
-
             case PlayerState.stunAttacked:
                 break;
-
             case PlayerState.waitForMoveNextStage:
                 break;
-            //stopForCutSceen
             case PlayerState.stopForCutSceen:
                 break;              
         }
@@ -171,14 +183,12 @@ public class PlayerInputScript : MonoBehaviour
     #region
     void inputProcessIdleAndNormalAttacked()
     {
-        if (playerUIState == PlayerUI.invenOn) return;
-
         checkRotationAndKeyDownToAniCon();
 
         if (Input.GetMouseButtonDown(1))
         {
-            if (playerWeaponUIScript.isWeaponChangeCoolTime == true) return;
-            playerWeaponUIScript.playerWeaponUISelect();
+            if (weaponInGameUIScript.isWeaponChangeCoolTime == true) return;
+            weaponInGameUIScript.playerWeaponUISelect();
         }
 
         // 그냥 이동함? 
@@ -215,8 +225,6 @@ public class PlayerInputScript : MonoBehaviour
     }
     void inputProcessAttack()
     {
-        if (playerUIState == PlayerUI.invenOn) return;
-
         // 기력은 충분하니? 
         if (spConScript.isPlayerSpZero == true) return;
 
@@ -250,18 +258,39 @@ public class PlayerInputScript : MonoBehaviour
     }
     void inputProcessE()
     {
-        if (playerUISeletMangerScript.imageWhenPlayerTouchTheWeapon.activeInHierarchy == false) return;
-        if (Input.GetKeyDown(KeyCode.E)) playerUIState = PlayerUI.getWeaponUiOn;
+        if (playerGetWeaponUINo5Script.imageWhenPlayerTouchTheWeapon.activeInHierarchy == false) return;
 
-        if (playerUIState != PlayerUI.getWeaponUiOn) return;
-        playerUISeletMangerScript.whenGetWeaponConTheUISet();
+
+        switch (playerColliderConScript.checkWhatItis.tag)
+        {
+            case "PlayerWeaponDroped":
+                if (Input.GetKeyDown(KeyCode.E)) playerUIState = PlayerUI.getWeaponUiOn;           
+                break;
+
+            case "PlayerPowerGetSet":
+                if (Input.GetKeyDown(KeyCode.E)) playerUIState = PlayerUI.getPowerUiOn;
+                break;
+        }
+
+
+        if (playerUIState == PlayerUI.getWeaponUiOn)
+        {
+            playerUISeletMangerScript.whenGetWeaponConTheUISet();
+            return;
+        }
+        if (playerUIState == PlayerUI.getPowerUiOn)
+        {
+            playerUISeletMangerScript.whenPlayerTouchPower();
+            return;
+        }
     }
 
 
     //  필수 요소
     void lookAtCam()
     {
-        if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn) return;
+        if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn
+            || playerUIState == PlayerUI.getPowerUiOn) return;
 
         Ray rayCam = cam.ScreenPointToRay(Input.mousePosition);
         Plane groundPlae = new Plane(Vector3.up, Vector3.zero);
@@ -299,14 +328,5 @@ public class PlayerInputScript : MonoBehaviour
         if (HP <= 0) HP = maxHP;
     }
     */
-
-
-
-    // 에어본인 경우 
-    void playerPosUp()
-    {
-        rigid.AddForce(Vector3.up * 6.6f, ForceMode.Impulse);
-        state = PlayerState.airborneAttackedCoolTime;
-    }
 }
 

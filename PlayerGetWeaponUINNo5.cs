@@ -28,10 +28,11 @@ public class PlayerGetWeaponUINNo5 : MonoBehaviour
     [SerializeField]
     Text[] playerWeaponDetails;
 
+    [SerializeField]
+   public GameObject imageWhenPlayerTouchTheWeapon;
 
-
-
-
+    [SerializeField]
+    public GameObject bgUiNo5Obj;
 
 
 

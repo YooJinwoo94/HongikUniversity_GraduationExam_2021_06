@@ -27,9 +27,12 @@ public class PlayerAttackCon : MonoBehaviour
 
     [Header("플래이어의 무기 콜라이더")]
     [SerializeField]
-    BoxCollider playerSwordBoxCollider;
-    bool onceCheck02;
-    bool onceCheck03;
+    BoxCollider[] playerSwordBoxCollider;
+
+    bool[] onceCheck = new bool[4];
+
+
+
 
     // 필요한지 확인.
     [HideInInspector]
@@ -41,17 +44,22 @@ public class PlayerAttackCon : MonoBehaviour
         playerSpConScript = GetComponent<PlayerSpCon>();
         inputScript = GetComponent<PlayerInputScript>();
         playerAnimationScript = GetComponent<PlayerAniScript>();
-    }
 
-    private void Awake()
-    {       
         WeaponStateEnum = WeaponState.normalSword;
 
-        playerSwordBoxCollider.enabled = false;
-        onceCheck02 = false;
-        onceCheck03 = false;
-        isCool = false; 
+       
+        for (int i = 0; i<3; i++)
+        {
+            playerSwordBoxCollider[i].enabled = false;
+        }
+        
+        onceCheck[2] = false;
+        onceCheck[3] = false;
+
+        isCool = false;
     }
+
+
 
     private void Update()
     {
@@ -82,7 +90,11 @@ public class PlayerAttackCon : MonoBehaviour
         if (noOfClicks >= 3) return;
 
         inputScript.state = PlayerState.attack;
-        playerSwordBoxCollider.enabled = true;
+        for (int i = 0; i < 3; i++)
+        {
+            playerSwordBoxCollider[i].enabled = true;
+        }
+
 
         attackCoolTime = true;
         lastClickedTime = Time.time;
@@ -106,11 +118,14 @@ public class PlayerAttackCon : MonoBehaviour
         if (inputScript.state != PlayerState.attack)
         {
             isCool = false;
-            onceCheck02 = false;
-            onceCheck03 = false;
+            onceCheck[2] = false;
+            onceCheck[3] = false;
 
             noOfClicks = 0;
-            playerSwordBoxCollider.enabled = false;
+            for (int i = 0; i < 3; i++)
+            {
+                playerSwordBoxCollider[i].enabled = false;
+            }
 
             attackCoolTime = false;
             //  playerAnimationScript.playerAniAttackLeftCombo(0);
@@ -120,11 +135,14 @@ public class PlayerAttackCon : MonoBehaviour
 
         if (Time.time - lastClickedTime > maxComboDelay)
         {
-            onceCheck02 = false;
-            onceCheck03 = false;
+            onceCheck[2] = false;
+            onceCheck[3] = false;
 
             noOfClicks = 0;
-            playerSwordBoxCollider.enabled = false;
+            for (int i = 0; i < 3; i++)
+            {
+                playerSwordBoxCollider[i].enabled = false;
+            }
             attackCoolTime = false;
             playerAnimationScript.playerAniAttackLeftCombo(0);
             maxComboDelay = 2f;
@@ -133,26 +151,32 @@ public class PlayerAttackCon : MonoBehaviour
             return;
         }
               
-        if (noOfClicks >= 2 && onceCheck02 == false)
+        if (noOfClicks >= 2 && onceCheck[2] == false)
         {
-             onceCheck02 = true;
-             playerSwordBoxCollider.enabled = true;
+            onceCheck[2] = true;
+            for (int i = 0; i < 3; i++)
+            {
+                playerSwordBoxCollider[i].enabled = true;
+            }
 
-             playerAnimationScript.playerAniAttackLeftCombo(2);
+            playerAnimationScript.playerAniAttackLeftCombo(2);
              SoundManager.Instance.playerAttackSound(0);
 
              maxComboDelay = 0.8f;
             return;
         }
-        if (noOfClicks == 3 && onceCheck03 == false)
+        if (noOfClicks == 3 && onceCheck[3] == false)
         {
              playerSpConScript.spDown();
 
              isCool = true;
-             onceCheck03 = true;
-             playerSwordBoxCollider.enabled = true;
+             onceCheck[3] = true;
+            for (int i = 0; i < 3; i++)
+            {
+                playerSwordBoxCollider[i].enabled = true;
+            }
 
-             playerAnimationScript.playerAniAttackLeftCombo(3);
+            playerAnimationScript.playerAniAttackLeftCombo(3);
              SoundManager.Instance.playerAttackSound(1);
              return;
         }
