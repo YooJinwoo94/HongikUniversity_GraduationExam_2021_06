@@ -51,7 +51,7 @@ public class PlayerGetWeaponUINNo5 : MonoBehaviour
             case "DropedPlayerWeaponNum01":
                 dropedWeaponImage.sprite = playerItemDataBaseScript.playerWeaponImage[0];
                 dropedWeaponName.text = playerItemDataBaseScript.playerWeaponNameSpace[0];
-                dropedWeaponDetails.text = playerItemDataBaseScript.playerWeaponNameSpace[0];
+                dropedWeaponDetails.text = playerItemDataBaseScript.playersWeaponDetails[0];
                 break;
             case "DropedPlayerWeaponNum02":
                 dropedWeaponImage.sprite = playerItemDataBaseScript.playerWeaponImage[1];

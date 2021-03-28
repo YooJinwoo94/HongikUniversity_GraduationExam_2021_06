@@ -30,6 +30,8 @@ public class PlayerUISeletManger : MonoBehaviour
 
     // 무기를 얻었을떄 뜨는 ui용
     [SerializeField]
+    TutorialStageManger tutorialStageMangerScript;
+    [SerializeField]
     PlayerWeaponInGameUI playerWeaponInGameUiScript;
     [SerializeField]
     PlayerPowerGetUINo2 playerPowerGetUiNo2Script;
@@ -41,7 +43,7 @@ public class PlayerUISeletManger : MonoBehaviour
     PlayerPowerDataBase playerPowerDataBaseScript;
 
     [SerializeField]
-    Button[] leftRightButtonToSwitchTheBoxWhenGetWeapon;
+    public Button[] leftRightButtonToSwitchTheBoxWhenGetWeapon;
     [SerializeField]
     Animator[] playerUiSetGetWeaponAnimator;
 
@@ -197,7 +199,7 @@ public class PlayerUISeletManger : MonoBehaviour
         playerGetWeaponUINo5Script.settingNameAndSprite();
         playerGetWeaponUINo5Script.whatIsThisWeapon();
 
-
+        if (tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0) return;
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             timeManagerScript.playerUITimeOff();

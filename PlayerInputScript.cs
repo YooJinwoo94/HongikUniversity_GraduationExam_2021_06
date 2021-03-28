@@ -37,10 +37,20 @@ public enum MousePlace
     left
 }
 
+
+
+
+
+
+
+
 public class PlayerInputScript : MonoBehaviour
 {
     #region
-
+    [SerializeField]
+    TypingTextCon typingTextConScript;
+    [SerializeField]
+    TutorialStageManger tutorialStageMangerScript;
     [SerializeField]
     PlayerGetWeaponUINNo5 playerGetWeaponUINo5Script;
     [SerializeField]
@@ -142,14 +152,26 @@ public class PlayerInputScript : MonoBehaviour
 
         inputProcessInven();
         inputProcessE();
-       
-        if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn 
-            || playerUIState == PlayerUI.getPowerUiOn) return;
+
+        if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn
+       || playerUIState == PlayerUI.getPowerUiOn || tutorialStageMangerScript.tutorialState == TutorialState.tutorialReady
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial01
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_1
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_2 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_3
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_4 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_5
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_6
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03   || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03_1 
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial05_0
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial06_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial07_0)
+        {
+            animationScript.playerAniWait();
+            return;
+        }
 
         switch (state)
         {
             case PlayerState.idle:
-                 inputProcessIdleAndNormalAttacked();
+                inputProcessIdleAndNormalAttacked();
                 break;
 
             case PlayerState.dodge:
@@ -221,7 +243,7 @@ public class PlayerInputScript : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.A)) { dodgeConScript.dodgeAndGetKeyA(); spConScript.spDown(); }
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.D)) { dodgeConScript.dodgeAndGetKeyD(); spConScript.spDown(); }
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.S)) { dodgeConScript.dodgeAndGetKeyS(); spConScript.spDown(); }
-        else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.W)) { dodgeConScript.dodgeAndGetKeyW(); spConScript.spDown(); }
+        else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.W)) { dodgeConScript.dodgeAndGetKeyW(); spConScript.spDown(); }  
     }
     void inputProcessAttack()
     {
@@ -271,8 +293,6 @@ public class PlayerInputScript : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.E)) playerUIState = PlayerUI.getPowerUiOn;
                 break;
         }
-
-
         if (playerUIState == PlayerUI.getWeaponUiOn)
         {
             playerUISeletMangerScript.whenGetWeaponConTheUISet();
@@ -290,7 +310,15 @@ public class PlayerInputScript : MonoBehaviour
     void lookAtCam()
     {
         if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn
-            || playerUIState == PlayerUI.getPowerUiOn) return;
+           || playerUIState == PlayerUI.getPowerUiOn || tutorialStageMangerScript.tutorialState == TutorialState.tutorialReady
+           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial01
+           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_1
+           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_2 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_3
+           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_4 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_5
+           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_6
+           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03_1
+           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial05_0
+           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial06_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial07_0) return;
 
         Ray rayCam = cam.ScreenPointToRay(Input.mousePosition);
         Plane groundPlae = new Plane(Vector3.up, Vector3.zero);

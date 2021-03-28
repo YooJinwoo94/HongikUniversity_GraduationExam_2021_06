@@ -38,10 +38,7 @@ public class PlayerColliderCon : MonoBehaviour
         inputScript = GetComponent<PlayerInputScript>();
     }
 
-    private void FixedUpdate()
-    {
-        Debug.Log(inputScript.state);   
-    }
+
 
 
     //  공격 받은 경우
@@ -191,7 +188,6 @@ public class PlayerColliderCon : MonoBehaviour
             checkWhatItis = other.gameObject;
             playerGetWeaponUINNo5.dropWeaponObj = other.gameObject;
             playerUISeletMangerScript.turnOnOffImageE();
-            Debug.Log(checkWhatItis);
             return;
         }
         if(other.gameObject.tag == "PlayerPowerGetSet")
