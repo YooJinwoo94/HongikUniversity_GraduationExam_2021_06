@@ -12,7 +12,7 @@ public class DoorOpenManager : MonoBehaviour
     GameObject particleDoorEffect;
 
 
-    private void Awake()
+    private void Start()
     {
         particleDoorEffect.SetActive(false);
     }

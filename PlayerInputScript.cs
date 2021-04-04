@@ -237,18 +237,19 @@ public class PlayerInputScript : MonoBehaviour
 
             attackConScript.whenAttackCheckWeapon();
         }
+
         //구르기 위한 조건을 만족 하니? 
         if (dodgeConScript.playerDodgeCoolTime == true || state == PlayerState.stunAttacked 
-            || state == PlayerState.airborneAttacked || state == PlayerState.stunAttacked) return;
+            || state == PlayerState.airborneAttacked || state == PlayerState.stunAttacked || state == PlayerState.dodge) return;
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.A)) { dodgeConScript.dodgeAndGetKeyA(); spConScript.spDown(); }
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.D)) { dodgeConScript.dodgeAndGetKeyD(); spConScript.spDown(); }
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.S)) { dodgeConScript.dodgeAndGetKeyS(); spConScript.spDown(); }
-        else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.W)) { dodgeConScript.dodgeAndGetKeyW(); spConScript.spDown(); }  
+        else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.W)) { dodgeConScript.dodgeAndGetKeyW(); spConScript.spDown(); }
     }
     void inputProcessAttack()
     {
-        // 기력은 충분하니? 
-        if (spConScript.isPlayerSpZero == true) return;
+        // 기력은 충분하니?  
+        if (spConScript.isPlayerSpZero == true || state == PlayerState.dodge) return;
 
         // 공격 함? 
         if (Input.GetMouseButtonDown(0))
@@ -257,9 +258,10 @@ public class PlayerInputScript : MonoBehaviour
 
             attackConScript.whenAttackCheckWeapon();
         }
+
         //구르기 위한 조건을 만족 하니? 
         if (dodgeConScript.playerDodgeCoolTime == true || state == PlayerState.stunAttacked
-            || state == PlayerState.airborneAttacked || state == PlayerState.stunAttacked) return;
+            || state == PlayerState.airborneAttacked || state == PlayerState.stunAttacked || state == PlayerState.dodge) return;
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.A)) { dodgeConScript.dodgeAndGetKeyA(); spConScript.spDown(); }
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.D)) { dodgeConScript.dodgeAndGetKeyD(); spConScript.spDown(); }
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.S)) { dodgeConScript.dodgeAndGetKeyS(); spConScript.spDown(); }
@@ -268,6 +270,7 @@ public class PlayerInputScript : MonoBehaviour
 
     void inputProcessDodge()
     {
+        //if (state != PlayerState.dodge || state == PlayerState.attack) return;
         transform.position += new Vector3(hAxis, 0, vAxis) * 9 * Time.deltaTime;  
     }
 

@@ -19,6 +19,10 @@ public class StageManager : MonoBehaviour
     List<int> nowStageCountList = new List<int>();
 
     [SerializeField]
+    TutorialStageManger tutorialStageManagerScript;
+    [SerializeField]
+    StageClearCheckManager stageClearCheckManagerScript;
+    [SerializeField]
     PlayerUISeletManger playerUiSelectMangerScript;
     [SerializeField]
     PlayerInputScript playerMoveScript;
@@ -34,7 +38,7 @@ public class StageManager : MonoBehaviour
     int[] count ;
 
 
-    void Awake()
+    void Start()
     {
         StageMoveMapUI.SetActive(false);
         instance = this;
@@ -64,6 +68,9 @@ public class StageManager : MonoBehaviour
     // 스택으로 현재 위치값을 구하고 넣어준다.
     public void makeStageCountList(int buttonPosCheck)
     {
+        stageClearCheckManagerScript.ifPlayerGoNextStageReset();
+        tutorialStageManagerScript.enabled = false;
+
         moveTo(buttonPosCheck);
         nowStageCountList.Add(buttonPosCheck);
         for (int i = 0; i < nowStageCountList.Count; i++)

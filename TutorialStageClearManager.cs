@@ -39,19 +39,9 @@ public class TutorialStageClearManager : MonoBehaviour
 
 
     //문열기
-    public void openDoor()
+    public void openDoor(int doorNum)
     {
-        doorOpenAni[0].SetBool("openDoor", true);
-        /*
-        killedMosterCount++;
-        //추후에 문이 추가 될 수 있으니 중복으로 놔둠
-        if (killedMosterCount == tutoialStageMosterCount)
-        {
-            doorOpenAni[0].SetBool("openDoor", true);
-
-            tutorialStageConManagerScript.resetState();
-        }
-        */
+        doorOpenAni[doorNum].SetBool("openDoor", true);
     }
 
     // 죽으면 이 함수를 호출 함

@@ -31,36 +31,43 @@ public class DistanceAttackTypeNormal : MonoBehaviour
     Transform enemyTransform;
 
 
-    int enemyHp;
     bool enemyDistanceCheck;
-    DistanceAttackTypeNormalState  DistanceAttackTypeNormalState;
-    DistanceAttackTypeNormalPattern DistanceAttackTypeNormalPattern;
-    const float enemyAttackCheckAreaDistance = 5f;
-    const float enemyAttackSpeedPatternFar = 0.02f;
-    const float isFarOrCloseDistance = 6f;
+    DistanceAttackTypeNormalState  distanceAttackTypeNormalState;
+    DistanceAttackTypeNormalPattern distanceAttackTypeNormalPattern;
+    const float enemyAttackCheckAreaDistance = 7f;
+    const float enemyAttackSpeedPatternFar = 0.005f;
+    const float isFarOrCloseDistance = 11f;
     [SerializeField]
-    EnemyHpPostionScript EnemyHpPostionScript;
+    EnemyHpPostionScript hpPostionScript;
+    [SerializeField]
+    DistanceAttackTypeNormalAni distanceAttackTypeNormalAniScript;
     bool trap01;
 
 
-    private void Awake()
+
+
+
+
+    private void Start()
     {
         enemyTransform = GetComponent<Transform>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        //closeAttackTypeNormalAniScript = GetComponent<CloseAttackTypeNormalAni>();
+        distanceAttackTypeNormalState = DistanceAttackTypeNormalState.idle;
+        distanceAttackTypeNormalPattern = DistanceAttackTypeNormalPattern.patternZero;
 
-        DistanceAttackTypeNormalState = DistanceAttackTypeNormalState.idle;
-        DistanceAttackTypeNormalPattern = DistanceAttackTypeNormalPattern.patternZero;
-        enemyHp = 5;  
         enemyDistanceCheck = false;
         attackAreaTransform.GetComponent<SpriteRenderer>().enabled = false;
         trap01 = false;
-        //Instantiate(fireAttack, firePos.position, firePos.rotation);
         StartCoroutine("WaitForPlayer");
     }
-    private void FixedUpdate()
+
+
+
+
+    private void Update()
     {
-        if (DistanceAttackTypeNormalPattern == DistanceAttackTypeNormalPattern.patternZero) return;
+        if (hpPostionScript.deadOrLive == 1) return;
+        if (distanceAttackTypeNormalPattern == DistanceAttackTypeNormalPattern.patternZero) return;
         rotateBoss();
 
         if (enemyDistanceCheck == true) transform.position = Vector3.Lerp(transform.position, playerTransform.position, enemyAttackSpeedPatternFar);
@@ -87,7 +94,8 @@ public class DistanceAttackTypeNormal : MonoBehaviour
         yield return null;
         if (Vector3.Distance(enemyTransform.position, playerTransform.position) < enemyAttackCheckAreaDistance)
         {
-            Debug.Log("AA");
+            distanceAttackTypeNormalPattern = DistanceAttackTypeNormalPattern.patternIdle;
+
             StartCoroutine("DistanceAttackTypeNormalController");
             StopCoroutine("WaitForPlayer");
         }
@@ -97,27 +105,31 @@ public class DistanceAttackTypeNormal : MonoBehaviour
     // 행동이에유
     IEnumerator DistanceAttackTypeNormalController()
     {
+        if (hpPostionScript.deadOrLive == 1) StopCoroutine("DistanceAttackTypeNormalController");
         yield return null;
-        if (enemyHp <= 0) StopCoroutine("DistanceAttackTypeNormalController");
+
         yield return new WaitForSeconds(3f);
-        if (DistanceAttackTypeNormalPattern != DistanceAttackTypeNormalPattern.pattern00 && Vector3.Distance(enemyTransform.position, playerTransform.position) > isFarOrCloseDistance) enemyDistanceCheck = true;
+        if (distanceAttackTypeNormalPattern != DistanceAttackTypeNormalPattern.pattern00 && Vector3.Distance(enemyTransform.position, playerTransform.position) > isFarOrCloseDistance) enemyDistanceCheck = true;
         else
         {
-            attackAreaTransform.GetComponent<SpriteRenderer>().enabled = true;
-            yield return new WaitForSeconds(1f);
-            attackAreaTransform.GetComponent<SpriteRenderer>().enabled = false;
+            if (hpPostionScript.deadOrLive == 1) StopCoroutine("DistanceAttackTypeNormalController");
+            //attackAreaTransform.GetComponent<SpriteRenderer>().enabled = true;
+            // yield return new WaitForSeconds(1f);
+            // attackAreaTransform.GetComponent<SpriteRenderer>().enabled = false;
             enemyDistanceCheck = false; 
-            DistanceAttackTypeNormalPattern = DistanceAttackTypeNormalPattern.pattern00;
-            Instantiate(fireAttack, transform.position, firePos.rotation);
+            distanceAttackTypeNormalPattern = DistanceAttackTypeNormalPattern.pattern00;
+
+            distanceAttackTypeNormalAniScript.fireBallAttack();
+            Instantiate(fireAttack, firePos.position, firePos.rotation);
         }
-        DistanceAttackTypeNormalPattern = DistanceAttackTypeNormalPattern.patternIdle;
+        distanceAttackTypeNormalPattern = DistanceAttackTypeNormalPattern.patternIdle;
         StartCoroutine("DistanceAttackTypeNormalController");
     }
 
 
     void stateChange()
     {
-        DistanceAttackTypeNormalState = DistanceAttackTypeNormalState.idle;
+        distanceAttackTypeNormalState = DistanceAttackTypeNormalState.idle;
     }
     void isTrap01CoolTimeOn()
     {
@@ -129,19 +141,58 @@ public class DistanceAttackTypeNormal : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (DistanceAttackTypeNormalState == DistanceAttackTypeNormalState.attacked) return;
+        if (distanceAttackTypeNormalState == DistanceAttackTypeNormalState.attacked) return;
 
-        if (other.gameObject.tag == "PlayerSword")
+        if (other.gameObject.tag == "PlayerSword01")
         {
-            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyHpDeadCheck();
 
-            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
-
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                distanceAttackTypeNormalAniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
             else
             {
-                DistanceAttackTypeNormalState = DistanceAttackTypeNormalState.attacked;
+                distanceAttackTypeNormalState = DistanceAttackTypeNormalState.attacked;
                 Invoke("stateChange", 0.3f);
             }
+            return;
+        }
+        if (other.gameObject.tag == "PlayerSword02")
+        {
+            hpPostionScript.enemyDamagedAndImageChange(0.5f);
+            hpPostionScript.enemyHpDeadCheck();
+
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                distanceAttackTypeNormalAniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+            else
+            {
+                distanceAttackTypeNormalState = DistanceAttackTypeNormalState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
+            return;
+        }
+        if (other.gameObject.tag == "PlayerSword03")
+        {
+            hpPostionScript.enemyDamagedAndImageChange(0.8f);
+            hpPostionScript.enemyHpDeadCheck();
+
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                distanceAttackTypeNormalAniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+            else
+            {
+                distanceAttackTypeNormalState = DistanceAttackTypeNormalState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
+            return;
         }
     }
 
@@ -152,12 +203,19 @@ public class DistanceAttackTypeNormal : MonoBehaviour
        else if (other.gameObject.tag == "TrapType2FireAttack"
       || other.gameObject.tag == "TrapType3BoomAttack")
         {
-            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyHpDeadCheck();
 
-            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
-
-            else Invoke("isTrap01CoolTimeOn", 2f);
-            
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                distanceAttackTypeNormalAniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+            else
+            {
+                distanceAttackTypeNormalState = DistanceAttackTypeNormalState.attacked;
+                Invoke("stateChange", 0.3f);
+            }    
         }
     }
 
@@ -165,16 +223,20 @@ public class DistanceAttackTypeNormal : MonoBehaviour
     {
         if (trap01 == true) return;
 
-       else if (other.gameObject.tag == "TrapType1Thorn")
+        if (other.gameObject.tag == "TrapType1Thorn")
         {
             trap01 = true;
+            hpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyHpDeadCheck();
 
-            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
-
-            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
-
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                distanceAttackTypeNormalAniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
             else Invoke("isTrap01CoolTimeOn", 2f);
 
+            return;
         }
     }
 }

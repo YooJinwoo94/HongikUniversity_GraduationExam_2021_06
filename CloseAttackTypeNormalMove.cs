@@ -18,53 +18,51 @@ enum CloseAttackTypeNormalPattern
 public class CloseAttackTypeNormalMove : MonoBehaviour
 {
     [SerializeField]
-    BoxCollider bossWeaponSword;
+    BoxCollider weaponCollider;
     [SerializeField]
-    EnemyHpPostionScript EnemyHpPostionScript;
+    EnemyHpPostionScript hpPostionScript;
 
     Transform playerTransform;
     Transform enemyTransform;
-    CloseAttackTypeNormalState CloseAttackTypeNormalState;
-    CloseAttackTypeNormalPattern EnemyPattern;
+    CloseAttackTypeNormalState closeAttackTypeNormalState;
+    CloseAttackTypeNormalPattern enemyPattern;
 
     bool enemyDistanceCheck;
     const float enemyPatternCloseDistance = 1f;
     const float enemyPatternFarDistance = 3f;
     const float enemyAttackSpeedPatternClose = 0.02f;
     const float enemyAttackSpeedPatternFar = 0.04f;
-    const float enemyAttackCheckAreaDistance = 6f;
+    const float enemyAttackCheckAreaDistance = 12f;
     const float isFarOrCloseDistance = 7f;
-    int enemyHp;
 
-    private CloseAttackTypeNormalAni closeAttackTypeNormalAniScript;
+    private CloseAttackTypeNormalAni aniScript;
 
     bool trap01;
 
 
 
 
-    private void Awake()
+    private void Start()
     {
         enemyTransform = GetComponent<Transform>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        closeAttackTypeNormalAniScript = GetComponent<CloseAttackTypeNormalAni>();
-        EnemyHpPostionScript = GetComponent<EnemyHpPostionScript>();
+        aniScript = GetComponent<CloseAttackTypeNormalAni>();
+        hpPostionScript = GetComponent<EnemyHpPostionScript>();
 
-        EnemyPattern = CloseAttackTypeNormalPattern.patternZero;
-        CloseAttackTypeNormalState = CloseAttackTypeNormalState.idle;
+        enemyPattern = CloseAttackTypeNormalPattern.patternZero;
+        closeAttackTypeNormalState = CloseAttackTypeNormalState.idle;
 
         trap01 = false;
-         enemyHp = 5;
-        bossWeaponSword.enabled = false;
+        weaponCollider.enabled = false;
         enemyDistanceCheck = false;
-      //  stopChase = false;
-        StartCoroutine("WaitForPlayer");   
+        StartCoroutine("WaitForPlayer");
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        if (EnemyPattern == CloseAttackTypeNormalPattern.patternZero) return;
-        switch (EnemyPattern)
+        if (hpPostionScript.deadOrLive == 1) return;
+        if (enemyPattern == CloseAttackTypeNormalPattern.patternZero) return;
+        switch (enemyPattern)
          {
             case CloseAttackTypeNormalPattern.patternClose:
                 resetNowStateToStopFollowing(enemyPatternCloseDistance, enemyAttackSpeedPatternClose);
@@ -74,8 +72,8 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
                 resetNowStateToStopFollowing(enemyPatternCloseDistance, enemyAttackSpeedPatternFar);
                 if (Vector3.Distance(enemyTransform.position, playerTransform.position) < enemyPatternFarDistance)
                 {
-                    closeAttackTypeNormalAniScript.patternFar02();
-                    EnemyPattern = CloseAttackTypeNormalPattern.patternIdle;
+                    aniScript.patternFar02();
+                    enemyPattern = CloseAttackTypeNormalPattern.patternIdle;
                 }
                 break;
          }
@@ -101,15 +99,15 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
     }
     void isClose()
     {
-        EnemyPattern = CloseAttackTypeNormalPattern.patternClose;
+        enemyPattern = CloseAttackTypeNormalPattern.patternClose;
         bossWeaponSwordOn();
-        closeAttackTypeNormalAniScript.patternChoice(0);
+        aniScript.patternChoice(0);
     }
     void isFar()
     {
-        EnemyPattern = CloseAttackTypeNormalPattern.patternFar;
+        enemyPattern = CloseAttackTypeNormalPattern.patternFar;
         bossWeaponSwordOn();
-        closeAttackTypeNormalAniScript.patternChoice(1);
+        aniScript.patternChoice(1);
     }
     void patternEnd()
     { 
@@ -117,16 +115,16 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
     }
     void bossWeaponSwordOn()
     {
-        bossWeaponSword.enabled = true;
+        weaponCollider.enabled = true;
     }
     public void bossWeaponSwordOff()
     {
-        bossWeaponSword.enabled = false;
+        weaponCollider.enabled = false;
     }
     public void MakeEnemyPatternIdle()
     {
-        EnemyPattern = CloseAttackTypeNormalPattern.patternIdle;
-        CloseAttackTypeNormalState = CloseAttackTypeNormalState.idle;
+        enemyPattern = CloseAttackTypeNormalPattern.patternIdle;
+        closeAttackTypeNormalState = CloseAttackTypeNormalState.idle;
     }
 
 
@@ -147,7 +145,10 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
     {
         yield return null;
 
-        if (enemyHp <= 0) StopCoroutine("CloseAttackTypeNormalController");
+        if (hpPostionScript.deadOrLive == 1)
+        {
+            StopCoroutine("CloseAttackTypeNormalController");
+        }
 
         yield return new WaitForSeconds(3.7f);
         checkDistanceFromPlayer();
@@ -171,30 +172,69 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
 
     void stateChange()
     {
-        CloseAttackTypeNormalState = CloseAttackTypeNormalState.idle;
+        closeAttackTypeNormalState = CloseAttackTypeNormalState.idle;
     }
     void isTrap01CoolTimeOn()
     {
         trap01 = false;
     }
+
+
     private void OnTriggerExit(Collider other)
     {
-        if (CloseAttackTypeNormalState == CloseAttackTypeNormalState.attacked) return;
+        if (closeAttackTypeNormalState == CloseAttackTypeNormalState.attacked) return;
 
-        if (other.gameObject.tag == "PlayerSword")
+        if(other.gameObject.tag == "PlayerSword01")
         {
-            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyHpDeadCheck();
 
-            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
-
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                aniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
             else
             {
-                CloseAttackTypeNormalState = CloseAttackTypeNormalState.attacked;
+                closeAttackTypeNormalState = CloseAttackTypeNormalState.attacked;
                 Invoke("stateChange", 0.3f);
             }
+            return;
         }
+        if (other.gameObject.tag == "PlayerSword02")
+        {
+            hpPostionScript.enemyDamagedAndImageChange(0.5f);
+            hpPostionScript.enemyHpDeadCheck();
 
-     
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                aniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+            else
+            {
+                closeAttackTypeNormalState = CloseAttackTypeNormalState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
+            return;
+        }
+        if (other.gameObject.tag == "PlayerSword03")
+        {
+            hpPostionScript.enemyDamagedAndImageChange(0.8f);
+            hpPostionScript.enemyHpDeadCheck();
+
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                aniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+            else
+            {
+                closeAttackTypeNormalState = CloseAttackTypeNormalState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
+            return;
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -203,25 +243,40 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
         if (other.gameObject.tag == "TrapType2FireAttack"
          || other.gameObject.tag == "TrapType3BoomAttack")
         {
-            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyHpDeadCheck(); 
 
-            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
-
-            else Invoke("isTrap01CoolTimeOn", 2f);
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                aniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+            else
+            {
+                closeAttackTypeNormalState = CloseAttackTypeNormalState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
         }
     }
     private void OnTriggerStay(Collider other)
     {
         if (trap01 == true) return;
 
-        if ( other.gameObject.tag == "TrapType1Thorn")
+        if (other.gameObject.tag == "TrapType1Thorn")
         {
             trap01 = true;
-            EnemyHpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyDamagedAndImageChange(0.2f);
+            hpPostionScript.enemyHpDeadCheck();
 
-            if (EnemyHpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                aniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
 
             else Invoke("isTrap01CoolTimeOn", 2f);
-        }
+
+            return;
+        } 
     }
 }

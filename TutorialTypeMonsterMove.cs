@@ -35,7 +35,7 @@ public class TutorialTypeMonsterMove : MonoBehaviour
     const float enemyAttackSpeedPatternFar = 0.04f;
     const float enemyAttackCheckAreaDistance = 40f;
     const float isFarOrCloseDistance = 8f;
-    int enemyHp;
+
 
     private TutorialTypeMonsterAni aniScript;
 
@@ -55,7 +55,6 @@ public class TutorialTypeMonsterMove : MonoBehaviour
         tutorialTypeMosterState = TutorialTypeMonsterState.idle;
 
         trap01 = false;
-        enemyHp = 5;
         weaponCollider.enabled = false;
         enemyDistanceCheck = false;
         StartCoroutine("WaitForPlayer");
@@ -130,6 +129,12 @@ public class TutorialTypeMonsterMove : MonoBehaviour
     }
 
 
+
+
+
+
+
+
     // 기달리는 행동이에유
     IEnumerator WaitForPlayer()
     {
@@ -141,19 +146,25 @@ public class TutorialTypeMonsterMove : MonoBehaviour
         }
         StartCoroutine("WaitForPlayer");
     }
-
     // 행동이에유
     IEnumerator CloseAttackTypeNormalController()
     {
         yield return null;
 
-        if (enemyHp <= 0) StopCoroutine("CloseAttackTypeNormalController");
+        if (hpPostionScript.deadOrLive == 1) StopCoroutine("CloseAttackTypeNormalController");
 
         yield return new WaitForSeconds(3.7f);
         checkDistanceFromPlayer();
 
         StopCoroutine("CloseAttackTypeNormalController");
     }
+
+
+
+
+
+
+
 
 
     public void enemyPatternStart()
@@ -177,24 +188,32 @@ public class TutorialTypeMonsterMove : MonoBehaviour
     {
         trap01 = false;
     }
+
+
+
+
+
     private void OnTriggerExit(Collider other)
     {
         if (tutorialTypeMosterState == TutorialTypeMonsterState.attacked) return;
 
-        if (other.gameObject.tag == "PlayerSword")
+        if (other.gameObject.tag == "PlayerSword01")
         {
             hpPostionScript.enemyDamagedAndImageChange(0.2f);
 
-            if (hpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
-
+            if (hpPostionScript.enemyHpDeadCheck() == 1)
+            {
+                aniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
             else
             {
                 tutorialTypeMosterState = TutorialTypeMonsterState.attacked;
                 Invoke("stateChange", 0.3f);
             }
+
+            return;
         }
-
-
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -205,9 +224,16 @@ public class TutorialTypeMonsterMove : MonoBehaviour
         {
             hpPostionScript.enemyDamagedAndImageChange(0.2f);
 
-            if (hpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
-
-            else Invoke("isTrap01CoolTimeOn", 2f);
+            if (hpPostionScript.enemyHpDeadCheck() == 1)
+            {
+                aniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+            else
+            {
+                tutorialTypeMosterState = TutorialTypeMonsterState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
         }
     }
     private void OnTriggerStay(Collider other)
@@ -219,9 +245,14 @@ public class TutorialTypeMonsterMove : MonoBehaviour
             trap01 = true;
             hpPostionScript.enemyDamagedAndImageChange(0.2f);
 
-            if (hpPostionScript.enemyHpDeadCheck() == 1) Destroy(this.gameObject);
-
+            if (hpPostionScript.enemyHpDeadCheck() == 1)
+            {
+                aniScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
             else Invoke("isTrap01CoolTimeOn", 2f);
+
+            return;
         }
     }
 }

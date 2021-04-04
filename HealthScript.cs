@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class HealthScript : MonoBehaviour
 {
     [SerializeField]
@@ -10,10 +11,16 @@ public class HealthScript : MonoBehaviour
 
     int maxHealth = 100;
     int currentHealth;
-    
+
+
+ 
+
+
     private void Awake()
     {
         currentHealth = maxHealth;
+
+
     }
 
     private void Update()

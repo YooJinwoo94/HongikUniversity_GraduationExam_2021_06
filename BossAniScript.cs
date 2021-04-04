@@ -12,12 +12,14 @@ public class BossAniScript : MonoBehaviour
     const float resetPatternTime = 0.5f;
     const float restartPatternTime = 2f;
 
-
-
+    [SerializeField]
+    BossMoveScript bossMoveScript;
+    Transform particlePos;
 
     // Start is called before the first frame update
     void Start()
     {
+        particlePos = GameObject.Find("BossParticleParent").transform;
         ani = GetComponent<Animator>();
         moveScript = GetComponent<BossMoveScript>();
     }
@@ -32,114 +34,88 @@ public class BossAniScript : MonoBehaviour
         switch (patternCount)
         {
             case 0:
-                bossAniPattern00();
+                Invoke("resetPattern", resetPatternTime);
                 break;
             case 1:
-                bossAniPattern01();
+                Invoke("resetPattern", resetPatternTime);
+                Invoke("restartPattern", restartPatternTime);
                 break;
             case 2:
-                bossAniPattern02();
+                invokeParticle00();
+
+                ani.SetBool("Bool_Boss_Waiting", false);
+                ani.SetBool("boolBossPattern02", true);
+
+                Invoke("resetPattern", resetPatternTime);
+                Invoke("restartPattern", restartPatternTime);
                 break;
-            case 3:
-                bossAniPattern03();
+            case 3:            
+                ani.SetBool("Bool_Boss_Waiting", false);
+                ani.SetBool("boolBossPattern03", true);
+
+                Invoke("resetPattern", resetPatternTime);
+                Invoke("restartPattern", restartPatternTime - 0.4f);
                 break;
             case 4:
-                bossAniPattern04();
+                invokeParticle01();
+                Invoke("invokeParticle02", 0.8f);
+                Invoke("invokeParticle01", 1.4f);
+
+                bossMoveScript.bossAttackParticleSet[2].Play();
+
+                ani.SetBool("Bool_Boss_Waiting", false);
+                ani.SetBool("boolBossPattern04", true);
+
+                Invoke("resetPattern", resetPatternTime);
+                Invoke("restartPattern", restartPatternTime);
                 break;
             case 5:
-                bossAniPattern05();
+                invokeParticle01();
+                Invoke("invokeParticle02", 2f);
+
+                ani.SetBool("Bool_Boss_Waiting", false);
+                ani.SetBool("boolBossPattern05", true);
+
+                Invoke("resetPattern", resetPatternTime);
+                Invoke("restartPattern", restartPatternTime + 0.6f);
                 break;
             case 6:
-                bossAniPattern06();
+                Invoke("invokeParticle03", 1f);
+               
+
+                ani.SetBool("Bool_Boss_Waiting", false);
+                ani.SetBool("boolBossPattern06", true);
+
+                Invoke("resetPattern", resetPatternTime);
+                Invoke("restartPattern", restartPatternTime);
                 break;
             case 7:
-                bossAniPattern07();
+                Invoke("invokeParticle01", 0.8f);
+
+                ani.SetBool("Bool_Boss_Waiting", false);
+                ani.SetBool("boolBossPattern07", true);
+
+                Invoke("resetPattern", resetPatternTime);
+                Invoke("restartPattern", restartPatternTime - 0.7f);
                 break;
             case 8:
-                bossAniPattern08();
+                bossMoveScript.bossAttackParticleSet[4].Play();
+
+                ani.SetBool("Bool_Boss_Waiting", false);
+                ani.SetBool("boolBossPattern08", true);
+
+                Invoke("resetPattern", resetPatternTime);
+                Invoke("restartPattern", restartPatternTime - 1f);
                 break;
             case 9:
-                bossAniPattern09();
+                ani.SetBool("Bool_Boss_Waiting", false);
+                ani.SetBool("boolBossPattern09", true);
+
+                Invoke("resetPattern", resetPatternTime);
+                Invoke("restartPattern", restartPatternTime - 1f);
                 break;
         }      
     }
-
-     void bossAniPattern00()
-    {
-        Invoke("resetPattern", resetPatternTime);
-
-    }
-
-     void bossAniPattern01()
-    {
-        Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime);
-    }
-     void bossAniPattern02()
-    {
-        ani.SetBool("Bool_Boss_Waiting", false);
-        ani.SetBool("boolBossPattern02", true);
-
-        Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime);
-    }
-     void bossAniPattern03()
-    {
-        ani.SetBool("Bool_Boss_Waiting", false);
-        ani.SetBool("boolBossPattern03", true);
-
-        Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime - 0.4f);
-    }
-     void bossAniPattern04()
-    {
-        ani.SetBool("Bool_Boss_Waiting", false);
-        ani.SetBool("boolBossPattern04", true);
-
-        Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime);
-    }
-     void bossAniPattern05()
-    {
-        ani.SetBool("Bool_Boss_Waiting", false);
-        ani.SetBool("boolBossPattern05", true);
-
-        Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime + 0.6f);
-    }
-     void bossAniPattern06()
-    {
-        ani.SetBool("Bool_Boss_Waiting", false);
-        ani.SetBool("boolBossPattern06", true);
-
-        Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime);
-    }
-     void bossAniPattern07()
-    {
-        ani.SetBool("Bool_Boss_Waiting", false);
-        ani.SetBool("boolBossPattern07", true);
-
-        Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime - 0.7f);
-    }
-     void bossAniPattern08()
-    {
-        ani.SetBool("Bool_Boss_Waiting", false);
-        ani.SetBool("boolBossPattern08", true);
-
-        Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime-1f);
-    }
-     void bossAniPattern09()
-    {
-        ani.SetBool("Bool_Boss_Waiting", false);
-        ani.SetBool("boolBossPattern09", true);
-
-        Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime-1f);
-    }
-
 
 
     void resetPattern()
@@ -161,4 +137,28 @@ public class BossAniScript : MonoBehaviour
         moveScript.bossConRestartBossPattern();
     }
 
+
+    void invokeParticle00()
+    {
+        bossMoveScript.bossAttackParticleSet[0].Play();
+    }
+    void invokeParticle01()
+    {
+        bossMoveScript.bossAttackParticleSet[1].Play();
+    }
+    void invokeParticle02()
+    {
+        bossMoveScript.bossAttackParticleSet[2].Play();
+    }
+    void invokeParticle03()
+    {
+        bossMoveScript.bossAttackParticleSet[3].Play();
+
+        var Object = Instantiate(bossMoveScript.whenBossAttackGroundMakeCrackObj, bossMoveScript.crackPos);
+        Object.transform.SetParent(particlePos.transform);
+    }
+    public void deadAniOn()
+    {
+        ani.SetBool("is_Enemy_Dead", true);
+    }
 }

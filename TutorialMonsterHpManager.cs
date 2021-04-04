@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class TutorialMonsterHpManager : MonoBehaviour
 {
-    int deadOrLive = 0;
+    [HideInInspector]
+   public int deadOrLive = 0;
     int maxHealth = 100;
     int currentHealth;
     [SerializeField]
@@ -25,6 +26,13 @@ public class TutorialMonsterHpManager : MonoBehaviour
 
     Image uiUse;
     GameObject cam;
+    bool deadIsOnce = false;
+
+
+
+
+
+
 
 
     private void Start()
@@ -60,15 +68,17 @@ public class TutorialMonsterHpManager : MonoBehaviour
 
     public int enemyHpDeadCheck()
     {
-        if (uiUse.fillAmount <= 0.01f)
+        if (uiUse.fillAmount <= 0.01f && deadIsOnce == false)
         {
+            deadIsOnce = true;
+
             int count = Random.Range(0, 3);
             Instantiate(weaponDropSet[0], transform.position, transform.rotation);
 
             // 현재 스테이지 값을 가져온다음 스테이지 클리어 여부를 확인 하기위해 값을 전달함.
             TutorialStageClearManager.Instance.ifDeadChageUiState();
             deadOrLive = 1;
-            Destroy(uiUse.gameObject);
+            Destroy(uiUse.gameObject,3f);
         }
 
         return deadOrLive;

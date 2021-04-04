@@ -14,9 +14,15 @@ public class TrapType2FireAttackLeft : MonoBehaviour
 
     BoxCollider boxCollider;
     MeshRenderer meshRenderer;
+    ParticleSystem particleSys;
+
+
+
+
     // Start is called before the first frame update
     void Start()
     {
+        particleSys = GetComponent<ParticleSystem>();
         fireBallTransform = GetComponent<Transform>();
         rid = GetComponent<Rigidbody>();
 
@@ -37,24 +43,28 @@ public class TrapType2FireAttackLeft : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.tag == "TrapType2FireAttack" || other.gameObject.tag == "TrapType02") return;
 
-        if (other.gameObject.tag == "Wall" || other.gameObject.tag == "TrapType2Fire")
+        if (other.gameObject.tag == "Player")
         {
-            boxCollider.enabled = false;
-            meshRenderer.enabled = false ;
-            rid.velocity = gameObject.transform.forward * 0;
+            if (PlayerInputScript.Instance.isDodge == true) return;
 
-            boomParticle.SetActive(true);
-            Destroy(gameObject, 3);
-        }
-        else if (other.gameObject.tag == "Player")
-        {
+            particleSys.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             boxCollider.enabled = false;
             meshRenderer.enabled = false;
             rid.velocity = gameObject.transform.forward * 0;
 
             boomParticle.SetActive(true);
             Destroy(gameObject, 3);
+
+            return;
         }
+        particleSys.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        boxCollider.enabled = false;
+        meshRenderer.enabled = false;
+        rid.velocity = gameObject.transform.forward * 0;
+
+        boomParticle.SetActive(true);
+        Destroy(gameObject, 3);
     }
 }

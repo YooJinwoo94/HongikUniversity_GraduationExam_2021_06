@@ -137,7 +137,6 @@ public class PlayerColliderCon : MonoBehaviour
             || other.gameObject.tag == "TrapType3BoomAttack"
             || other.gameObject.tag == "TrapType1Thorn")
         {
-            //  PlayerCamManager.Instance.shack();
             inputScript.state = PlayerState.normalAttacked;
 
             playerCamManagerScript.shake();

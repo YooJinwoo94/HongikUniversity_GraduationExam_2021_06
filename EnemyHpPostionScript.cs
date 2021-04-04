@@ -6,16 +6,19 @@ using UnityEngine.UI;
 
 public class EnemyHpPostionScript : MonoBehaviour
 {
-    //ws EnemyHealthScript enemyHealthScript;
-    //float updateSpeed = 0.5f;
+    [SerializeField]
+    CapsuleCollider enemyCollider;
+    [HideInInspector]
+   public int deadOrLive = 0;
     int maxHealth = 100;
     int currentHealth;
 
     [SerializeField]
     Image prefabUi;
     Camera playerCamera;
-
-
+    [SerializeField]
+    GameObject[] weaponDropSet;
+    int randomNumForWeaponDrop = 0;
 
     private Transform headPos;
     Vector3 offSet = new Vector3(0, 2f, 0);
@@ -25,12 +28,15 @@ public class EnemyHpPostionScript : MonoBehaviour
 
     Image uiUse;
     GameObject cam;
+    bool deadIsOnce = false;
 
 
 
-    //    FindObjectOfType<Canvas>().transform).GetComponent<Image>();
-    //.GetComponent<Image>()
-    private void Awake()
+
+
+
+
+    private void Start()
     {
         uiUse = Instantiate(prefabUi, GameObject.FindGameObjectWithTag("EnemyHpUI").transform);
 
@@ -45,7 +51,6 @@ public class EnemyHpPostionScript : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         uiUse.transform.position = playerCamera.WorldToScreenPoint(transform.position + offSet);
     }
 
@@ -64,35 +69,18 @@ public class EnemyHpPostionScript : MonoBehaviour
 
     public int enemyHpDeadCheck()
     {
-        int deadOrLive = 0;
-
-        if (uiUse.fillAmount <= 0.01f)
+        if (uiUse.fillAmount <= 0.01f && deadIsOnce == false)
         {
-            // return true;
-            //StageClearCheckManager =  GameObject.Find("StageClearCheckManager").GetComponent<StageClearCheckManager>();
-            //StageClearCheckManager.numMosterCount(1);
+            deadIsOnce = true;
+            randomNumForWeaponDrop = Random.Range(0, 5);
+            if (randomNumForWeaponDrop <= 3) Instantiate(weaponDropSet[randomNumForWeaponDrop], transform.position, transform.rotation);
 
+            //  enemyCollider.enabled = false; 
             // 현재 스테이지 값을 가져온다음 스테이지 클리어 여부를 확인 하기위해 값을 전달함.
-            StageClearCheckManager.Instance.numMosterCount(StageManager.Instance.returnNowStageCount());
-
+            StageClearCheckManager.Instance.numMosterCount(StageManager.Instance.returnNowStageCount());           
             deadOrLive = 1;
-
-            Destroy(uiUse.gameObject);
+            Destroy(uiUse.gameObject,3f);
         }
-
         return deadOrLive;
     }
- 
-
-    /*
-    IEnumerator HpCon(float amount)
-    {
-        yield return null;
-
-        //float nowHp = prefabUi.fillAmount;
-
-        prefabUi.fillAmount -= amount;
-        StopCoroutine("HpCon");
-    }
-    */
 }

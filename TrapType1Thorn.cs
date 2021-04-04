@@ -19,10 +19,10 @@ public class TrapType1Thorn : MonoBehaviour
 
     Renderer rendererColor;
     TrapType1State TrapType1State;
-   // BoxCollider trapType1ThornCollider;
+
 
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         //  trapType1ThornCollider = GetComponent<BoxCollider>();
         //trapType1ThornCollider.enabled = true;
@@ -58,10 +58,10 @@ public class TrapType1Thorn : MonoBehaviour
         // 애니메이션 작동 
         yield return new WaitForSeconds(0.5f);
         trapType1AttackAni.SetBool("trapType1Attack", true);
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.2f);
         attack();
 
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(1.05f);
         reset();
         StopCoroutine("StartTrapType1Thorn");
     }

@@ -72,4 +72,8 @@ public class TutorialTypeMonsterAni : MonoBehaviour
         moveScript.bossWeaponSwordOff();
         moveScript.enemyPatternStart();
     }
+    public void deadAniOn()
+    {
+        ani.SetBool("is_Enemy_Dead", true);
+    }
 }

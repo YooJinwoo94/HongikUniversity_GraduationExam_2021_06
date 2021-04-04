@@ -4,21 +4,21 @@ using UnityEngine;
 
 public class CloseAttackTypeNormalAni : MonoBehaviour
 {
-    private Animator enemyAnimator;
-    private CloseAttackTypeNormalMove closeAttackTypeNormalMoveScript;
+    private Animator ani;
+    private CloseAttackTypeNormalMove moveScript;
 
-    const float restartPatternTime = 2f;
+
     const float resetPatternTime = 0.5f;
+    const float restartPatternTime = 2f;
 
 
 
-
-    private void Awake()
+    private void Start()
     {
-        closeAttackTypeNormalMoveScript = GetComponent<CloseAttackTypeNormalMove>();
-        enemyAnimator = GetComponent<Animator>();
+        moveScript = GetComponent<CloseAttackTypeNormalMove>();
+        ani = GetComponent<Animator>();
 
-        enemyAnimator.SetBool("Bool_Enemy_Waiting", true);
+        ani.SetBool("Bool_Enemy_Waiting", true);
     }
 
 
@@ -38,38 +38,43 @@ public class CloseAttackTypeNormalAni : MonoBehaviour
 
     void patternClose()
     {
-        enemyAnimator.SetBool("Bool_Enemy_PatternClose", true);
+        ani.SetBool("Bool_Enemy_PatternClose", true);
         Invoke("resetPattern", resetPatternTime);
         Invoke("restartPattern", restartPatternTime);
     }
     void patternFar()
     {
-        enemyAnimator.SetBool("Bool_Enemy_PatternFar", true);
+        ani.SetBool("Bool_Enemy_PatternFar", true);
     }
     public void patternFar02()
     {
-        enemyAnimator.SetBool("Bool_Enemy_PatternFar02", true);
+        ani.SetBool("Bool_Enemy_PatternFar02", true);
 
 
         Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime);
+        Invoke("restartPattern", restartPatternTime-0.8f);
     }
 
 
     void resetPattern()
     {
-        closeAttackTypeNormalMoveScript.enemyPatternStart();
+        moveScript.enemyPatternStart();
 
-        enemyAnimator.SetBool("Bool_Enemy_Waiting", true);
+        ani.SetBool("Bool_Enemy_Waiting", true);
 
-        enemyAnimator.SetBool("Bool_Enemy_PatternClose", false);
-        enemyAnimator.SetBool("Bool_Enemy_PatternFar", false);
-        enemyAnimator.SetBool("Bool_Enemy_PatternFar02", false);
+        ani.SetBool("Bool_Enemy_PatternClose", false);
+        ani.SetBool("Bool_Enemy_PatternFar", false);
+        ani.SetBool("Bool_Enemy_PatternFar02", false);
     }
     void restartPattern()
     {
-        closeAttackTypeNormalMoveScript.MakeEnemyPatternIdle();
-        closeAttackTypeNormalMoveScript.bossWeaponSwordOff();
-        closeAttackTypeNormalMoveScript.enemyPatternStart();
+        moveScript.MakeEnemyPatternIdle();
+        moveScript.bossWeaponSwordOff();
+        moveScript.enemyPatternStart();
+    }
+
+    public void deadAniOn()
+    {
+        ani.SetBool("is_Enemy_Dead", true);
     }
 }

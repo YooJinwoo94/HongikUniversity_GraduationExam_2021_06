@@ -12,12 +12,13 @@ public class PlayerAttackCon : MonoBehaviour
     PlayerInputScript inputScript;
     PlayerAniScript playerAnimationScript;
     PlayerSpCon playerSpConScript;
-
+    PlayerParticleCon playerParticleConScript;
 
     WeaponState WeaponStateEnum;
 
     // 공격 관련 
-    int noOfClicks = 0;
+    [HideInInspector]
+    public int noOfClicks = 0;
     float lastClickedTime = 0;
 
     [Header("평타를 때릴시 콤보완성을 위한 딜레이")]
@@ -38,12 +39,13 @@ public class PlayerAttackCon : MonoBehaviour
     [HideInInspector]
    public bool isCool;
 
-    // 
+
     private void Start()
     {
         playerSpConScript = GetComponent<PlayerSpCon>();
         inputScript = GetComponent<PlayerInputScript>();
         playerAnimationScript = GetComponent<PlayerAniScript>();
+        playerParticleConScript = GetComponent<PlayerParticleCon>();
 
         WeaponStateEnum = WeaponState.normalSword;
 
@@ -99,9 +101,10 @@ public class PlayerAttackCon : MonoBehaviour
         attackCoolTime = true;
         lastClickedTime = Time.time;
 
+        playerParticleConScript.swordParticleOn();
         noOfClicks++;
         if (noOfClicks == 1)
-        {
+        {           
             playerAnimationScript.playerAniAttackLeftCombo(1);
             SoundManager.Instance.playerAttackSound(0);
         }
@@ -110,9 +113,8 @@ public class PlayerAttackCon : MonoBehaviour
         noOfClicks = Mathf.Clamp(noOfClicks, 0, 3);
     }
 
-    // 추상화 attack with cooltime in normalsword
-    //attack with cooltime in normalsword
-    //매개함수를 적어서 표현하는것도 방법이다. 이거 중요함
+
+
     void normalSwordAttackCoolTimeCount(int coolTime = 0)
     {
         if (inputScript.state != PlayerState.attack)
@@ -129,7 +131,7 @@ public class PlayerAttackCon : MonoBehaviour
 
             attackCoolTime = false;
             //  playerAnimationScript.playerAniAttackLeftCombo(0);
-            maxComboDelay = 2f;
+            maxComboDelay = 0.8f;
             return;
         }
 
@@ -145,7 +147,7 @@ public class PlayerAttackCon : MonoBehaviour
             }
             attackCoolTime = false;
             playerAnimationScript.playerAniAttackLeftCombo(0);
-            maxComboDelay = 2f;
+            maxComboDelay = 0.8f;
 
             inputScript.state = PlayerState.idle;
             return;

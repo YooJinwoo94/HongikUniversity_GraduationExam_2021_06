@@ -34,6 +34,13 @@ enum BossPatternStorageToCheckLastOne
 public class BossMoveScript : MonoBehaviour
 {
     [SerializeField]
+    public GameObject whenBossAttackGroundMakeCrackObj;
+    [SerializeField]
+    public Transform crackPos;
+
+    [SerializeField]
+    public ParticleSystem[] bossAttackParticleSet;
+    [SerializeField]
     BoxCollider bossWeaponSword;
     [SerializeField]
     BoxCollider bossWeaponShield;
@@ -72,13 +79,15 @@ public class BossMoveScript : MonoBehaviour
     float[] bossAttackDistancePattern  = new float[11] ;
     float[] bossAttackSpeedPattern = new float[11];
 
-
+    bool trap01;
 
 
 
 
     private void Start()
     {
+        trap01 = false;
+
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         bossTransform = GetComponent<Transform>();
         bossAnimationScript = GetComponent<BossAniScript>();
@@ -93,31 +102,31 @@ public class BossMoveScript : MonoBehaviour
             switch (i)
             {
                 case 1:
-                    num = 5.5f;
+                    num = 8f;
                     break;
                 case 2:
-                    num = 2.5f;
+                    num = 3f;
                     break;
                 case 3:
-                    num = 1f;
+                    num = 2f;
                     break;
                 case 4:
-                    num = 1f;
+                    num = 2f;
                     break;
                 case 5:
-                    num = 1f;
+                    num = 2f;
                     break;
                 case 6:
-                    num = 1f;
+                    num = 2f;
                     break;
                 case 7:
                     num = 1.5f;
                     break;
                 case 8:
-                    num = 0.6f;
+                    num = 1.6f;
                     break;
                 case 9:
-                    num = 1f;
+                    num = 2f;
                     break;
             }
 
@@ -125,11 +134,11 @@ public class BossMoveScript : MonoBehaviour
         }    
         for (int i = 2; i < 10; i++)
         {
-            float num = 0.05f;
+            float num = 0.01f;
             switch (i)
             {
                 case 2:
-                    num = 0.08f;
+                    num = 0.03f;
                     break;
             }
             bossAttackSpeedPattern[i] = num;
@@ -150,8 +159,10 @@ public class BossMoveScript : MonoBehaviour
     }
 
 
-    private void FixedUpdate()
+    private void Update()
     {
+        if (hpPostionScript.deadOrLive == 1) return;
+
         rotateBoss();
 
         if (bossDistanceCheck == true || bossPatternNow == 0 || ischaseStart == false) return;
@@ -202,7 +213,6 @@ public class BossMoveScript : MonoBehaviour
     {
         StartCoroutine("BossController");
     }
-
     IEnumerator BossController()
     {
         yield return null;
@@ -221,6 +231,14 @@ public class BossMoveScript : MonoBehaviour
         
         StopCoroutine("BossController");
     }
+
+
+
+
+
+
+
+
 
 
     //철자
@@ -274,24 +292,29 @@ public class BossMoveScript : MonoBehaviour
         }     
     }
     // 패턴 선택이에유 
-    void patternChoice( int bossPatternRandomStorage)
+    void patternChoice( int num)
     {
-        if (bossPatternRandomStorage !=2)
+        if (num !=2)
         {
-            bossPatternNow = bossPatternRandomStorage;
+            bossPatternNow = num;
             colliderOn();
-            bossAnimationScript.bossPatternChoice(bossPatternRandomStorage);
+            
+            // 실행!
+            bossAnimationScript.bossPatternChoice(num);
         }
-        if (bossPatternRandomStorage != 2 && bossPatternRandomStorage != 1)
+        if (num != 2 && num != 1)
         {
             ischaseStart = true;
         }
 
-        switch (bossPatternRandomStorage)
+        switch (num)
         {
+               //null
             case 1:
                 bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern01;
                 break;
+
+                // 돌진 찌르기
             case 2:
                 pattern02BossAttackAreaTransform.GetComponent<SpriteRenderer>().enabled = true;
                 Invoke("offpattern02AttackAreaSprite", 1.7f);
@@ -299,32 +322,39 @@ public class BossMoveScript : MonoBehaviour
                 break;
             case 3:
                 bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern03;
+                Debug.Log(bossPatternStorageToCheckLastOneState);
                 Invoke("stopAttackTracking", 0.8f);
                 break;
             case 4:
                 bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern04;
+                Debug.Log(bossPatternStorageToCheckLastOneState);
                 Invoke("stopAttackTracking", 0.8f);
                 break;
             case 5:
                 bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern05;
+                Debug.Log(bossPatternStorageToCheckLastOneState);
                 Invoke("stopAttackTracking", 0.8f);
                 break;
             case 6:
                 bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern06;
+                Debug.Log(bossPatternStorageToCheckLastOneState);
                 Invoke("stopAttackTracking", 0.4f);
                 break;
             case 7:
                 bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern07;
+                Debug.Log(bossPatternStorageToCheckLastOneState);
                 Invoke("stopAttackTracking", 1f);
                 break;
             case 8:
                 bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern08;
                 weaponSword.tag = "pattern08";
                 Invoke("stopAttackTracking", 0.4f);
+                Debug.Log(bossPatternStorageToCheckLastOneState);
                 break;
             case 9:
                 bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern09;
                 Invoke("stopAttackTracking", 1f);
+                Debug.Log(bossPatternStorageToCheckLastOneState);
                 break;
         }           
     }
@@ -488,17 +518,111 @@ public class BossMoveScript : MonoBehaviour
         BossState = BossState.idle;
     }
 
+    void isTrap01CoolTimeOn()
+    {
+        trap01 = false;
+    }
 
 
     private void OnTriggerExit(Collider other)
     {
         if (BossState == BossState.attacked) return;
 
-        if (other.gameObject.tag == "PlayerSword")
+
+        if (other.gameObject.tag == "PlayerSword01")
+        {
+            hpPostionScript.enemyDamagedAndImageChange(0.1f);
+            hpPostionScript.enemyHpDeadCheck();
+
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                bossAnimationScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+            else
+            {
+                BossState = BossState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
+            return;
+        }
+        if (other.gameObject.tag == "PlayerSword02")
+        {
+            hpPostionScript.enemyDamagedAndImageChange(0.3f);
+            hpPostionScript.enemyHpDeadCheck();
+
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                bossAnimationScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+            else
+            {
+                BossState = BossState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
+            return;
+        }
+        if (other.gameObject.tag == "PlayerSword03")
+        {
+            hpPostionScript.enemyDamagedAndImageChange(0.6f);
+            hpPostionScript.enemyHpDeadCheck();
+
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                bossAnimationScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+            else
+            {
+                BossState = BossState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
+        }      
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (trap01 == true) return;
+
+        if (other.gameObject.tag == "TrapType2FireAttack"
+         || other.gameObject.tag == "TrapType3BoomAttack")
         {
             hpPostionScript.enemyDamagedAndImageChange(0.2f);
-            BossState = BossState.attacked;
-            Invoke("stateChange", 0.3f);
+            hpPostionScript.enemyHpDeadCheck();
+
+            if (hpPostionScript.deadOrLive == 1)
+            {
+                bossAnimationScript.deadAniOn();
+                Destroy(this.gameObject, 3f);
+            }
+
+            else
+            {
+                BossState = BossState.attacked;
+                Invoke("stateChange", 0.3f);
+            }
         }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (trap01 == true) return;
+
+        switch (other.gameObject.tag)
+        {
+            case "TrapType1Thorn":
+                trap01 = true;
+                hpPostionScript.enemyDamagedAndImageChange(0.2f);
+                hpPostionScript.enemyHpDeadCheck();
+
+                if (hpPostionScript.deadOrLive == 1)
+                {
+                    bossAnimationScript.deadAniOn();
+                    Destroy(this.gameObject, 3f);
+                }
+                else Invoke("isTrap01CoolTimeOn", 2f);
+                break;
+        }
+       
+    
     }
 }

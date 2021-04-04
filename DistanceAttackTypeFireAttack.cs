@@ -14,9 +14,14 @@ public class DistanceAttackTypeFireAttack : MonoBehaviour
     MeshRenderer meshRenderer;
 
     Transform playerTransform;
-
+    ParticleSystem particleSys;
     bool isStop = false;
-    // Start is called before the first frame update
+
+
+
+
+
+
     void Start()
     {
         isStop = false;
@@ -24,8 +29,8 @@ public class DistanceAttackTypeFireAttack : MonoBehaviour
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
 
         fireBallTransform = GetComponent<Transform>();
-
-
+        particleSys = GetComponent<ParticleSystem>();
+        rid = GetComponent<Rigidbody>();
 
         boxCollider = GetComponent<BoxCollider>();
         boxCollider.enabled = true;
@@ -38,23 +43,27 @@ public class DistanceAttackTypeFireAttack : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isStop == false) fireBallTransform.Translate(Vector3.forward * 0.5f);
+        if (isStop == false) fireBallTransform.Translate(Vector3.forward * 0.2f);
     }
 
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.tag == "DistanceAttackEnemy01") return;
 
-        if (other.gameObject.tag == "Wall"
-            || other.gameObject.tag == "TrapType2Fire"
-            || other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" || other.gameObject.tag == "Wall")
         {
+            if (PlayerInputScript.Instance.isDodge == true) return;
+
+            particleSys.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             boxCollider.enabled = false;
             meshRenderer.enabled = false;
-            // rid.velocity = gameObject.transform.forward * 0;
-            isStop = true;
+            rid.velocity = gameObject.transform.forward * 0;
+
             boomParticle.SetActive(true);
             Destroy(gameObject, 3);
+
+            return;
         }
     }
 }

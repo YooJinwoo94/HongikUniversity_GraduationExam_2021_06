@@ -22,6 +22,7 @@ public enum TutorialState
     tutorial05_0,
     tutorial06_0,
     tutorial07_0,
+    tutorial08_0,
     tutorialEnd,
     wait
 }
@@ -42,11 +43,14 @@ public class TutorialStageManger : MonoBehaviour
 
     bool startOnce = false;
     bool startOnce_02 = false;
+    bool startOnce_03 = false;
 
     [SerializeField]
     TypingTextCon typingTextConScript;
     [SerializeField]
     PlayerGetWeaponUINNo5 playerGetWeaponUINo5Script;
+    [SerializeField]
+    PlayerPowerGetUINo2 playerPowerGetUiNo2Script;
 
     [SerializeField]
     GameObject[] uiPanel;
@@ -57,13 +61,20 @@ public class TutorialStageManger : MonoBehaviour
     int count = 0;
     int tutorial02Phase = 0;
     [SerializeField]
-    Animator[] boorAni;
+    Animator[] doorAni;
 
     [SerializeField]
     Image[] forIngameUiTutorialVer;
     [SerializeField]
     Image[] forWeaponGetUiTutorialVer;
 
+    //키보드 애니 작동
+    [SerializeField]
+    Animator[] playerKeyButtonAni;
+    [SerializeField]
+    Animation[] playerKeyButtonAnimation;
+    [SerializeField]
+    GameObject[] playerKeyButtonObj;
 
     public TutorialState tutorialState = TutorialState.tutorialReady;
 
@@ -89,7 +100,14 @@ public class TutorialStageManger : MonoBehaviour
             // 다음꺼 tutorial04_0 입니다 라고 알림
             nowTutorialNum = 8;
             count = 0;
-        }   
+            return;
+        }
+        if (playerPowerGetUiNo2Script.bgUiNo2Obj.activeInHierarchy == true && startOnce_03 == false)
+        {
+            startOnce_03 = true;
+            tutorialState = TutorialState.tutorial08_0;
+            return;
+        }
         tutorial();    
     }
 
@@ -97,16 +115,6 @@ public class TutorialStageManger : MonoBehaviour
 
 
 
-
-
-
-
-
-
-    void tutorialFin()
-    {
-        boorAni[0].SetBool("OpenDoor", true);
-    }
 
 
 
@@ -119,6 +127,7 @@ public class TutorialStageManger : MonoBehaviour
     {
         switch (nowTutorialNum)
         {
+            // w 키에 대한 설명
             case 0:
                 tutorialState = TutorialState.tutorial02_1;
                 break;
@@ -133,12 +142,18 @@ public class TutorialStageManger : MonoBehaviour
                 break;
             case 4:
                 tutorialState = TutorialState.tutorial02_5;
+                for (int i = 0; i < 5; i++)
+                {
+                    playerKeyButtonAni[i].SetBool("Start", true);
+                }
                 break;
             case 5:
                 tutorialState = TutorialState.tutorial02_6;
                 break;
             case 6:
                 tutorialState = TutorialState.tutorial03;
+                playerKeyButtonObj[4].SetActive(true);
+                playerKeyButtonAni[4].enabled = true;
                 break;
             case 7:
                 tutorialState = TutorialState.tutorial03_1;
@@ -154,6 +169,9 @@ public class TutorialStageManger : MonoBehaviour
                 break;
             case 11:
                 tutorialState = TutorialState.tutorial07_0;
+                break;
+            case 12:
+                tutorialState = TutorialState.tutorial08_0;
                 break;
         }
         uiPanel[0].SetActive(true);
@@ -171,17 +189,23 @@ public class TutorialStageManger : MonoBehaviour
             case TutorialState.tutorialReady:
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    uiPanel[0].SetActive(false);
-                    uiPanel[1].SetActive(false);
-                    tutorialState = TutorialState.wait;
+                    tutorialState = TutorialState.tutorial01;
+
+                    uiPanel[0].SetActive(true);
+                    uiPanel[1].SetActive(true);
                 }
                 break;
 
             case TutorialState.tutorial01:
                 if (startOnce == false)
                 {
-                    typingTextConScript.typingTextStart(1);
                     startOnce = true;
+
+                    playerKeyButtonObj[4].SetActive(true);
+                    playerKeyButtonObj[4].transform.localPosition = new Vector3(296.7f, -432, 0);
+                    playerKeyButtonAni[4].enabled = true;
+
+                    typingTextConScript.typingTextStart(1);
                 }
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
@@ -191,10 +215,18 @@ public class TutorialStageManger : MonoBehaviour
 
                         tutorialBasicObj.SetActive(false);
                         forIngameUiTutorialVer[count - 1].enabled = false;
+
+                        playerKeyButtonObj[4].SetActive(false);
+                        playerKeyButtonAni[4].enabled = false;
+
                         startOnce = false;
                     }
                     else
                     {
+                        playerKeyButtonObj[4].SetActive(true);
+                        playerKeyButtonObj[4].transform.localPosition = new Vector3(193, -371.4f, 0);
+                        playerKeyButtonAni[4].enabled = true;
+
                         tutorialBasicObj.SetActive(true);
                         uiPanel[0].SetActive(false);
                         uiPanel[1].SetActive(false);
@@ -210,25 +242,48 @@ public class TutorialStageManger : MonoBehaviour
             case TutorialState.tutorial02_0:
                 if (startOnce == false)
                 {
+                    startOnce = true;
+
+                    playerKeyButtonObj[4].SetActive(true);
+                    playerKeyButtonObj[4].transform.localPosition = new Vector3(296.7f, -432, 0);
+                    playerKeyButtonAni[4].enabled = true;
+
                     uiPanel[0].SetActive(true);
                     uiPanel[1].SetActive(true);
+
                     typingTextConScript.typingTextStart(2);
-                    startOnce = true;
                 }
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
+                    playerKeyButtonObj[4].SetActive(false);
+
                     uiPanel[1].SetActive(false);
                     typingTextConScript.typingTextStart(3);
                     nowTutorialNum = 0;
-                    tutorialState = TutorialState.wait;
 
-                    Invoke("resetState", 0.5f);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        playerKeyButtonObj[i].SetActive(true);
+                        playerKeyButtonAni[i].SetBool("Start", false);
+                    }
+                    playerKeyButtonAni[0].SetBool("Start", true);
+
+
+
+
+                    tutorialState = TutorialState.tutorial02_1;
                 }
                 break;
 
             case TutorialState.tutorial02_1:
                 if (Input.GetKeyDown(KeyCode.W))
                 {
+                    for (int i = 0; i < 5; i++) playerKeyButtonAni[i].SetBool("Start", false);
+                    playerKeyButtonAni[1].SetBool("Start", true);
+
+                    playerKeyButtonObj[1].SetActive(true);
+
+
                     typingTextConScript.typingTextStart(4);
                     nowTutorialNum = 1;
                     tutorialState = TutorialState.wait;
@@ -239,6 +294,13 @@ public class TutorialStageManger : MonoBehaviour
             case TutorialState.tutorial02_2:
                 if (Input.GetKeyDown(KeyCode.A))
                 {
+                    for (int i = 0; i < 5; i++) playerKeyButtonAni[i].SetBool("Start", false);
+                    playerKeyButtonAni[2].SetBool("Start", true);
+
+                    playerKeyButtonObj[2].SetActive(true);
+                    playerKeyButtonAni[2].enabled = true;
+
+
                     typingTextConScript.typingTextStart(5);
                     nowTutorialNum = 2;
                     tutorialState = TutorialState.wait;
@@ -249,6 +311,13 @@ public class TutorialStageManger : MonoBehaviour
             case TutorialState.tutorial02_3:
                 if (Input.GetKeyDown(KeyCode.D))
                 {
+                    for (int i = 0; i < 5; i++) playerKeyButtonAni[i].SetBool("Start", false);
+                    playerKeyButtonAni[3].SetBool("Start", true);
+
+                    playerKeyButtonObj[3].SetActive(true);
+                    playerKeyButtonAni[3].enabled = true;
+
+
                     typingTextConScript.typingTextStart(6);
                     nowTutorialNum = 3;
                     tutorialState = TutorialState.wait;
@@ -259,6 +328,13 @@ public class TutorialStageManger : MonoBehaviour
             case TutorialState.tutorial02_4:
                 if (Input.GetKeyDown(KeyCode.S))
                 {
+                    playerKeyButtonObj[4].SetActive(true);
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        playerKeyButtonAni[i].SetBool("Start", false);
+                    }
+
                     typingTextConScript.typingTextStart(7);
                     nowTutorialNum = 4;
                     tutorialState = TutorialState.wait;
@@ -272,6 +348,15 @@ public class TutorialStageManger : MonoBehaviour
                     Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.S)||
                     Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.W))
                 {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        playerKeyButtonObj[i].SetActive(false);
+                        playerKeyButtonAni[i].enabled = false;
+                    }
+
+                    playerKeyButtonObj[6].SetActive(true);
+                    playerKeyButtonAni[6].enabled = true;
+
                     typingTextConScript.typingTextStart(8);
                     // 다음꺼 tutorial02_6 입니다 라고 알림
                     nowTutorialNum = 5;
@@ -284,10 +369,17 @@ public class TutorialStageManger : MonoBehaviour
                 }
                 break;
             
+
+                //마우스 클릭으로 공격
             case TutorialState.tutorial02_6:
                 if (Input.GetMouseButtonDown(0))
                 {
+                    doorAni[0].SetTrigger("OpenDoor");
+
                     typingTextConScript.typingTextStart(9);
+
+                    playerKeyButtonObj[6].SetActive(false);
+                    playerKeyButtonAni[6].enabled = false;
 
                     // 다음꺼 tutorial03 입니다 라고 알림
                     nowTutorialNum = 6;                    
@@ -295,7 +387,7 @@ public class TutorialStageManger : MonoBehaviour
                     uiPanel[1].SetActive(false);            
 
                     tutorialState = TutorialState.wait;
-                    Invoke("resetState", 0.5f);
+
                 }          
                 break;
 
@@ -305,6 +397,9 @@ public class TutorialStageManger : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     if (startOnce != false) return;
+
+                    playerKeyButtonObj[4].SetActive(false);
+                    playerKeyButtonAni[4].enabled = false;
 
                     uiPanel[0].SetActive(false);
                     // 다음꺼 tutorial03_1 입니다 라고 알림
@@ -323,10 +418,15 @@ public class TutorialStageManger : MonoBehaviour
                 {
                     startOnce = true;
                     typingTextConScript.typingTextStart(10);
+
+                    playerKeyButtonObj[4].SetActive(true);
+                    playerKeyButtonAni[4].enabled = true;
                     return;
                 }
                 if (Input.anyKeyDown)
                 {
+                    playerKeyButtonObj[4].SetActive(false);
+                    playerKeyButtonAni[4].enabled = false;
                     uiPanel[0].SetActive(false);
                     tutorialState =  TutorialState.wait;
                     nowTutorialNum = 8;
@@ -338,6 +438,11 @@ public class TutorialStageManger : MonoBehaviour
 
                 if (startOnce == false)
                 {
+                    playerKeyButtonObj[4].transform.localPosition = new Vector3(193, -371.4f, 0);
+                    playerKeyButtonObj[4].SetActive(true);
+                    playerKeyButtonAni[4].enabled = true;
+
+
                     startOnce = true;
                     tutorialBasicObj.SetActive(true);
 
@@ -350,6 +455,9 @@ public class TutorialStageManger : MonoBehaviour
                 {
                     if (count >= 4)
                     {
+                        playerKeyButtonObj[4].SetActive(false);
+                        playerKeyButtonAni[4].enabled = false;
+
                         startOnce = false;
                         tutorialBasicObj.SetActive(false);
                         forWeaponGetUiTutorialVer[count - 1].enabled = false;
@@ -379,19 +487,26 @@ public class TutorialStageManger : MonoBehaviour
 
                || (startOnce == false && Input.GetKeyDown(KeyCode.Escape)) )
                 {
+                    playerKeyButtonObj[5].SetActive(true);
+                    playerKeyButtonAni[5].enabled = true;
+                    playerKeyButtonObj[5].transform.localPosition = new Vector3(-18.6f, -432.6f, 0);
+
                     startOnce = true;
                     uiPanel[0].SetActive(true);
                     typingTextConScript.typingTextStart(11);
                     tutorialState = TutorialState.tutorial06_0;
                     nowTutorialNum = 10;
                 }
-
                 break;
 
             case TutorialState.tutorial06_0:
                 if (Input.GetKeyDown(KeyCode.I))
                 {
                     startOnce = false;
+
+                    playerKeyButtonObj[5].SetActive(false);
+                    playerKeyButtonAni[5].enabled = false;
+
                     uiPanel[0].SetActive(false);
                 }
                 if (Input.GetKeyDown(KeyCode.Escape)&& startOnce == false)
@@ -405,15 +520,34 @@ public class TutorialStageManger : MonoBehaviour
 
                 if (startOnce == false)
                 {
+                    playerKeyButtonObj[4].transform.localPosition = new Vector3(296.7f, -432, 0);
+                    playerKeyButtonObj[4].SetActive(true);
+                    playerKeyButtonAni[4].enabled = true;
+
                     startOnce = true;
                     uiPanel[0].SetActive(true);
                     typingTextConScript.typingTextStart(12);
                     return;
                 }
-                if (Input.anyKeyDown)
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    tutorialStageClearManagerScript.openDoor();
+                    nowTutorialNum = 12;
+                    startOnce = false;
+
+                    playerKeyButtonObj[4].SetActive(false);
+                    playerKeyButtonAni[4].enabled = false;
+
+                    tutorialStageClearManagerScript.openDoor(0);
                     uiPanel[0].SetActive(false);
+                    tutorialState = TutorialState.wait;
+                }
+                break;
+
+            case TutorialState.tutorial08_0:
+
+                if (playerPowerGetUiNo2Script.bgUiNo2Obj.activeInHierarchy == false)
+                {
+                    tutorialStageClearManagerScript.openDoor(1);
                     tutorialState = TutorialState.wait;
                 }
                 break;
@@ -440,12 +574,9 @@ public class TutorialStageManger : MonoBehaviour
     {
         if(other.tag == "Player")
         {
-            tutorialState = TutorialState.tutorial01;
+            doorAni[0].SetBool("Start", true);
+            Invoke("resetState", 0.5f);
 
-            uiPanel[0].SetActive(true);
-            uiPanel[1].SetActive(true);
-
-            boorAni[0].SetBool("Start", true);
             boxCollider.enabled = false;
         }
     }

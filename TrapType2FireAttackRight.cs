@@ -1,8 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrapType2FireAttackFront : MonoBehaviour
+public class TrapType2FireAttackRight : MonoBehaviour
 {
     Transform fireBallTransform;
     Rigidbody rid;
@@ -12,8 +12,8 @@ public class TrapType2FireAttackFront : MonoBehaviour
 
     BoxCollider boxCollider;
     MeshRenderer meshRenderer;
-
     ParticleSystem particleSys;
+
 
 
     // Start is called before the first frame update
@@ -23,7 +23,7 @@ public class TrapType2FireAttackFront : MonoBehaviour
         fireBallTransform = GetComponent<Transform>();
         rid = GetComponent<Rigidbody>();
 
-        fireBallTransform.rotation = Quaternion.Euler(0, -180, 0);
+        fireBallTransform.rotation = Quaternion.Euler(0, -270, 0);
         rid.velocity = gameObject.transform.forward * 20;
 
         boxCollider = GetComponent<BoxCollider>();
