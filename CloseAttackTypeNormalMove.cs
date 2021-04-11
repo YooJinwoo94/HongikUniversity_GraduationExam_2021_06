@@ -70,11 +70,6 @@ public class CloseAttackTypeNormalMove : MonoBehaviour
 
             case CloseAttackTypeNormalPattern.patternFar:
                 resetNowStateToStopFollowing(enemyPatternCloseDistance, enemyAttackSpeedPatternFar);
-                if (Vector3.Distance(enemyTransform.position, playerTransform.position) < enemyPatternFarDistance)
-                {
-                    aniScript.patternFar02();
-                    enemyPattern = CloseAttackTypeNormalPattern.patternIdle;
-                }
                 break;
          }
         rotateBoss();       

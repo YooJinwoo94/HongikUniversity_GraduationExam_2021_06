@@ -2,79 +2,95 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+public enum CloseAttackEnemyType01AtkPattern
+{
+    patternZero,
+    patternIdle,
+    patternClose,
+    patternFar,
+}
+
+
+
 public class CloseAttackTypeNormalAni : MonoBehaviour
 {
     private Animator ani;
-    private CloseAttackTypeNormalMove moveScript;
 
+    const float resetColliderTime = 1.6f;
+    const float resetAniTime = 0.5f;
+    float resetPatternTime = 2f;
 
-    const float resetPatternTime = 0.5f;
-    const float restartPatternTime = 2f;
+    public CloseAttackEnemyType01AtkPattern enemyPattern;
+    WeaponColliderCon weaponColliderConScript;
 
+    float startTime;
 
 
     private void Start()
     {
-        moveScript = GetComponent<CloseAttackTypeNormalMove>();
         ani = GetComponent<Animator>();
 
         ani.SetBool("Bool_Enemy_Waiting", true);
+
+        enemyPattern = CloseAttackEnemyType01AtkPattern.patternIdle;
+
+        weaponColliderConScript = GetComponent<WeaponColliderCon>();
     }
 
 
     public void patternChoice(int patternCount)
     {
-        switch (patternCount)
+       switch(patternCount)
         {
+            // close
             case 0:
-                patternClose();
+                ani.SetBool("Bool_Enemy_PatternClose", true);
+                weaponColliderConScript.weaponColliderOn(0);
+                Invoke("resetAni", resetAniTime);
+                Invoke("resetWeaponCollider", resetColliderTime);
+                Invoke("resetPattern", resetPatternTime);
                 break;
 
+            // far
             case 1:
-                patternFar();
+                ani.SetBool("Bool_Enemy_PatternFar", true);
                 break;
         }
     }
 
-    void patternClose()
+
+    public void enemyHitted()
     {
-        ani.SetBool("Bool_Enemy_PatternClose", true);
-        Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime);
+        ani.SetTrigger("is_Enemy_Damaged");
     }
-    void patternFar()
-    {
-        ani.SetBool("Bool_Enemy_PatternFar", true);
-    }
+
     public void patternFar02()
     {
         ani.SetBool("Bool_Enemy_PatternFar02", true);
-
-
+        weaponColliderConScript.weaponColliderOn(0);
+        Invoke("resetAniAndCollider", resetAniTime);
         Invoke("resetPattern", resetPatternTime);
-        Invoke("restartPattern", restartPatternTime-0.8f);
     }
-
-
-    void resetPattern()
+    void resetAni()
     {
-        moveScript.enemyPatternStart();
-
         ani.SetBool("Bool_Enemy_Waiting", true);
 
         ani.SetBool("Bool_Enemy_PatternClose", false);
         ani.SetBool("Bool_Enemy_PatternFar", false);
         ani.SetBool("Bool_Enemy_PatternFar02", false);
     }
-    void restartPattern()
+    void resetPattern()
     {
-        moveScript.MakeEnemyPatternIdle();
-        moveScript.bossWeaponSwordOff();
-        moveScript.enemyPatternStart();
+        enemyPattern = CloseAttackEnemyType01AtkPattern.patternZero;
     }
-
     public void deadAniOn()
     {
         ani.SetBool("is_Enemy_Dead", true);
+    }
+    void resetWeaponCollider()
+    {
+        weaponColliderConScript.weaponColliderOff(0);
     }
 }
