@@ -6,13 +6,12 @@ using BehaviorDesigner.Runtime;
 
 public class CloseAttackEnemyAtkPattern02 : Action
 {
+    public SharedBool attackStart;
     public SharedInt numOfPattern;
     public SharedTransform target;
     public EnemyHpPostionScript hpPostionScript;
     public CloseAttackTypeNormalAni aniScript;
     public CloseAttackTypeNormalColliderCon colliderConScript;
-
-    const float isFarOrCloseDistance = 8.5f;
 
     const float enemyPatternFarDistance = 4f;
     const float enemyAttackSpeedPatternFar = 0.03f;
@@ -31,22 +30,23 @@ public class CloseAttackEnemyAtkPattern02 : Action
 
     public override TaskStatus OnUpdate()
     {
-        if (hpPostionScript.deadOrLive == 1) return TaskStatus.Failure;
-        if (aniScript.enemyPattern == CloseAttackEnemyType01AtkPattern.patternZero) return TaskStatus.Failure;
-        if (numOfPattern.Value != 2) return TaskStatus.Success;
-
-        if (colliderConScript.IsAttackedState == CloseAttackTypeNormalColliderCon.CloseAttackEnemy01IsAttacked.attacked) return TaskStatus.Failure;
+        if (attackStart.Value == false ||
+            hpPostionScript.deadOrLive == 1 ||
+            numOfPattern.Value != 2 ||
+            colliderConScript.IsAttackedState == CloseAttackTypeNormalColliderCon.CloseAttackEnemy01IsAttacked.attacked) return TaskStatus.Failure;
 
         if (aniScript.enemyPattern == CloseAttackEnemyType01AtkPattern.patternIdle) patternStart();
 
+
         resetNowStateToStopFollowing(enemyPatternFarDistance, enemyAttackSpeedPatternFar);
-        if (Vector3.Distance(transform.position, target.Value.position) < enemyPatternFarDistance)
+        if (aniScript.enemyPattern == CloseAttackEnemyType01AtkPattern.patternFar &&
+            Vector3.Distance(transform.position, target.Value.position) <= enemyPatternFarDistance)
         {
             aniScript.patternFar02();
             return TaskStatus.Failure;
         }
 
-        rotateBoss();
+        if (hpPostionScript.deadOrLive != 1) rotate();
         return TaskStatus.Running;
     }
 
@@ -54,7 +54,7 @@ public class CloseAttackEnemyAtkPattern02 : Action
 
 
 
-    void rotateBoss()
+    void rotate()
     {
         Vector3 vec = target.Value.position - transform.position;
         vec.Normalize();

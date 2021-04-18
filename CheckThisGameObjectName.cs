@@ -30,18 +30,18 @@ public class CheckThisGameObjectName : Conditional
         {
             case "CloseAttackEnemy01":
                 closeAttackEnemyaniScript01 = GetComponent<CloseAttackTypeNormalAni>();
-                closeAttackEnemyaniScript01.enemyPattern = CloseAttackEnemyType01AtkPattern.patternZero;
+                closeAttackEnemyaniScript01.enemyPattern = CloseAttackEnemyType01AtkPattern.patternIdle;
                 break;
 
             case "DistanceAttackEnemy01":
                 distanceAttackEnemyaniScript01 = GetComponent<DistanceAttackTypeNormalAni>();
-                distanceAttackEnemyaniScript01.enemyPattern = DistanceAttackEnemyType01AtkPattern.patternZero;
+                distanceAttackEnemyaniScript01.enemyPattern = DistanceAttackEnemyType01AtkPattern.patternIdle;
                 break;
 
             case "Boss_01(Clone)":
                 bossAniScript = GetComponent<BossAniScript>();
-                //closeAttackEnemyaniScript01.enemyPattern = CloseAttackEnemyType01AtkPattern.patternZero;            
-                 break;
+                //closeAttackEnemyaniScript01.enemyPattern = CloseAttackEnemyType01AtkPattern.patternIdle;        
+                break;
         }      
     }
 

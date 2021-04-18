@@ -9,8 +9,9 @@ public class CheckPatternForEnemy : Conditional
     public SharedInt numOfPattern;
     public SharedTransform target;
     public SharedString thisGameObjName;
+    public SharedBool attackStart;
 
-    const float isFarOrCloseDistance = 8.5f;
+    const float isFarOrCloseDistance = 9f;
 
     EnemyHpPostionScript hpPostionScript;
     DistanceAttackTypeNormalAni distanceAttackEnemyAniScript01;
@@ -81,7 +82,7 @@ public class CheckPatternForEnemy : Conditional
 
 
     public override TaskStatus OnUpdate()
-    {
+    {     
         switch (thisGameObjName.Value)
         {
             case "CloseAttackEnemy01":
@@ -94,9 +95,9 @@ public class CheckPatternForEnemy : Conditional
 
             case "DistanceAttackEnemy01":
                 //  따라가기  
-                if (Vector3.Distance(transform.position, target.Value.position) > isFarOrCloseDistance + 6) numOfPattern.Value = 1;
+                if (Vector3.Distance(transform.position, target.Value.position) > isFarOrCloseDistance + 3) numOfPattern.Value = 1;
                 //   공격
-                if (Vector3.Distance(transform.position, target.Value.position) <= isFarOrCloseDistance + 6) numOfPattern.Value = 2;
+                if (Vector3.Distance(transform.position, target.Value.position) <= isFarOrCloseDistance + 3) numOfPattern.Value = 2;
 
                 distanceAttackEnemyAniScript01.enemyPattern = DistanceAttackEnemyType01AtkPattern.patternIdle;
                 break;
@@ -142,13 +143,10 @@ public class CheckPatternForEnemy : Conditional
                 }
                 break;
         }
-      
 
+        if (attackStart.Value == true) return TaskStatus.Success;
 
-
-//        Debug.Log(numOfPattern);
-  //      Debug.Log(bossAniScript01.bossPatternStorageToCheckLastOneState);
-        return TaskStatus.Success;
+        return TaskStatus.Failure;
     }
 
 

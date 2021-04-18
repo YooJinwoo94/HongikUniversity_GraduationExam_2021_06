@@ -30,11 +30,11 @@ public class DistacneAttackEnemyType01Pattern01 : Action
 
     public override TaskStatus OnUpdate()
     {
-        if (hpPostionScript.deadOrLive == 1) return TaskStatus.Failure;
-        if (colliderConScript.IsAttackedState == DistacneAttackTypeNormalColliderCon.DistacneAttackEnemy01IsAttacked.attacked) return TaskStatus.Failure;
-        if (CheckPatternForEnemy.numOfPattern.Value != 1) return TaskStatus.Success;
+        if (hpPostionScript.deadOrLive == 1 ||
+           colliderConScript.IsAttackedState == DistacneAttackTypeNormalColliderCon.DistacneAttackEnemy01IsAttacked.attacked ||
+           CheckPatternForEnemy.numOfPattern.Value != 1) return TaskStatus.Failure;
 
-        rotateBoss();
+        rotate();
 
         transform.position = Vector3.Lerp(transform.position, target.Value.position, ifEnemyGoCloserToPlayerControllTheSpeed);
         if ((Vector3.Distance(transform.position, target.Value.position) <= distanceCheckForStop + 4)) return TaskStatus.Success;
@@ -44,7 +44,7 @@ public class DistacneAttackEnemyType01Pattern01 : Action
 
 
 
-    void rotateBoss()
+    void rotate()
     {
         Vector3 vec = target.Value.position - transform.position;
         vec.Normalize();

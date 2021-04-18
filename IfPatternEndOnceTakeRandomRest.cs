@@ -6,6 +6,7 @@ using BehaviorDesigner.Runtime;
 
 public class IfPatternEndOnceTakeRandomRest : Conditional
 {
+    bool waitForSecondAttack = false;
     private float startTime;
     private float randomTime;
     public float maxRandomTime;
@@ -19,9 +20,9 @@ public class IfPatternEndOnceTakeRandomRest : Conditional
     public SharedString thisGameObjName;
     public SharedInt numOfPattern;
     public SharedTransform target;
+    public SharedBool attackStart;
 
-
-
+    Vector3 velo = Vector3.zero;
 
 
 
@@ -31,6 +32,8 @@ public class IfPatternEndOnceTakeRandomRest : Conditional
 
     public override void OnStart()
     {
+        velo = Vector3.zero;
+
         startTime = Time.time;
         randomTime = Random.Range(minRandomTime, maxRandomTime);
 
@@ -58,26 +61,43 @@ public class IfPatternEndOnceTakeRandomRest : Conditional
     // 2번쨰 부터는 딜래이를 가지고 시작한다.
     public override TaskStatus OnUpdate()
     {
+        if (attackStart.Value == false) return TaskStatus.Failure;
+
         switch (thisGameObjName.Value)
         {
             case "CloseAttackEnemy01":
-                if (closeAttackEnemyaniScript.enemyPattern == CloseAttackEnemyType01AtkPattern.patternZero) return TaskStatus.Success;
+                if (waitForSecondAttack== false)
+                {
+                    waitForSecondAttack = true;
+                    return TaskStatus.Success;
+                }
                 if (startTime + randomTime < Time.time) return TaskStatus.Success;
+                if (Vector3.Distance(transform.position, target.Value.position) >= 4f) transform.position = Vector3.SmoothDamp(transform.position, target.Value.position, ref velo, 2f);
                 break;
 
             case "DistanceAttackEnemy01":
-                if (distanceAttackEnemyaniScript.enemyPattern == DistanceAttackEnemyType01AtkPattern.patternZero) return TaskStatus.Success;
+                if (waitForSecondAttack == false)
+                {
+                    waitForSecondAttack = true;
+                    return TaskStatus.Success;
+                }
                 if (startTime + randomTime < Time.time) return TaskStatus.Success;
+                if (Vector3.Distance(transform.position, target.Value.position) >= 10f) transform.position = Vector3.SmoothDamp(transform.position, target.Value.position, ref velo, 10f);
                 break;
 
             case "Boss_01(Clone)":
-                if (bossAniScript.bossPatternStorageToCheckLastOneState == BossPatternStorageToCheckLastOne.patternZero) return TaskStatus.Success;
+                if (waitForSecondAttack == false)
+                {
+                    waitForSecondAttack = true;
+                    return TaskStatus.Success;
+                }
                 if (startTime + randomTime < Time.time) return TaskStatus.Success;
                 break;
         }
 
         rotateBoss();
 
+        
         return TaskStatus.Running;
     }
 

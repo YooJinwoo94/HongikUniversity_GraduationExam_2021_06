@@ -27,14 +27,14 @@ public class DistacneAttackEnemyType01Pattern02 : Action
 
     public override TaskStatus OnUpdate()
     {
-        if (hpPostionScript.deadOrLive == 1) return TaskStatus.Failure;
-        if (colliderConScript.IsAttackedState == DistacneAttackTypeNormalColliderCon.DistacneAttackEnemy01IsAttacked.attacked) return TaskStatus.Failure;
-        if (CheckPatternForEnemy.numOfPattern.Value != 2) return TaskStatus.Failure;
+        if (hpPostionScript.deadOrLive == 1 ||
+            colliderConScript.IsAttackedState == DistacneAttackTypeNormalColliderCon.DistacneAttackEnemy01IsAttacked.attacked ||
+            CheckPatternForEnemy.numOfPattern.Value != 2) return TaskStatus.Failure;
 
-        rotateBoss();
+        rotate();
         if (ani.enemyPattern == DistanceAttackEnemyType01AtkPattern.patternIdle) patternStart();
 
-        return TaskStatus.Success;
+        return TaskStatus.Failure;
     }
 
 
@@ -42,7 +42,7 @@ public class DistacneAttackEnemyType01Pattern02 : Action
 
 
 
-    void rotateBoss()
+    void rotate()
     {
         Vector3 vec = target.Value.position - transform.position;
         vec.Normalize();
@@ -52,7 +52,7 @@ public class DistacneAttackEnemyType01Pattern02 : Action
     void patternStart()
     {
         ani.enemyPattern = DistanceAttackEnemyType01AtkPattern.patternFireBallAttack;
-        rotateBoss();
+        rotate();
         ani.fireBallAttack();
 
         //Instantiate(fireBall, firePos.position, firePos.rotation);   

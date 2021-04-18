@@ -6,6 +6,7 @@ using BehaviorDesigner.Runtime;
 
 public class CloseAttackEnemyAtkPattern01 : Action
 {
+    public SharedBool attackStart;
     public SharedInt numOfPattern;
     public SharedTransform target;
     public EnemyHpPostionScript hpPostionScript;
@@ -19,7 +20,7 @@ public class CloseAttackEnemyAtkPattern01 : Action
     const float enemyAttackSpeedPatternClose = 0.005f;
 
 
-    float endTime =3f;
+    float endTime =1f;
     float startTime;
 
 
@@ -39,13 +40,13 @@ public class CloseAttackEnemyAtkPattern01 : Action
 
     public override TaskStatus OnUpdate()
     {
-        //if (aniScript.enemyPattern == CloseAttackEnemyType01AtkPattern.patternZero) return TaskStatus.Failure;
+        if (attackStart.Value == false ||
+            hpPostionScript.deadOrLive == 1 ||
+            numOfPattern.Value != 1 ||
+            colliderConScript.IsAttackedState == CloseAttackTypeNormalColliderCon.CloseAttackEnemy01IsAttacked.attacked
+            ) return TaskStatus.Failure;
 
-
-        if (hpPostionScript.deadOrLive == 1) return TaskStatus.Failure;
-        if (numOfPattern.Value != 1) return TaskStatus.Success;
-
-        if (colliderConScript.IsAttackedState == CloseAttackTypeNormalColliderCon.CloseAttackEnemy01IsAttacked.attacked) return TaskStatus.Failure;
+    
         if (aniScript.enemyPattern == CloseAttackEnemyType01AtkPattern.patternIdle) patternStart();
         switch (aniScript.enemyPattern)
         {
@@ -54,10 +55,9 @@ public class CloseAttackEnemyAtkPattern01 : Action
                 break;
         }
 
-
         if (startTime + endTime < Time.time) return TaskStatus.Failure;
+        if (hpPostionScript.deadOrLive != 1) rotate();
 
-        rotate();
         return TaskStatus.Running;
     }
 
