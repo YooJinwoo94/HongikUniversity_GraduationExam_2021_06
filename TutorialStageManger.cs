@@ -71,8 +71,7 @@ public class TutorialStageManger : MonoBehaviour
     //키보드 애니 작동
     [SerializeField]
     Animator[] playerKeyButtonAni;
-    [SerializeField]
-    Animation[] playerKeyButtonAnimation;
+
     [SerializeField]
     GameObject[] playerKeyButtonObj;
 
@@ -353,7 +352,7 @@ public class TutorialStageManger : MonoBehaviour
                         playerKeyButtonObj[i].SetActive(false);
                         playerKeyButtonAni[i].enabled = false;
                     }
-
+                    //playerKeyButtonAni[4].enabled = true;
                     playerKeyButtonObj[6].SetActive(true);
                     playerKeyButtonAni[6].enabled = true;
 
