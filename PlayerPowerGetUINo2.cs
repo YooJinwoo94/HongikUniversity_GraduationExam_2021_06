@@ -24,7 +24,8 @@ public class PlayerPowerGetUINo2 : MonoBehaviour
     [SerializeField]
    public Text[] playerPowerDetails;
 
-    
+    [SerializeField]
+    public GameObject bgUiNo2Obj;
 
 
 

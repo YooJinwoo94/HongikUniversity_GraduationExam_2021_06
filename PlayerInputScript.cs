@@ -50,6 +50,8 @@ public class PlayerInputScript : MonoBehaviour
     [SerializeField]
     TypingTextCon typingTextConScript;
     [SerializeField]
+    DialogueManager dialogueManagerScript;
+    [SerializeField]
     TutorialStageManger tutorialStageMangerScript;
     [SerializeField]
     PlayerGetWeaponUINNo5 playerGetWeaponUINo5Script;
@@ -154,15 +156,8 @@ public class PlayerInputScript : MonoBehaviour
         inputProcessE();
 
         if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn
-       || playerUIState == PlayerUI.getPowerUiOn || tutorialStageMangerScript.tutorialState == TutorialState.tutorialReady
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial01
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_1
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_2 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_3
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_4 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_5
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_6
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03   || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03_1 
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial05_0
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial06_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial07_0)
+       || playerUIState == PlayerUI.getPowerUiOn || tutorialStageMangerScript.tutorialState != TutorialState.wait ||
+       dialogueManagerScript.dialogueState == DialogueState.DialogueStart)
         {
             animationScript.playerAniWait();
             return;
@@ -270,7 +265,6 @@ public class PlayerInputScript : MonoBehaviour
 
     void inputProcessDodge()
     {
-        //if (state != PlayerState.dodge || state == PlayerState.attack) return;
         transform.position += new Vector3(hAxis, 0, vAxis) * 9 * Time.deltaTime;  
     }
 
@@ -313,15 +307,8 @@ public class PlayerInputScript : MonoBehaviour
     void lookAtCam()
     {
         if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn
-           || playerUIState == PlayerUI.getPowerUiOn || tutorialStageMangerScript.tutorialState == TutorialState.tutorialReady
-           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial01
-           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_1
-           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_2 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_3
-           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_4 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_5
-           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_6
-           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03_1
-           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial05_0
-           || tutorialStageMangerScript.tutorialState == TutorialState.tutorial06_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial07_0) return;
+           || playerUIState == PlayerUI.getPowerUiOn || tutorialStageMangerScript.tutorialState != TutorialState.wait ||
+       dialogueManagerScript.dialogueState == DialogueState.DialogueStart) return;
 
         Ray rayCam = cam.ScreenPointToRay(Input.mousePosition);
         Plane groundPlae = new Plane(Vector3.up, Vector3.zero);
@@ -344,20 +331,5 @@ public class PlayerInputScript : MonoBehaviour
         else if (transform.rotation.y <= 0f && transform.rotation.y >= -0.8f) mousePlace = MousePlace.left;
     }
     #endregion
-
-
-
-    /*
-    //  공격 받은 경우 
-    //======================================================
-    public void Damage(int amount)
-    {
-        BleedBehavior.BloodAmount += Mathf.Clamp01(damageBloodAmount * amount / HP);
-
-        HP -= amount;
-
-        if (HP <= 0) HP = maxHP;
-    }
-    */
 }
 

@@ -84,7 +84,7 @@ public class BossStageSceneManager : MonoBehaviour
     IEnumerator stageBoss01Opening()
     {
         yield return new WaitForSeconds(0.5f);
-        bossDoorAni.SetBool("isDoorClose", true);
+        bossDoorAni.SetBool("doorClose", true);
         yield return new WaitForSeconds(2.5f);
         Instantiate(bossGameObj, bossSwapnArea);
         yield return new WaitForSeconds(3f);

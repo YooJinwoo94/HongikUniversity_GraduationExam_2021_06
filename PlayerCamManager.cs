@@ -58,7 +58,7 @@ public class PlayerCamManager : MonoBehaviour
     void Update()
     {             
         if (CamState != CamState.playerFollow) return;
-       transform.position = target.position + offSet;       
+       transform.position = target.position + offSet;
     }
 
 
@@ -87,40 +87,7 @@ public class PlayerCamManager : MonoBehaviour
             yield return null;
         }
 
-        transform.rotation = Quaternion.Euler(startRotation);
+        transform.rotation = Quaternion.Euler(new Vector3(37, 0, 0));
         StopCoroutine(ShakeCam());
     }
-
-
-
-
-
-    /*
-    public void shake()
-    {
-        CamState = CamState.shake;
-        InvokeRepeating("shakeCam", 0f, 0.003f);
-        Invoke("stopShake", shakeDuration);
-    }
-
-    void shakeCam()
-    {
-        float camPosX = Random.value * shakeAmount * 2 - shakeAmount;
-        float camPosY = Random.value * shakeAmount * 2 - shakeAmount;
-
-        Vector3 camPos = cam.transform.position;
-
-        camPos.x += camPosX;
-        camPos.y += camPosY;
-
-        cam.transform.position = camPos;
-    }
-    void stopShake()
-    {
-        cam.transform.position = camPos;
-        CamState = CamState.playerFollow;
-        CancelInvoke("shakeCam");        
-
-    }
-    */
 }

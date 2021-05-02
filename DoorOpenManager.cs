@@ -12,10 +12,7 @@ public class DoorOpenManager : MonoBehaviour
     GameObject particleDoorEffect;
 
 
-    private void Start()
-    {
-        particleDoorEffect.SetActive(false);
-    }
+
 
     private void OnTriggerEnter(Collider other)
     {

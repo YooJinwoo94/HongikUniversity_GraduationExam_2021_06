@@ -25,7 +25,7 @@ public class PlayerUISeletManger : MonoBehaviour
     // i를 누르면 나오는 인벤토리 ui용
     [SerializeField]
     GameObject[] playerUiSetWhenInputI;
-    int invenPageCount;
+    int numOfInvenPage;
 
 
     // 무기를 얻었을떄 뜨는 ui용
@@ -57,9 +57,14 @@ public class PlayerUISeletManger : MonoBehaviour
 
     private void Start()
     {
-
-        invenPageCount = 0;
+        numOfInvenPage = 0;
     }
+
+
+
+
+
+
 
 
 
@@ -88,9 +93,6 @@ public class PlayerUISeletManger : MonoBehaviour
 
 
 
-
-
-
     //I를 눌렀을때 이미지 컨트롤
     public void playerInputI(int buttonCleck = 0)
     {
@@ -104,24 +106,24 @@ public class PlayerUISeletManger : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.A) || buttonCleck == -1)
         {
-            invenPageCount -= 1;
+            numOfInvenPage -= 1;
 
-            if (invenPageCount == -2) invenPageCount = 1;
+            if (numOfInvenPage == -2) numOfInvenPage = 1;
             invenPageOnOff();
             return;
         }
         if (Input.GetKeyDown(KeyCode.D) || buttonCleck == 1)
         {
-            invenPageCount += 1;
+            numOfInvenPage += 1;
 
-            if (invenPageCount == 2) invenPageCount = -1;
+            if (numOfInvenPage == 2) numOfInvenPage = -1;
 
             invenPageOnOff();
             return;
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            invenPageCount = 0;
+            numOfInvenPage = 0;
 
             timeManagerScript.playerUITimeOff();
             playerInputScript.playerUIState = PlayerUI.invenOff;
@@ -135,7 +137,7 @@ public class PlayerUISeletManger : MonoBehaviour
     }
     void invenPageOnOff()
     {
-        switch (invenPageCount)
+        switch (numOfInvenPage)
         {
             case -1:
                 playerUiSetWhenInputI[0].SetActive(false);
@@ -156,8 +158,6 @@ public class PlayerUISeletManger : MonoBehaviour
                 break;
         }
     }
-
-
 
 
 
@@ -199,7 +199,9 @@ public class PlayerUISeletManger : MonoBehaviour
         playerGetWeaponUINo5Script.settingNameAndSprite();
         playerGetWeaponUINo5Script.whatIsThisWeapon();
 
+
         if (tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0) return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             timeManagerScript.playerUITimeOff();
@@ -277,9 +279,6 @@ public class PlayerUISeletManger : MonoBehaviour
 
         playerAniScript.playerAniWait();
     }
-
-
-
 
 
 

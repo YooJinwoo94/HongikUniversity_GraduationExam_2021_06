@@ -5,13 +5,14 @@ using UnityEngine;
 
 
 
-
+/*
 enum BossState
 {
     idle,
     attacked,
 }
-
+*/
+/*
 // 기존에 했었던 패턴 기억
 enum BossPatternStorageToCheckLastOne
 {
@@ -27,7 +28,7 @@ enum BossPatternStorageToCheckLastOne
     pattern08 = 8,
     pattern09 = 9,
 }
-
+*/
 
 
 
@@ -54,7 +55,7 @@ public class BossMoveScript : MonoBehaviour
     private BossAniScript bossAnimationScript;
 
     BossState BossState;
-    BossPatternStorageToCheckLastOne bossPatternStorageToCheckLastOneState ;
+   // BossPatternStorageToCheckLastOne bossPatternStorageToCheckLastOneState ;
     int bossPatternNow;
 
     bool ischaseStart;
@@ -93,8 +94,8 @@ public class BossMoveScript : MonoBehaviour
         bossAnimationScript = GetComponent<BossAniScript>();
         hpPostionScript = GetComponent<Boss01HpPostionScript>();
 
-        BossState = BossState.idle;
-        bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.bossWait;
+        //BossState = BossState.idle;
+        //bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.bossWait;
 
         for (int i = 1; i < 10; i++)
         {
@@ -155,7 +156,7 @@ public class BossMoveScript : MonoBehaviour
         bossWeaponSword.enabled = false;
         bossWeaponShield.enabled = false;
 
-        StartCoroutine("BossController");
+       // StartCoroutine("BossController");
     }
 
 
@@ -166,6 +167,9 @@ public class BossMoveScript : MonoBehaviour
         rotateBoss();
 
         if (bossDistanceCheck == true || bossPatternNow == 0 || ischaseStart == false) return;
+
+
+        /*
         switch (bossPatternStorageToCheckLastOneState)
         {
             case (BossPatternStorageToCheckLastOne.pattern02):
@@ -207,6 +211,7 @@ public class BossMoveScript : MonoBehaviour
                 transform.position = Vector3.Lerp(transform.position, playerTransform.position, bossAttackSpeedPattern[9]);
                 break;
         }
+        */
     }
     // Restart bossPattern
     public void bossConRestartBossPattern()
@@ -227,7 +232,7 @@ public class BossMoveScript : MonoBehaviour
             yield return new WaitForSeconds(6f);
         } 
         yield return new WaitForSeconds(2f);
-         checkDistanceFromPlayer();
+         //checkDistanceFromPlayer();
         
         StopCoroutine("BossController");
     }
@@ -240,7 +245,7 @@ public class BossMoveScript : MonoBehaviour
 
 
 
-
+    /*
     //철자
     //거리를 계산해보겠어유
     void checkDistanceFromPlayer()
@@ -358,7 +363,7 @@ public class BossMoveScript : MonoBehaviour
                 break;
         }           
     }
-
+    */
 
 
 
@@ -479,7 +484,7 @@ public class BossMoveScript : MonoBehaviour
 
         bossPatternNow = 2;
         colliderOn();
-        bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern02;
+        //bossPatternStorageToCheckLastOneState = BossPatternStorageToCheckLastOne.pattern02;
         bossAnimationScript.bossPatternChoice(2);
 
         Invoke("stopAttackTracking", 1f);
@@ -502,17 +507,26 @@ public class BossMoveScript : MonoBehaviour
 
 
 
-
+    /*
     // 일정거리이내까지만 따라온다음 멈춰야 공격시 플레이어가 피할 수 있다.
     void resetNowStateToStopFollowing(float distance)
     {
         if (Vector3.Distance(bossTransform.position, playerTransform.position) < distance) bossDistanceCheck = true;
         else bossDistanceCheck = false;
     }
+    */
     void stopAttackTracking()
     {
         ischaseStart = false;
     }
+
+
+
+
+
+
+
+    /*
     void stateChange()
     {
         BossState = BossState.idle;
@@ -625,4 +639,8 @@ public class BossMoveScript : MonoBehaviour
        
     
     }
+
+
+
+    */
 }

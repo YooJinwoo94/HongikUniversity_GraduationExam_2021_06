@@ -2,24 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class StageClearCheckManager : MonoBehaviour
 {
     private static StageClearCheckManager instance = null;
 
-    bool[,] boolForAreaClear = new bool[10, 10];
-    int [,] monsterCountForAreaClear = new int [10, 10];
-    int[,] killedMosterCount = new int[10, 10];
+    int[,,] monsterCountForAreaClear = new int[10,10, 10];
+    int[,,] killedMosterCount = new int[10, 10, 10];
+    bool[,,] boolForAreaClear = new bool[10, 10, 10];
+
 
     int areaCount;
+
 
     [SerializeField]
     Animator[] doorOpenAni;
 
-   // GameObject camObj;
-    // Start is called before the first frame update
+
+
+
+
+
+
+
+
+
+
     void Start()
     {
+        checkStageClear();
         areaCount = 0;
+
 
         instance = this;
         if (null == instance)
@@ -27,6 +41,7 @@ public class StageClearCheckManager : MonoBehaviour
             instance = this;
         }
     }
+
 
     public static StageClearCheckManager Instance
     {
@@ -42,9 +57,9 @@ public class StageClearCheckManager : MonoBehaviour
 
 
 
-    
+
     IEnumerator CamSetting()
-    {     
+    {
         yield return new WaitForSeconds(2f);
         //camSet[0].SetActive(false);
         //DestroyImmediate(camSet[0], true);
@@ -52,26 +67,25 @@ public class StageClearCheckManager : MonoBehaviour
         Destroy(GameObject.FindWithTag("StageClearCam"));
         StopCoroutine("CamSetting");
     }
-    
+
 
 
 
 
     // 죽으면 이 함수를 호출 함
     // 함수 호출시 카운트를 함 
-    public  void numMosterCount(int stage)
+    public void numMosterCount(int dungeonNum, int stage)
     {
-        killedMosterCount[stage, areaCount]++;
-        checkStageClear();
+        killedMosterCount[dungeonNum,stage, areaCount]++;
 
         //추후에 문이 추가 될 수 있으니 중복으로 놔둠
-        if ((killedMosterCount[stage, areaCount] == monsterCountForAreaClear[stage, areaCount]) 
-            && (boolForAreaClear[stage, areaCount] == false ))
+        if ((killedMosterCount[dungeonNum,stage, areaCount] == monsterCountForAreaClear[dungeonNum,stage, areaCount])
+            && (boolForAreaClear[dungeonNum,stage, areaCount] == false))
         {
-            boolForAreaClear[stage, areaCount] = true;
+            boolForAreaClear[dungeonNum,stage, areaCount] = true;
 
             //해당 스테이지의 1구역을 처리 하면 다음 구역에 있는 문 열기
-            switch(areaCount)
+            switch (areaCount)
             {
                 case 0:
                     doorOpenAni[0] = GameObject.Find("areaClearDoor_00").GetComponent<Animator>();
@@ -91,8 +105,6 @@ public class StageClearCheckManager : MonoBehaviour
                     break;
             }
             areaCount++;
-            //Instantiate(camSet[0], camPos[stage -1]);
-            // StartCoroutine("CamSetting");
             return;
         }
     }
@@ -102,21 +114,43 @@ public class StageClearCheckManager : MonoBehaviour
 
     //한 스테이지에 있는 한 구역당 처리를 하고 싶다.
 
-    void checkStageClear()
+    void checkStageClear(int num = 1)
     {
-        for (int i = 1; i <3; i ++)
+        switch (num)
         {
-            monsterCountForAreaClear[i, 0] = 1;
-            monsterCountForAreaClear[i, 1] = 1;
-        }
+            //던전 1
+            case 1:
+                for (int i = 1; i < 3; i++)
+                {
+                      monsterCountForAreaClear[StageManager.Instance.dungeonNum,i, 0] = 1;
+                      monsterCountForAreaClear[StageManager.Instance.dungeonNum,i, 1] = 1;
+                }
 
-        for (int i = 3; i < 6; i++)
-        {
-            monsterCountForAreaClear[i, 0] = 2;
-            monsterCountForAreaClear[i, 1] = 1;
-        }
+                for (int i = 3; i < 6; i++)
+                {
+                       monsterCountForAreaClear[StageManager.Instance.dungeonNum,i, 0] = 2;
+                       monsterCountForAreaClear[StageManager.Instance.dungeonNum,i, 1] = 1;
+                }
+                monsterCountForAreaClear[StageManager.Instance.dungeonNum,6, 0] = 1;
+                break;
 
-        monsterCountForAreaClear[6, 0] = 1;
+            //던전 2
+            case 2:
+                for (int i = 1; i < 3; i++)
+                {
+                       monsterCountForAreaClear[StageManager.Instance.dungeonNum,i, 0] = 1;
+                      monsterCountForAreaClear[StageManager.Instance.dungeonNum,i, 1] = 1;
+
+                }
+
+                for (int i = 3; i < 6; i++)
+                {
+                      monsterCountForAreaClear[StageManager.Instance.dungeonNum,i, 0] = 2;
+                      monsterCountForAreaClear[StageManager.Instance.dungeonNum,i, 1] = 1;
+                }
+                monsterCountForAreaClear[StageManager.Instance.dungeonNum,6, 0] = 1;
+                break;
+        }
     }
 
 

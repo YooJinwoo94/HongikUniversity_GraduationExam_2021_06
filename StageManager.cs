@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
 enum StageState
 {
     weaponStage,
@@ -31,16 +32,32 @@ public class StageManager : MonoBehaviour
     [SerializeField]
     Transform playerPos;
     [SerializeField]
+    Image[] uiButtonsImg;
+    [SerializeField]
     Button[] uiButtons;
     [SerializeField]
-    GameObject StageMoveMapUI;
+    Image[] lineImg;
+    [SerializeField]
+    GameObject[] xImg;
+    [SerializeField]
+    GameObject []stageMoveMapUI;
+    [SerializeField]
+    GameObject blurUI;
     private static StageManager instance = null;
     int[] count ;
-
+    [HideInInspector]
+    public int dungeonNum = 1;
 
     void Start()
     {
-        StageMoveMapUI.SetActive(false);
+        switch(dungeonNum)
+        {
+            case 1:
+                for (int i = 0; i < 3; i++) uiButtons[i].interactable = true;
+                for (int i = 3; i < 6; i++) uiButtons[i].interactable = false;
+                break;
+        }
+        stageMoveMapUI[dungeonNum].SetActive(false);
         instance = this;
         if (null == instance)
         {
@@ -56,76 +73,158 @@ public class StageManager : MonoBehaviour
         }
     }
 
-
-    void moveTo(int StageState)
-    {
-        playerPos.position = transformPos[StageState-1].position;
-    }
-
     //버튼 눌렀으면 적용
     //현재 위치값을 가져온다 스위치로비교를 하여 현재 내 상황을 비교한다.
     //버튼을 구별해야 한다.
     // 스택으로 현재 위치값을 구하고 넣어준다.
     public void makeStageCountList(int buttonPosCheck)
     {
-        stageClearCheckManagerScript.ifPlayerGoNextStageReset();
-        tutorialStageManagerScript.enabled = false;
-
-        moveTo(buttonPosCheck);
-        nowStageCountList.Add(buttonPosCheck);
-        for (int i = 0; i < nowStageCountList.Count; i++)
+        switch(dungeonNum)
         {
-            switch (nowStageCountList[i])
-            {
-                case 1:
-                    uiButtons[0].enabled = false;
-                    uiButtons[1].interactable = false;
-                    uiButtons[2].interactable = true;
-                    uiButtons[3].interactable = true;                  
-                    SceneManager.LoadScene("Stage_01");
-                    break;
-                case 2:
-                    uiButtons[0].interactable = false;
-                    uiButtons[1].enabled = false;
-                    uiButtons[3].interactable = true;
-                    uiButtons[4].interactable = true;
-                    SceneManager.LoadScene("Stage_02");
-                    break;
-                case 3:
-                    uiButtons[2].enabled = false;
-                    uiButtons[3].interactable = false;
-                    uiButtons[5].interactable = true;            
-                    SceneManager.LoadScene("Stage_03");
-                    break;
-                case 4:
-                    uiButtons[2].interactable = false;
-                    uiButtons[3].enabled = false;
-                    uiButtons[4].interactable = false;
-                    uiButtons[5].interactable = true;
-                    SceneManager.LoadScene("Stage_04");
-                    break;
-                case 5:
-                    uiButtons[3].interactable = false;
-                    uiButtons[4].enabled = false;
-                    uiButtons[5].interactable = true;
-                    SceneManager.LoadScene("Stage_05");
-                    break;
-                case 6:
-                    SceneManager.LoadScene("Stage_06");
-                    break;
-            }
+            case 1:
+                stageClearCheckManagerScript.ifPlayerGoNextStageReset();
+                tutorialStageManagerScript.enabled = false;
+
+                playerPos.position = transformPos[0].position;
+                nowStageCountList.Add(buttonPosCheck);
+                for (int i = 0; i < nowStageCountList.Count; i++)
+                {
+                    switch (nowStageCountList[i])
+                    {
+                        case 1:
+                            for (int a = 0; a < 6; a++)
+                            {
+                                if (a == 0) lineImg[a].color = new Color(229 / 255f, 126 / 255f, 12 / 255f, 255 / 255f);
+                                else lineImg[a].color = new Color(255 / 255f, 255 / 255f, 255 / 255f, 255 / 255f);
+                            }
+                            uiButtons[0].enabled = false;
+                            uiButtonsImg[0].color = new Color(229 / 255f, 126 / 255f, 12 / 255f, 255 / 255f);
+
+                            uiButtons[1].interactable = false;
+                            uiButtons[2].interactable = false;
+                            uiButtons[3].interactable = true;
+
+                            xImg[1].SetActive(true);
+                            xImg[2].SetActive(true);
+                            xImg[4].SetActive(true);
+                            SceneManager.LoadScene("Dungeon_Num01_Stage_01");
+                            break;
+                        case 2:
+                            for (int a = 0; a < 6; a++)
+                            {
+                                if (a == 1 || a == 2) lineImg[a].color = new Color(229 / 255f, 126 / 255f, 12 / 255f, 255 / 255f);
+                                else lineImg[a].color = new Color(255 / 255f, 255 / 255f, 255 / 255f, 255 / 255f);
+                            }
+                            uiButtons[1].enabled = false;
+                            uiButtonsImg[1].color = new Color(229 / 255f, 126 / 255f, 12 / 255f, 255 / 255f);
+
+                            uiButtons[0].interactable = false;
+                            uiButtons[2].interactable = false;
+                            uiButtons[3].interactable = true;
+                            uiButtons[4].interactable = true;
+
+                            xImg[0].SetActive(true);
+                            xImg[2].SetActive(true);
+                            SceneManager.LoadScene("Dungeon_Num01_Stage_02");
+                            break;
+                        case 3:
+                            for (int a = 0; a < 6; a++)
+                            {
+                                if (a == 3) lineImg[a].color = new Color(229 / 255f, 126 / 255f, 12 / 255f, 255 / 255f);
+                                else lineImg[a].color = new Color(255 / 255f, 255 / 255f, 255 / 255f, 255 / 255f);
+                            }
+                            uiButtons[2].enabled = false;
+                            uiButtonsImg[2].color = new Color(229 / 255f, 126 / 255f, 12 / 255f, 255 / 255f);
+
+                            uiButtons[0].interactable = false;
+                            uiButtons[1].interactable = false;
+                            uiButtons[3].interactable = false;
+                            uiButtons[4].interactable = true;
+
+                            xImg[0].SetActive(true);
+                            xImg[1].SetActive(true);
+                            xImg[3].SetActive(true);
+                            SceneManager.LoadScene("Dungeon_Num01_Stage_03");
+                            break;
+                        case 4:
+                            for (int a = 4; a < 6; a++)
+                            {
+                                if (a == 4) lineImg[a].color = new Color(229 / 255f, 126 / 255f, 12 / 255f, 255 / 255f);
+                                else lineImg[a].color = new Color(255 / 255f, 255 / 255f, 255 / 255f, 255 / 255f);
+                            }
+
+                            uiButtons[3].enabled = false;
+                            uiButtonsImg[3].color = new Color(229 / 255f, 126 / 255f, 12 / 255f, 255 / 255f);
+
+                            uiButtons[2].interactable = false;
+                            uiButtons[4].interactable = false;
+                            uiButtons[5].interactable = true;
+
+                            xImg[2].SetActive(true);
+                            xImg[4].SetActive(true);
+                            SceneManager.LoadScene("Dungeon_Num01_Stage_04");
+                            break;
+                        case 5:
+                            for (int a = 5; a < 6; a++)
+                            {
+                                if (a == 5) lineImg[a].color = new Color(229 / 255f, 126 / 255f, 12 / 255f, 255 / 255f);
+                                else lineImg[a].color = new Color(255 / 255f, 255 / 255f, 255 / 255f, 255 / 255f);
+                            }
+                            uiButtons[4].enabled = false;
+                            uiButtonsImg[4].color = new Color(229 / 255f, 126 / 255f, 12 / 255f, 255 / 255f);
+
+                            uiButtons[3].interactable = false;
+                            uiButtons[5].interactable = true;
+
+                            xImg[3].SetActive(true);
+                            SceneManager.LoadScene("Dungeon_Num01_Stage_05");
+                            break;
+                        case 6:
+                            SceneManager.LoadScene("Dungeon_Num01_Stage_06");
+                            break;
+                    }
+                }
+                stageMoveMapUI[dungeonNum].SetActive(false);
+                break;
+            case 2:
+                break;
         }
-        StageMoveMapUI.SetActive(false);
+        blurUI.SetActive(false);
         playerMoveScript.state = PlayerState.idle;
     }
 
     public void playerStageMapUI()
     {
-        StageMoveMapUI.SetActive(true);
+        stageMoveMapUI[dungeonNum].SetActive(true);
+        blurUI.SetActive(true);
     }
-
-    public int returnNowStageCount()
+    public int returnNowStageName()
     {
-        return nowStageCountList[nowStageCountList.Count-1];
+        int num = 0;
+        if (dungeonNum == 1)
+        {
+            switch (SceneManager.GetActiveScene().name)
+            {
+                case "Dungeon_Num01_Stage_01":
+                    num = 1;
+                    break;
+                case "Dungeon_Num01_Stage_02":
+                    num = 2;
+                    break;
+                case "Dungeon_Num01_Stage_03":
+                    num = 3;
+                    break;
+                case "Dungeon_Num01_Stage_04":
+                    num = 4;
+                    break;
+                case "Dungeon_Num01_Stage_05":
+                    num = 5;
+                    break;
+                case "Dungeon_Num01_Stage_06":
+                    num = 6;
+                    break;
+            }
+        }
+        return num;
     }
 }

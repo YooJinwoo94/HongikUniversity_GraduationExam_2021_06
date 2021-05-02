@@ -1,12 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerColliderCon : MonoBehaviour
 {
     [SerializeField]
     Animator camAni;
 
+
+    [SerializeField]
+    DialogueManager dialogueManagerScript;
+    [SerializeField]
+    CoinManager coinManagerScript;
     [SerializeField]
     PlayerCamManager playerCamManagerScript;
     [SerializeField]
@@ -164,13 +171,31 @@ public class PlayerColliderCon : MonoBehaviour
             StartCoroutine(PlayerAttackedCoroutine());
             return;
         }
-        if (other.gameObject.tag == "NextStageDoor")
+        if (other.gameObject.tag == "DoorOfDungeon" + 1.ToString())
         {
             inputScript.state = PlayerState.waitForMoveNextStage;
 
             aniConScript.playerDodgeAniReset();
             aniConScript.playerAniWait();
             StageManager.Instance.playerStageMapUI();
+            StageManager.Instance.dungeonNum = 1;
+            return;
+        }
+        if (other.gameObject.name == "GoToStartStage")
+        {
+            inputScript.state = PlayerState.idle;
+
+            aniConScript.playerDodgeAniReset();
+            aniConScript.playerAniWait();
+            SceneManager.LoadScene("Start_Stage");
+            return;
+        }
+        if (other.gameObject.name == "DialogueStart")
+        {
+            BoxCollider box = other.GetComponent<BoxCollider>();
+            box.enabled = false;
+            dialogueManagerScript.uiOn();
+            //typingUISet[1].SetActive(true);
             return;
         }
         if (other.gameObject.tag == "BossStageSceneManager")
@@ -193,6 +218,11 @@ public class PlayerColliderCon : MonoBehaviour
         {
             playerUISeletMangerScript.turnOnOffImageE();
             checkWhatItis = other.gameObject;
+            return;
+        }
+        if (other.gameObject.tag == "Gold")
+        {
+            coinManagerScript.cointCountToUi(100);
             return;
         }
     }

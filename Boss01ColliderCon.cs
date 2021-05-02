@@ -59,12 +59,12 @@ public class Boss01ColliderCon : MonoBehaviour
 
             if (hpPostionScript.deadOrLive == 1)
             {
-                aniScript.deadAniOn();
+                aniScript.aniSet("Dead");
                 Destroy(this.gameObject, 3f);
             }
             else
             {
-                aniScript.enemyHitted();
+                aniScript.aniSet("Hitted");
                 bossState = BossState.attacked;
                 Invoke("stateChange", 0.3f);
             }
@@ -77,12 +77,12 @@ public class Boss01ColliderCon : MonoBehaviour
 
             if (hpPostionScript.deadOrLive == 1)
             {
-                aniScript.deadAniOn();
+                aniScript.aniSet("Dead");
                 Destroy(this.gameObject, 3f);
             }
             else
             {
-                aniScript.enemyHitted();
+                aniScript.aniSet("Hitted");
                 bossState = BossState.attacked;
                 Invoke("stateChange", 0.3f);
             }
@@ -95,12 +95,12 @@ public class Boss01ColliderCon : MonoBehaviour
 
             if (hpPostionScript.deadOrLive == 1)
             {
-                aniScript.deadAniOn();
+                aniScript.aniSet("Dead");
                 Destroy(this.gameObject, 3f);
             }
             else
             {
-                aniScript.enemyHitted();
+                aniScript.aniSet("Hitted");
                 bossState = BossState.attacked;
                 Invoke("stateChange", 0.3f);
             }
@@ -118,13 +118,13 @@ public class Boss01ColliderCon : MonoBehaviour
 
             if (hpPostionScript.deadOrLive == 1)
             {
-                aniScript.deadAniOn();
+                aniScript.aniSet("Dead");
                 Destroy(this.gameObject, 3f);
             }
 
             else
             {
-                aniScript.enemyHitted();
+                aniScript.aniSet("Hitted");
                 bossState = BossState.attacked;
                 Invoke("stateChange", 0.3f);
             }
@@ -143,12 +143,12 @@ public class Boss01ColliderCon : MonoBehaviour
 
                 if (hpPostionScript.deadOrLive == 1)
                 {
-                    aniScript.deadAniOn();
+                    aniScript.aniSet("Dead");
                     Destroy(this.gameObject, 3f);
                 }
                 else
                 {
-                    aniScript.enemyHitted();
+                    aniScript.aniSet("Hitted");
                     bossState = BossState.attacked;
                     Invoke("stateChange", 0.3f);
                     Invoke("isTrap01CoolTimeOn", 2f);
