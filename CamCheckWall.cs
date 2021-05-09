@@ -126,14 +126,7 @@ public class CamCheckWall : MonoBehaviour
                 if (renderer.material.HasProperty("_Color"))
                 {
                     Color prevColor = renderer.material.GetColor("_Color");
-                    renderer.material.SetColor("_Color", new Color(prevColor.r, prevColor.g, prevColor.b, 0.5f));
-
-                   
-                 //   skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0.15f);
-                 //   skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0.15f);
-                    /*
-                   Debug.Log("dd");
-                   */
+                    renderer.material.SetColor("_Color", new Color(prevColor.r, prevColor.g, prevColor.b, 0.5f));         
                 }
 
             }
@@ -150,25 +143,10 @@ public class CamCheckWall : MonoBehaviour
                 renderer.material.shader = Shader.Find(nameShader);
                 Color prevColor = renderer.material.GetColor("_Color");
                 renderer.material.SetColor("_Color", new Color(prevColor.r, prevColor.g, prevColor.b, 1f));
-
-               
-              //  skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0f);
-              //  skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0f);
-                /*
-               Debug.Log("xx");
-               */
             }
         }
         // swap
-        listPrevObstacleObject = listNewObstacleObject;
-
-        
-        if (stayCheck == false)
-        {
-          //  skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0f);
-          //  skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0f);
-        }
-        
+        listPrevObstacleObject = listNewObstacleObject;             
     }
 
     private bool FindColliderByName(RaycastHit[] inListRayCastInfo, string inName)

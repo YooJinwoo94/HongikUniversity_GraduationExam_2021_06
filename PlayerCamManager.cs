@@ -54,16 +54,6 @@ public class PlayerCamManager : MonoBehaviour
 
 
 
-    // Update is called once per frame
-    void Update()
-    {             
-        if (CamState != CamState.playerFollow) return;
-       transform.position = target.position + offSet;
-    }
-
-
-
-
 
     public void shake()
     {

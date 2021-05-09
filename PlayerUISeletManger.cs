@@ -40,6 +40,9 @@ public class PlayerUISeletManger : MonoBehaviour
     [SerializeField]
     PlayerGetWeaponUINNo5 playerGetWeaponUINo5Script;
     [SerializeField]
+    PlayerShopUINo7 playerShopUINo7Script;
+
+    [SerializeField]
     PlayerPowerDataBase playerPowerDataBaseScript;
 
     [SerializeField]
@@ -199,7 +202,6 @@ public class PlayerUISeletManger : MonoBehaviour
         playerGetWeaponUINo5Script.settingNameAndSprite();
         playerGetWeaponUINo5Script.whatIsThisWeapon();
 
-
         if (tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -290,13 +292,13 @@ public class PlayerUISeletManger : MonoBehaviour
     public void whenPlayerTouchPower()
     {
         playerPowerDataBaseScript.changeTextToMakeSameWithInven();
-        timeManagerScript.playerUITimeOn();
+      
         playerUIBackGround.SetActive(true);
         playerPowerGetUiNo2Script.bg.SetActive(true);
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            timeManagerScript.playerUITimeOff();
+          
             playerInputScript.playerUIState = PlayerUI.getPowerUiOff;
             playerUIBackGround.SetActive(false);
             playerPowerGetUiNo2Script.bg.SetActive(false);
@@ -311,5 +313,29 @@ public class PlayerUISeletManger : MonoBehaviour
         playerInputScript.playerUIState = PlayerUI.getPowerUiOff;
         playerUIBackGround.SetActive(false);
         playerPowerGetUiNo2Script.bg.SetActive(false);
+    }
+
+
+
+
+    public void whenPlayerTouchShop()
+    {
+        playerPowerDataBaseScript.changeTextToMakeSameWithInven();
+        
+        playerUIBackGround.SetActive(true);
+        playerShopUINo7Script.bg.SetActive(true);
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GameObject cam = GameObject.Find("Dwarf_Set").transform.Find("CM vcam1").gameObject;
+            cam.SetActive(false);
+
+            playerInputScript.playerUIState = PlayerUI.getShopUiOff;
+            playerUIBackGround.SetActive(false);
+            playerShopUINo7Script.bg.SetActive(false);
+            return;
+        }
+
+        playerAniScript.playerAniWait();
     }
 }
