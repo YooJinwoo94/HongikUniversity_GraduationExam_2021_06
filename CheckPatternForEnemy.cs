@@ -9,7 +9,7 @@ public class CheckPatternForEnemy : Conditional
     public SharedInt numOfPattern;
     public SharedTransform target;
     public SharedString thisGameObjName;
-    public SharedBool attackStart;
+    public SharedBool waitForAttack;
 
     const float isFarOrCloseDistance = 9f;
 
@@ -144,9 +144,7 @@ public class CheckPatternForEnemy : Conditional
                 break;
         }
 
-        if (attackStart.Value == true) return TaskStatus.Success;
-
-        return TaskStatus.Failure;
+            return TaskStatus.Success;
     }
 
 

@@ -16,69 +16,58 @@ public class PlayerAniScript : MonoBehaviour
 
 
 
+    public void playerAniParring()
+    {
+        aniReset();
 
+        ani.SetTrigger("Trigger_PlayerParring");
+    }
 
     public void playerAniWait()
     {
-        ani.SetBool("Bool_Player_Waiting", true);
-        ani.SetBool("Bool_Player_Walking", false);
+        aniReset();
 
-        ani.SetBool("Bool_Player_Attack_01", false);
-        ani.SetBool("Bool_Player_Attack_02", false);
-        ani.SetBool("Bool_Player_Attack_03", false);
+        ani.SetBool("Bool_Player_Waiting", true);
     }
     public void playerAniWalk()
     {
-        ani.SetBool("Bool_Player_Waiting", false);
-        ani.SetBool("Bool_Player_Walking", true);
+        aniReset();
 
-        ani.SetBool("Bool_Player_Attack_01", false);
-        ani.SetBool("Bool_Player_Attack_02", false);
-        ani.SetBool("Bool_Player_Attack_03", false);
+        ani.SetBool("Bool_Player_Walking", true);
     }
 
     //  구른 경우 
     //======================================================
     public void playerAniRollFront()
     {
-        ani.SetBool("Bool_Player_Roll_Front", true);
+        aniReset();
 
-        ani.SetBool("Bool_Player_Roll_Left", false);
-        ani.SetBool("Bool_Player_Roll_Right", false);
-        ani.SetBool("Bool_Player_Roll_Back", false);
+        ani.SetBool("Bool_Player_Roll_Front", true);
     }
     public void playerAniRollLeft()
     {
-        ani.SetBool("Bool_Player_Roll_Left", true);
+        aniReset();
 
-        ani.SetBool("Bool_Player_Roll_Front", false);
-        ani.SetBool("Bool_Player_Roll_Right", false);
-        ani.SetBool("Bool_Player_Roll_Back", false);
+        ani.SetBool("Bool_Player_Roll_Left", true);
     }
     public void playerAniRollRight()
     {
-        ani.SetBool("Bool_Player_Roll_Right", true);
+        aniReset();
 
-        ani.SetBool("Bool_Player_Roll_Front", false);
-        ani.SetBool("Bool_Player_Roll_Left", false);
-        ani.SetBool("Bool_Player_Roll_Back", false);
+        ani.SetBool("Bool_Player_Roll_Right", true);
     }
     public void playerAniRollBack()
     {
-         ani.SetBool("Bool_Player_Roll_Back", true);
+        aniReset();
 
-        ani.SetBool("Bool_Player_Roll_Front", false);
-        ani.SetBool("Bool_Player_Roll_Left", false);
-        ani.SetBool("Bool_Player_Roll_Right", false);
+        ani.SetBool("Bool_Player_Roll_Back", true);
     }
 
     public void playerDodgeAniReset()
     {
-        //playerAnimator.SetBool("Bool_Player_Waiting", true);
-        ani.SetBool("Bool_Player_Roll_Front", false);
-        ani.SetBool("Bool_Player_Roll_Left", false);
-        ani.SetBool("Bool_Player_Roll_Right", false);
-        ani.SetBool("Bool_Player_Roll_Back", false);
+        aniReset();
+
+        ani.SetBool("Bool_Player_Waiting", true);
     }
 
     //  공격 한 경우  
@@ -88,43 +77,27 @@ public class PlayerAniScript : MonoBehaviour
         switch (comboCount)
         {
             case 1 :
-                ani.SetBool("Bool_Player_Waiting", false);
-                ani.SetBool("Bool_Player_Walking", false);
+                aniReset();
 
-                //====================================================================
                 ani.SetBool("Bool_Player_Attack_01", true);
-                //====================================================================
-                ani.SetBool("Bool_Player_Attack_02", false);
-                ani.SetBool("Bool_Player_Attack_03", false);
                 break;
 
             case 2:
-                ani.SetBool("Bool_Player_Waiting", false);
-                ani.SetBool("Bool_Player_Walking", false);
-
-                ani.SetBool("Bool_Player_Attack_01", false);
-                //====================================================================
+                aniReset();
+               
                 ani.SetBool("Bool_Player_Attack_02", true);
-                //====================================================================
-                ani.SetBool("Bool_Player_Attack_03", false);
                 break;
 
             case 3:
-                ani.SetBool("Bool_Player_Waiting", false);
-                ani.SetBool("Bool_Player_Walking", false);
+                aniReset();
 
-                ani.SetBool("Bool_Player_Attack_01", false);
-                ani.SetBool("Bool_Player_Attack_02", false);
-                //====================================================================
                 ani.SetBool("Bool_Player_Attack_03", true);
-                //====================================================================
                 break;
 
             case 0:
+                aniReset();
+
                 ani.SetBool("Bool_Player_Waiting", true);
-                ani.SetBool("Bool_Player_Attack_01", false);
-                ani.SetBool("Bool_Player_Attack_02", false);
-                ani.SetBool("Bool_Player_Attack_03", false);
                 break;
         }
     }
@@ -136,7 +109,8 @@ public class PlayerAniScript : MonoBehaviour
 
     public void attackedAni(int attackCount)
     {
-        ifAttackedTurnOffOtherAni();
+        aniReset();
+
         switch (attackCount)
         {
             case 1:
@@ -150,27 +124,30 @@ public class PlayerAniScript : MonoBehaviour
                 break;
         }
     }
-    void ifAttackedTurnOffOtherAni()
-    {
-        ani.SetBool("Bool_Player_Waiting", false);
-        ani.SetBool("Bool_Player_Walking", false);
-        ani.SetBool("Bool_Player_Roll_Front", false);
-        ani.SetBool("Bool_Player_Roll_Left", false);
-        ani.SetBool("Bool_Player_Roll_Right", false);
-        ani.SetBool("Bool_Player_Roll_Back", false);
-        ani.SetBool("Bool_Player_Attack_01", false);
-        ani.SetBool("Bool_Player_Attack_02", false);
-        ani.SetBool("Bool_Player_Attack_03", false);
-    }
-
-
 
     public void attackedAniReset()
     {
+        aniReset();
+
+        ani.SetBool("Bool_Player_Waiting", true);
+    }
+
+    void aniReset()
+    {
+        ani.SetBool("Bool_Player_Waiting", false);
+        ani.SetBool("Bool_Player_Walking", false);
+
+        ani.SetBool("Bool_Player_Attack_01", false);
+        ani.SetBool("Bool_Player_Attack_02", false);
+        ani.SetBool("Bool_Player_Attack_03", false);
+
+        ani.SetBool("Bool_Player_Roll_Left", false);
+        ani.SetBool("Bool_Player_Roll_Front", false);
+        ani.SetBool("Bool_Player_Roll_Right", false);
+        ani.SetBool("Bool_Player_Roll_Back", false);
+
         ani.SetBool("Bool_Player_Normal_Attacked", false);
         ani.SetBool("Bool_Player_Airborne_Attacked", false);
         ani.SetBool("Bool_Player_Stun_Attacked", false);
-
-        ani.SetBool("Bool_Player_Waiting", true);
     }
 }

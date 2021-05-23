@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CapsuleCollider))]
 public class CamCheckWall : MonoBehaviour
@@ -20,45 +21,30 @@ public class CamCheckWall : MonoBehaviour
     bool stayCheck;
 
     // Use this for initialization
-    void Awake()
+    void Start()
     {
         stayCheck = false;
-        StartCoroutine("turnOn");
+        StartCoroutine("waitForSec");
 
         capsuleCollider = GetComponent<CapsuleCollider>();
-
-       // skinnedMeshRenderer.materials[0].SetFloat("_Outline", 0f);
-       // skinnedMeshRenderer.materials[1].SetFloat("_Outline", 0f);
     }
 
 
-    IEnumerator turnOn()
+    
+    IEnumerator waitForSec()
     {
         yield return new WaitForSeconds(0.1f);
         stayCheck = true;
-        StopCoroutine("turnOn");
+        StopCoroutine("waitForSec");
     }
 
 
 
 
 
-
-
-
-    // Update is called once per frame
     void FixedUpdate()
     {
-    
-
-      if (cam == null)
-        {
-            obj = GameObject.Find("Camera");
-
-            cam = obj.transform;
-        }
-
-
+        if (cam == null) return;
 
         Vector3 pointCenter = transform.TransformPoint(capsuleCollider.center);
         Vector3 pointLeft = transform.TransformPoint(capsuleCollider.center) - new Vector3(capsuleCollider.radius, 0, 0);
@@ -67,8 +53,9 @@ public class CamCheckWall : MonoBehaviour
         Vector3 pointDown = transform.TransformPoint(capsuleCollider.center) - new Vector3(0, capsuleCollider.height / 2.0f, 0);
 
         List<Ray> listRay = new List<Ray>();
-        Vector3 targetPosition = cam.position;    // camera world position
+        Vector3 targetPosition = cam.position; 
 
+        // 
         listRay.Add(new Ray(pointCenter, targetPosition - pointCenter));
         listRay.Add(new Ray(pointLeft, targetPosition - pointLeft));
         listRay.Add(new Ray(pointRight, targetPosition - pointRight));
@@ -77,16 +64,13 @@ public class CamCheckWall : MonoBehaviour
 
         List<RaycastHit[]> listHitInfo = new List<RaycastHit[]>();
 
-        //
+
         foreach (Ray ray in listRay)
         {
             RaycastHit[] hitInfo = Physics.RaycastAll(ray, 1000.0f);
             listHitInfo.Add(hitInfo);
-
-            // Debug.DrawRay(ray.origin, ray.direction * 500, Color.red);
         }
 
-        //
         RaycastHit[] listHit = listHitInfo[0];
 
         List<GameObject> listNewObstacleObject = new List<GameObject>();
@@ -112,13 +96,10 @@ public class CamCheckWall : MonoBehaviour
             }
         }
 
-        // new
         foreach (GameObject obstacleObject in listNewObstacleObject)
         {
-            // add
             if (stayCheck == true &&  !listPrevObstacleObject.Find(delegate (GameObject inObject) { return (inObject.name == obstacleObject.name); }))
             {
-                // changed to transparent
                 string nameShader = "Transparent/VertexLit";
 
                 MeshRenderer renderer = obstacleObject.GetComponent<MeshRenderer>();
@@ -128,10 +109,9 @@ public class CamCheckWall : MonoBehaviour
                     Color prevColor = renderer.material.GetColor("_Color");
                     renderer.material.SetColor("_Color", new Color(prevColor.r, prevColor.g, prevColor.b, 0.5f));         
                 }
-
             }
         }
-        // prev
+
         foreach (GameObject obstacleObject in listPrevObstacleObject)
         {
             // remove
@@ -145,7 +125,7 @@ public class CamCheckWall : MonoBehaviour
                 renderer.material.SetColor("_Color", new Color(prevColor.r, prevColor.g, prevColor.b, 1f));
             }
         }
-        // swap
+
         listPrevObstacleObject = listNewObstacleObject;             
     }
 

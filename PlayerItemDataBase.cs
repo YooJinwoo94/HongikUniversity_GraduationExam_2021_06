@@ -10,9 +10,9 @@ public class PlayerItemDataBase : MonoBehaviour
     [SerializeField]
     public Sprite[] playerWeaponImage;
     [HideInInspector]
-    public string[] playerWeaponNameSpace = null;
+    public string[] playerWeaponNameSpace = new string[10];
     [HideInInspector]
-    public string[] playersWeaponDetails = null;
+    public string[] playersWeaponDetails = new string[10];
     //===========================================
 
     private void Start()
@@ -23,10 +23,6 @@ public class PlayerItemDataBase : MonoBehaviour
 
         playersWeaponDetails[0] = "이름만 거창한 기본 검입니다.";
         playersWeaponDetails[1] = "가만히 있으면 시간이 느리게 갑니다.";
-        playersWeaponDetails[2] = "네?";
+        playersWeaponDetails[2] = "이름만 거창한 귀족 검입니다.";
     }
-
-
-
-
 }

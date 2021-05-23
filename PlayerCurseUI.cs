@@ -6,16 +6,17 @@ using UnityEngine.UI;
 public class PlayerCurseUI : MonoBehaviour
 {
     [SerializeField]
-    Animator[] curseSkullAni;
+    public Animator[] curseSkullAni;
     [SerializeField]
-    Image[] playerCurseImage;
+    public Image[] playerCurseImage;
 
     [SerializeField]
-    Image playerCurseBar;
+    public Image playerCurseBar;
 
     [HideInInspector]
     public bool isCurseUp;
-    int playerCurseCount;
+    [HideInInspector]
+    public int playerCurseCount;
     //float curseBarFloat = 0f;
 
 
@@ -27,41 +28,37 @@ public class PlayerCurseUI : MonoBehaviour
     }
 
 
-    /*
-    private void Update()
-    {
-        if (isCurseUp == false) return;
-
-         playerCurseBar.fillAmount += 0.001f;
-
-        if (playerCurseBar.fillAmount >= curseBarFloat) isCurseUp = false;
-    }
-    */
-
     public void isplayerCursed(float num)
     {
       if (playerCurseCount >= 5) return;
 
         isCurseUp = true;
-        //curseBarFloat += num;
         playerCurseBar.fillAmount += num;
-        //Debug.Log(playerCurseBar.fillAmount);
 
         if (playerCurseBar.fillAmount >= 0.9f)
         {
-            //curseBarFloat = 0;
             playerCurseBar.fillAmount = 0;
             curseSkullAni[playerCurseCount].SetBool("curseStart", true);
             playerCurseImage[playerCurseCount].color = new Color(123 / 255f, 58 / 255f, 214 / 255f);
             playerCurseCount++;
             Mathf.Clamp(playerCurseCount, 0, 4);
         }
-       
-
+      
        if (playerCurseCount >= 5) playerCurseBar.fillAmount = 1;
     }
+
+    // 창고에 박혀있음
     public void playerCurseBarDown(float num)
     {
         playerCurseBar.fillAmount -= num;
+    }
+
+    public void ifPlayerDrinkBluePosion()
+    {
+        playerCurseCount--;
+        playerCurseBar.fillAmount = 0;
+        curseSkullAni[playerCurseCount].SetBool("curseStart", true);
+        playerCurseImage[playerCurseCount].color = new Color(255 / 255f, 255 / 255f, 255 / 255f);
+        Mathf.Clamp(playerCurseCount, 0, 4);
     }
 }

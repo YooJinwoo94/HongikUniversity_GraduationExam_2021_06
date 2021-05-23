@@ -17,10 +17,12 @@ public class DistacneAttackEnemyType01Pattern01 : Action
 
     const float ifEnemyGoCloserToPlayerControllTheSpeed = 0.004f;
     const float distanceCheckForStop = 8.5f;
-
+    const float isFarOrCloseDistance = 7f;
 
     public override void OnStart()
     {
+        if (Vector3.Distance(transform.position, target.Value.position) > isFarOrCloseDistance) numOfPattern.Value = 1;
+
         colliderConScript = GetComponent<DistacneAttackTypeNormalColliderCon>();
         hpPostionScript = GetComponent<EnemyHpPostionScript>();
         aniScript = GetComponent<DistanceAttackTypeNormalAni>();
@@ -32,7 +34,7 @@ public class DistacneAttackEnemyType01Pattern01 : Action
     {
         if (hpPostionScript.deadOrLive == 1 ||
            colliderConScript.IsAttackedState == DistacneAttackTypeNormalColliderCon.DistacneAttackEnemy01IsAttacked.attacked ||
-           CheckPatternForEnemy.numOfPattern.Value != 1) return TaskStatus.Failure;
+           numOfPattern.Value != 1) return TaskStatus.Failure;
 
         rotate();
 

@@ -9,25 +9,38 @@ public enum PlayerUI
     invenOn,
     invenOff,
 
+    getShopUiOn,
+    getShopUiOff,
+
     getWeaponUiOn,
     getWeaponUiOff,
 
     getPowerUiOn,
     getPowerUiOff,
+
+    getSaveUiOn,
+    getSaveUiOff,
 }
 [HideInInspector]
 public enum PlayerState
 {
     idle,
-    normalAttacked,
-    airborneAttacked,
-    airborneAttackedCoolTime,
-    stunAttacked,
+    parring,
     dodge,
     attack,
     waitForMoveNextStage,
     stopForCutSceen,
 }
+
+public enum PlayerHitted
+{
+    none,
+    normalAttacked,
+    airborneAttacked,
+    airborneAttackedCoolTime,
+    stunAttacked,
+}
+
 [HideInInspector]
 public enum MousePlace
 {
@@ -47,6 +60,8 @@ public enum MousePlace
 public class PlayerInputScript : MonoBehaviour
 {
     #region
+    [SerializeField]
+    PlayerParringCon playerParringConScript;
     [SerializeField]
     TypingTextCon typingTextConScript;
     [SerializeField]
@@ -80,6 +95,8 @@ public class PlayerInputScript : MonoBehaviour
 
     // 상태 관련 
     [HideInInspector]
+   public PlayerHitted playerHitted;
+    [HideInInspector]
     public MousePlace mousePlace;
     [HideInInspector]
     public PlayerState state;
@@ -89,15 +106,7 @@ public class PlayerInputScript : MonoBehaviour
     private float maxHP = 100;
     private float hP = 100;
 
-    /*
-    [SerializeField]
-     private float damageBloodAmount = 3;
-    [SerializeField]
-      private float maxBloodIndication = 0.5f; 
 
-   [SerializeField]
-     float recoverSpeed = 1;//HP per second
-     */
     [HideInInspector]
     public bool isDodge;  // trapType2FireAttack을 피하기 위한것
     #endregion
@@ -116,6 +125,8 @@ public class PlayerInputScript : MonoBehaviour
 
         isDodge = false;
         hP = maxHP;
+
+        playerHitted = PlayerHitted.none;
         playerUIState = PlayerUI.invenOff;
         state = PlayerState.idle;
         mousePlace = MousePlace.top;
@@ -125,9 +136,7 @@ public class PlayerInputScript : MonoBehaviour
     }
 
 
-
-
-
+ 
     public static PlayerInputScript Instance
     {
         get
@@ -137,27 +146,41 @@ public class PlayerInputScript : MonoBehaviour
         }
     }
 
-
-
     // update
     #region
+
+    void FixedUpdate()
+    {
+        rigid.angularVelocity = Vector3.zero;
+    }
+
     void Update()
     {
-        if (state == PlayerState.airborneAttacked)
+        if (playerHitted == PlayerHitted.airborneAttacked)
         {
             rigid.AddForce(Vector3.up * 0.35f, ForceMode.Impulse);
             return;
         }
 
         if (state == PlayerState.idle || state == PlayerState.dodge ||
-           state == PlayerState.attack || state == PlayerState.normalAttacked) lookAtCam();
+           state == PlayerState.attack 
+           || playerHitted == PlayerHitted.normalAttacked
+           ) lookAtCam();
 
         inputProcessInven();
         inputProcessE();
 
-        if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn
-       || playerUIState == PlayerUI.getPowerUiOn || tutorialStageMangerScript.tutorialState != TutorialState.wait ||
-       dialogueManagerScript.dialogueState == DialogueState.DialogueStart)
+        if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn || playerUIState == PlayerUI.getShopUiOn
+       || playerUIState == PlayerUI.getPowerUiOn || playerUIState == PlayerUI.getSaveUiOn
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorialReady
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial01
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_1
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_2 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_3
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_4 
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03_1
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial05_0
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial06_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial07_0
+       || dialogueManagerScript.dialogueState == DialogueState.DialogueStart)
         {
             animationScript.playerAniWait();
             return;
@@ -166,7 +189,7 @@ public class PlayerInputScript : MonoBehaviour
         switch (state)
         {
             case PlayerState.idle:
-                inputProcessIdleAndNormalAttacked();
+                inputProcessWhenPlayerIsIdle();
                 break;
 
             case PlayerState.dodge:
@@ -178,19 +201,24 @@ public class PlayerInputScript : MonoBehaviour
                 inputProcessAttack();
                 break;
   
-            case PlayerState.normalAttacked:
-                inputProcessIdleAndNormalAttacked();
+            case PlayerState.parring:
                 break;
 
             //=========================================이동 불가 
-            case PlayerState.airborneAttacked:
-                break;
-            case PlayerState.stunAttacked:
-                break;
+           
             case PlayerState.waitForMoveNextStage:
                 break;
             case PlayerState.stopForCutSceen:
                 break;              
+        }
+        switch (playerHitted)
+        {
+            case PlayerHitted.normalAttacked:
+                break;
+            case PlayerHitted.airborneAttacked:
+                break;
+            case PlayerHitted.stunAttacked:
+                break;
         }
     }
     #endregion
@@ -198,7 +226,7 @@ public class PlayerInputScript : MonoBehaviour
 
     //  상태에 따라 입력 가능이 바뀜  
     #region
-    void inputProcessIdleAndNormalAttacked()
+    void inputProcessWhenPlayerIsIdle()
     {
         checkRotationAndKeyDownToAniCon();
 
@@ -233,9 +261,17 @@ public class PlayerInputScript : MonoBehaviour
             attackConScript.whenAttackCheckWeapon();
         }
 
+        // 패링함?
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            if (playerParringConScript.isCool == true) return;
+
+            playerParringConScript.parringStart();
+        }
+
         //구르기 위한 조건을 만족 하니? 
-        if (dodgeConScript.playerDodgeCoolTime == true || state == PlayerState.stunAttacked 
-            || state == PlayerState.airborneAttacked || state == PlayerState.stunAttacked || state == PlayerState.dodge) return;
+        if (dodgeConScript.playerDodgeCoolTime == true
+            || playerHitted == PlayerHitted.airborneAttacked || playerHitted == PlayerHitted.stunAttacked || state == PlayerState.dodge) return;
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.A)) { dodgeConScript.dodgeAndGetKeyA(); spConScript.spDown(); }
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.D)) { dodgeConScript.dodgeAndGetKeyD(); spConScript.spDown(); }
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.S)) { dodgeConScript.dodgeAndGetKeyS(); spConScript.spDown(); }
@@ -255,8 +291,8 @@ public class PlayerInputScript : MonoBehaviour
         }
 
         //구르기 위한 조건을 만족 하니? 
-        if (dodgeConScript.playerDodgeCoolTime == true || state == PlayerState.stunAttacked
-            || state == PlayerState.airborneAttacked || state == PlayerState.stunAttacked || state == PlayerState.dodge) return;
+        if (dodgeConScript.playerDodgeCoolTime == true
+            || playerHitted == PlayerHitted.airborneAttacked || playerHitted == PlayerHitted.stunAttacked || state == PlayerState.dodge) return;
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.A)) { dodgeConScript.dodgeAndGetKeyA(); spConScript.spDown(); }
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.D)) { dodgeConScript.dodgeAndGetKeyD(); spConScript.spDown(); }
         else if (Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.S)) { dodgeConScript.dodgeAndGetKeyS(); spConScript.spDown(); }
@@ -282,33 +318,62 @@ public class PlayerInputScript : MonoBehaviour
 
         switch (playerColliderConScript.checkWhatItis.tag)
         {
+            case "Dwarf_ShopOwner":
+                if (Input.GetKeyDown(KeyCode.E)) 
+                {
+                    GameObject cam = GameObject.Find("Dwarf_Set").transform.Find("CM vcam1").gameObject;
+                    cam.SetActive(true);
+                    playerUIState = PlayerUI.getShopUiOn;
+                    playerUISeletMangerScript.whenPlayerTouchShop();
+                }
+                break;
+
             case "PlayerWeaponDroped":
-                if (Input.GetKeyDown(KeyCode.E)) playerUIState = PlayerUI.getWeaponUiOn;           
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    playerUIState = PlayerUI.getWeaponUiOn;
+                    playerUISeletMangerScript.whenGetWeaponConTheUISet();
+                }
                 break;
 
             case "PlayerPowerGetSet":
-                if (Input.GetKeyDown(KeyCode.E)) playerUIState = PlayerUI.getPowerUiOn;
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    playerUIState = PlayerUI.getPowerUiOn;
+                    playerUISeletMangerScript.whenPlayerTouchPower();
+                }
                 break;
+
+            case  "Save_State" :
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    playerUIState = PlayerUI.getSaveUiOn;
+                    playerUISeletMangerScript.whenPlayerTouchSave();
+                }
+                break;
+
         }
-        if (playerUIState == PlayerUI.getWeaponUiOn)
-        {
-            playerUISeletMangerScript.whenGetWeaponConTheUISet();
-            return;
-        }
-        if (playerUIState == PlayerUI.getPowerUiOn)
-        {
-            playerUISeletMangerScript.whenPlayerTouchPower();
-            return;
-        }
+        if (playerUIState == PlayerUI.getPowerUiOn) playerUISeletMangerScript.whenPlayerTouchPower();
+        if (playerUIState == PlayerUI.getWeaponUiOn) playerUISeletMangerScript.whenGetWeaponConTheUISet();
+        if (playerUIState == PlayerUI.getShopUiOn) playerUISeletMangerScript.whenPlayerTouchShop();
+        if (playerUIState == PlayerUI.getSaveUiOn) playerUISeletMangerScript.whenPlayerTouchSave();
     }
 
 
     //  필수 요소
     void lookAtCam()
     {
-        if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn
-           || playerUIState == PlayerUI.getPowerUiOn || tutorialStageMangerScript.tutorialState != TutorialState.wait ||
-       dialogueManagerScript.dialogueState == DialogueState.DialogueStart) return;
+        if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn || playerUIState == PlayerUI.getShopUiOn
+           || playerUIState == PlayerUI.getPowerUiOn || playerUIState == PlayerUI.getSaveUiOn
+           || tutorialStageMangerScript.tutorialState == TutorialState.tutorialReady
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial01
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_1
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_2 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_3
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_4 
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03_1
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial05_0
+       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial06_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial07_0
+           || dialogueManagerScript.dialogueState == DialogueState.DialogueStart) return;
 
         Ray rayCam = cam.ScreenPointToRay(Input.mousePosition);
         Plane groundPlae = new Plane(Vector3.up, Vector3.zero);

@@ -6,7 +6,9 @@ using BehaviorDesigner.Runtime;
 
 public class CloseAttackEnemyAtkPattern01 : Action
 {
-    public SharedBool attackStart;
+    private CloseAttackTypeNormalColliderCon closeAttackTypeNormalColliderCon;
+
+    public SharedBool waitForAttack;
     public SharedInt numOfPattern;
     public SharedTransform target;
     public EnemyHpPostionScript hpPostionScript;
@@ -14,13 +16,12 @@ public class CloseAttackEnemyAtkPattern01 : Action
     public CloseAttackTypeNormalColliderCon colliderConScript;
 
 
-    const float isFarOrCloseDistance = 8.5f;
+    const float isFarOrCloseDistance = 5f;
     const float enemyPatternCloseDistance = 3f;
-    const float enemyPatternFarDistance = 5f;
     const float enemyAttackSpeedPatternClose = 0.005f;
 
 
-    float endTime =1f;
+    float endTime =2.5f;
     float startTime;
 
 
@@ -33,21 +34,21 @@ public class CloseAttackEnemyAtkPattern01 : Action
         aniScript = GetComponent<CloseAttackTypeNormalAni>();
         hpPostionScript = GetComponent<EnemyHpPostionScript>();
         colliderConScript = GetComponent<CloseAttackTypeNormalColliderCon>();
+
+        closeAttackTypeNormalColliderCon = GetComponent<CloseAttackTypeNormalColliderCon>();
     }
-
-
 
 
     public override TaskStatus OnUpdate()
     {
-        if (attackStart.Value == false ||
+        if (waitForAttack.Value == false ||
             hpPostionScript.deadOrLive == 1 ||
-            numOfPattern.Value != 1 ||
             colliderConScript.IsAttackedState == CloseAttackTypeNormalColliderCon.CloseAttackEnemy01IsAttacked.attacked
             ) return TaskStatus.Failure;
 
-    
+        startTime += Time.deltaTime;
         if (aniScript.enemyPattern == CloseAttackEnemyType01AtkPattern.patternIdle) patternStart();
+
         switch (aniScript.enemyPattern)
         {
             case CloseAttackEnemyType01AtkPattern.patternClose:
@@ -55,8 +56,24 @@ public class CloseAttackEnemyAtkPattern01 : Action
                 break;
         }
 
-        if (startTime + endTime < Time.time) return TaskStatus.Failure;
+        if (closeAttackTypeNormalColliderCon.IsAttackedState == CloseAttackTypeNormalColliderCon.CloseAttackEnemy01IsAttacked.stuned)
+        {
+            waitForAttack.Value = false;
+            closeAttackTypeNormalColliderCon.isAttack = false;
+            return TaskStatus.Failure;
+        }
         if (hpPostionScript.deadOrLive != 1) rotate();
+
+        if ( startTime > endTime)
+        {
+            startTime = 0;
+
+            waitForAttack.Value = false;
+            closeAttackTypeNormalColliderCon.isAttack = false;
+
+            aniScript.resetPattern();
+            return TaskStatus.Failure;
+        }
 
         return TaskStatus.Running;
     }
@@ -89,8 +106,9 @@ public class CloseAttackEnemyAtkPattern01 : Action
 
     void patternStart()
     {
-        startTime = Time.time;
         aniScript.enemyPattern = CloseAttackEnemyType01AtkPattern.patternClose;
         aniScript.patternChoice(0);
+
+        closeAttackTypeNormalColliderCon.isAttack = true;
     }
 }

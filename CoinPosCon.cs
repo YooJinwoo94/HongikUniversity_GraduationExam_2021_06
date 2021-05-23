@@ -33,7 +33,9 @@ public class CoinPosCon : MonoBehaviour
             {
                 case 5:
                     countForCoinAni = 0;
-                    coinManagerScript.cointCountToUi(100);
+                    coinManagerScript.coinCountToUi(100,true);
+                    coinManagerScript.costCountUpDown();
+
                     coinTextAni = GameObject.Find("Coin_Count_Text").GetComponent<Animator>();
                     coinTextAni.SetTrigger("AniStart");
                     break;

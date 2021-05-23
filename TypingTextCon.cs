@@ -82,6 +82,31 @@ public class TypingTextCon : MonoBehaviour
                     }
                 }
                 break;
+
+            case "Start_Stage_ForSecondPlayer":
+
+                if (questManagerScript.isQuestEnd[1, 0] == false)
+                {
+                    for (int i = 0; i <= TextDataBase.startStageTextQuest01Start[num].Length; i++)
+                    {
+                        text.text = null;
+                        text.text = TextDataBase.startStageTextQuest01Start[num].Substring(0, i);
+
+                        yield return new WaitForSeconds(0.05f);
+                    }
+                }
+                if (questManagerScript.isQuestEnd[1, 0] == true && questManagerScript.isQuestEnd[2, 0] == false)
+                {
+                    for (int i = 0; i <= TextDataBase.startStageTextQuest02Start[num].Length; i++)
+                    {
+                        text.text = null;
+                        text.text = TextDataBase.startStageTextQuest02Start[num].Substring(0, i);
+
+                        yield return new WaitForSeconds(0.05f);
+                    }
+                }
+                break;
+
         }
        
 

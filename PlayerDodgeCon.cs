@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PlayerDodgeCon : MonoBehaviour
 {
-    [SerializeField]
-    Camera cam;
     Vector3 mousePos;
     [HideInInspector]
     public  bool playerDodgeCoolTime = false;
@@ -28,7 +26,6 @@ public class PlayerDodgeCon : MonoBehaviour
 
     private void Start()
     {
-        cam = FindObjectOfType<Camera>();
         aniScript = GetComponent<PlayerAniScript>();
         inputScript = GetComponent<PlayerInputScript>();
         spConScript = GetComponent<PlayerSpCon>();

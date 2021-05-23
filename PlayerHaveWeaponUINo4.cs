@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class PlayerHaveWeaponUINo4 : MonoBehaviour
 {
     [SerializeField]
+    PlayerGetWeaponUINNo5 playerGetWeaponUINO5Script;
+    [SerializeField]
     PlayerItemDataBase playerItemDataBase;
 
     [HideInInspector]
@@ -75,5 +77,40 @@ public class PlayerHaveWeaponUINo4 : MonoBehaviour
     {
         playerWeaponName[weaponSlot].text = playerItemDataBase.playerWeaponNameSpace[count];
         playerWeaponDetails[weaponSlot].text = playerItemDataBase.playersWeaponDetails[count];
+    }
+
+    public void ifLoadData()
+    {
+        if (playerWeaponName[1].text != "")
+        {
+            playersWeaponImage[1].enabled = true;
+
+            playerGetWeaponUINO5Script.playersWeaponImage[1].enabled = true;
+        }
+        for ( int i = 0; i< 2; i++)
+        {
+            switch (playerWeaponName[i].text.ToString())
+            {
+                case "저주받은 진소의 검":
+                    playersWeaponType[i] = PlayersWeaponType.weaponType1;
+                    playerWeaponDetails[i].text = playerItemDataBase.playersWeaponDetails[0];
+                    playersWeaponImage[i].sprite = playerItemDataBase.playerWeaponImage[0];
+                    break;
+
+                case "삼천호검":
+                    playersWeaponType[i] = PlayersWeaponType.weaponType2;
+                    playerWeaponDetails[i].text = playerItemDataBase.playersWeaponDetails[1];
+                    playersWeaponImage[i].sprite = playerItemDataBase.playerWeaponImage[1];
+                    break;
+
+                case "최후의 섬광":
+                    playersWeaponType[i] = PlayersWeaponType.weaponType3;
+                    playerWeaponDetails[i].text = playerItemDataBase.playersWeaponDetails[2];
+                    playersWeaponImage[i].sprite = playerItemDataBase.playerWeaponImage[2];
+                    break;
+            }
+        }
+
+
     }
 }

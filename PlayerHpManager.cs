@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class PlayerHpManager : MonoBehaviour
 {
     [SerializeField]
-    Image hp;
+   public Image hp;
 
     public void isPlayerDamaged(float damage)
     {

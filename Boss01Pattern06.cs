@@ -12,7 +12,7 @@ public class Boss01Pattern06 : Action
     WeaponColliderCon weaponColliderConScript;
     BossAniScript bossAniScript01;
     Boss01HpPostionScript hpPostionScript;
-    public CheckPatternForEnemy checkPatternForEnemyScript;
+    public IfPatternEndOnceTakeRandomRest checkPatternForEnemyScript;
 
     const float bossAttackSpeedPattern = 0.01f;
 
@@ -60,7 +60,7 @@ public class Boss01Pattern06 : Action
 
     public override TaskStatus OnUpdate()
     {
-        if (numOfPattern.Value != 6) return TaskStatus.Success;
+        if (numOfPattern.Value != 6) return TaskStatus.Failure;
 
         if (hpPostionScript.deadOrLive == 1) return TaskStatus.Failure;
         

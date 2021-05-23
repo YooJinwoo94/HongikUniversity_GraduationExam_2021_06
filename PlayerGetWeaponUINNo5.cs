@@ -7,11 +7,11 @@ using UnityEngine.UI;
 public class PlayerGetWeaponUINNo5 : MonoBehaviour
 {
     [SerializeField]
-   public Text dropedWeaponName;
+    public Text dropedWeaponName;
     [SerializeField]
-    Text dropedWeaponDetails;
+    public Text dropedWeaponDetails;
     [SerializeField]
-    Image dropedWeaponImage;
+    public Image dropedWeaponImage;
 
     [HideInInspector]
     public GameObject dropWeaponObj = null;

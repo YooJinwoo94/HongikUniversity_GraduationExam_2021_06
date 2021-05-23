@@ -7,15 +7,21 @@ using UnityEngine.SceneManagement;
 public class PlayerColliderCon : MonoBehaviour
 {
     [SerializeField]
+    PlayerParringCon playerParringConScript;
+    [SerializeField]
     Animator camAni;
-
-
+    [SerializeField]
+    Transform[] transformPos;
+    [SerializeField]
+    Transform playerPos;
     [SerializeField]
     DialogueManager dialogueManagerScript;
     [SerializeField]
     CoinManager coinManagerScript;
     [SerializeField]
     PlayerCamManager playerCamManagerScript;
+    [SerializeField]
+    PlayerPowerGetUINo2 playerPowerGetUINo2Script;
     [SerializeField]
     PlayerGetWeaponUINNo5 playerGetWeaponUINNo5;
     [SerializeField]
@@ -53,6 +59,7 @@ public class PlayerColliderCon : MonoBehaviour
     void resetStateToidle()
     {
         inputScript.state = PlayerState.idle;
+        inputScript.playerHitted = PlayerHitted.none;
     }
     void turnOnStunParticle()
     {
@@ -64,9 +71,9 @@ public class PlayerColliderCon : MonoBehaviour
     }
     IEnumerator PlayerAttackedCoroutine()
     {
-        switch (inputScript.state)
+        switch (inputScript.playerHitted)
         {
-            case PlayerState.normalAttacked:
+            case PlayerHitted.normalAttacked:
                 aniConScript.attackedAni(1);
                 yield return new WaitForSeconds(0.3f);
                 aniConScript.attackedAniReset();
@@ -74,7 +81,7 @@ public class PlayerColliderCon : MonoBehaviour
                 resetStateToidle();
                 break;
 
-            case PlayerState.airborneAttacked:
+            case PlayerHitted.airborneAttacked:
                 aniConScript.attackedAni(2);
                 yield return new WaitForSeconds(0.3f);
                 aniConScript.attackedAniReset();
@@ -82,7 +89,7 @@ public class PlayerColliderCon : MonoBehaviour
                 resetStateToidle();
                 break;
 
-            case PlayerState.stunAttacked:
+            case PlayerHitted.stunAttacked:
                 aniConScript.attackedAni(3);
                 turnOnStunParticle();
                 yield return new WaitForSeconds(0.3f);
@@ -116,12 +123,15 @@ public class PlayerColliderCon : MonoBehaviour
     }
 
 
+    // 골드 획득만 예외적으로 다른 스크립트에서 처리한다.
     private void OnTriggerEnter(Collider other)
     {
         // 죽었을떄도 넣기 // 
-        if (inputScript.state == PlayerState.normalAttacked
-            || inputScript.state == PlayerState.airborneAttacked
-            || inputScript.state == PlayerState.airborneAttackedCoolTime
+        if (
+            playerParringConScript.isSucess == true
+            || inputScript.playerHitted == PlayerHitted.normalAttacked
+            || inputScript.playerHitted == PlayerHitted.airborneAttacked
+            || inputScript.playerHitted == PlayerHitted.airborneAttackedCoolTime
             ) return;
         // 구르기로 도피시 슬로우 모션
         if (inputScript.state == PlayerState.dodge && dodgeConScript.playerDodgeCoolTime == true)
@@ -144,7 +154,7 @@ public class PlayerColliderCon : MonoBehaviour
             || other.gameObject.tag == "TrapType3BoomAttack"
             || other.gameObject.tag == "TrapType1Thorn")
         {
-            inputScript.state = PlayerState.normalAttacked;
+            inputScript.playerHitted = PlayerHitted.normalAttacked;
 
             playerCamManagerScript.shake();
             playerHpManagerScript.isPlayerDamaged(0.1f);
@@ -155,7 +165,7 @@ public class PlayerColliderCon : MonoBehaviour
         }
         if (other.gameObject.tag == "pattern08")
         {
-            inputScript.state = PlayerState.airborneAttacked;
+            inputScript.playerHitted = PlayerHitted.airborneAttacked;
 
             playerCamManagerScript.shake();
             playerCurseScript.isplayerCursed(0.2f);
@@ -166,13 +176,17 @@ public class PlayerColliderCon : MonoBehaviour
         }
         if (other.gameObject.tag == "enemyStun")
         {
-            inputScript.state = PlayerState.stunAttacked;
+            inputScript.playerHitted = PlayerHitted.stunAttacked;
 
             StartCoroutine(PlayerAttackedCoroutine());
             return;
         }
+      
         if (other.gameObject.tag == "DoorOfDungeon" + 1.ToString())
         {
+            GameObject cam = GameObject.Find("DoorOfDungeon1_Set").transform.Find("CM vcam1").gameObject;
+            cam.SetActive(true);
+
             inputScript.state = PlayerState.waitForMoveNextStage;
 
             aniConScript.playerDodgeAniReset();
@@ -181,13 +195,23 @@ public class PlayerColliderCon : MonoBehaviour
             StageManager.Instance.dungeonNum = 1;
             return;
         }
+
         if (other.gameObject.name == "GoToStartStage")
         {
             inputScript.state = PlayerState.idle;
-
+            playerPos.position = transformPos[0].position;
             aniConScript.playerDodgeAniReset();
             aniConScript.playerAniWait();
-            SceneManager.LoadScene("Start_Stage");
+            LoadingManager.loadScene("Start_Stage");
+            return;
+        }
+        if (other.gameObject.name == "GoToStartStage_ForSecondPlayer")
+        {
+            inputScript.state = PlayerState.idle;
+            playerPos.position = transformPos[0].position;
+            aniConScript.playerDodgeAniReset();
+            aniConScript.playerAniWait();
+            LoadingManager.loadScene("Start_Stage_ForSecondPlayer");
             return;
         }
         if (other.gameObject.name == "DialogueStart")
@@ -195,7 +219,6 @@ public class PlayerColliderCon : MonoBehaviour
             BoxCollider box = other.GetComponent<BoxCollider>();
             box.enabled = false;
             dialogueManagerScript.uiOn();
-            //typingUISet[1].SetActive(true);
             return;
         }
         if (other.gameObject.tag == "BossStageSceneManager")
@@ -207,22 +230,31 @@ public class PlayerColliderCon : MonoBehaviour
             Invoke("waitForBossStage", 6.5f);
             return;
         }
+        if (other.gameObject.tag == "Dwarf_ShopOwner")
+        {
+            checkWhatItis = other.gameObject;
+            playerUISeletMangerScript.turnOnOffImageE(true);
+            return;
+        }
         if (other.gameObject.tag == "PlayerWeaponDroped")
         {
             checkWhatItis = other.gameObject;
+
             playerGetWeaponUINNo5.dropWeaponObj = other.gameObject;
-            playerUISeletMangerScript.turnOnOffImageE();
+            playerUISeletMangerScript.turnOnOffImageE(true);
             return;
         }
         if(other.gameObject.tag == "PlayerPowerGetSet")
         {
-            playerUISeletMangerScript.turnOnOffImageE();
+            playerPowerGetUINo2Script.stateObj = other.gameObject;
+            playerUISeletMangerScript.turnOnOffImageE(true);
             checkWhatItis = other.gameObject;
             return;
         }
-        if (other.gameObject.tag == "Gold")
+        if (other.gameObject.name == "Save_State")
         {
-            coinManagerScript.cointCountToUi(100);
+            checkWhatItis = other.gameObject;
+            playerUISeletMangerScript.turnOnOffImageE(true);           
             return;
         }
     }
@@ -233,33 +265,28 @@ public class PlayerColliderCon : MonoBehaviour
             inputScript.state = PlayerState.idle;
             return;
         }
-        if (other.gameObject.tag == "PlayerWeaponDroped")
-        {
-            checkWhatItis = null;
-            playerGetWeaponUINNo5.dropWeaponObj = null;
 
-            playerUISeletMangerScript.turnOnOffImageE();
-            return;
-        }
-        if (other.gameObject.tag == "PlayerPowerGetSet")
+        if (other.gameObject.tag == "Dwarf_ShopOwner" ||
+            other.gameObject.tag == "PlayerWeaponDroped" ||
+            other.gameObject.tag == "PlayerPowerGetSet" ||
+            other.gameObject.name == "Save_State")
         {
-            checkWhatItis = null;
-            playerGetWeaponUINNo5.dropWeaponObj = null;
-
-            playerUISeletMangerScript.turnOnOffImageE();
+            playerUISeletMangerScript.turnOnOffImageE(false);
             return;
         }
     }
     private void OnTriggerStay(Collider other)
     {
         // 죽었을떄도 넣기 // 
-        if (inputScript.state == PlayerState.normalAttacked || inputScript.state == PlayerState.dodge
-            || inputScript.state == PlayerState.airborneAttacked || inputScript.state == PlayerState.airborneAttackedCoolTime
+        if (inputScript.playerHitted == PlayerHitted.normalAttacked 
+            || inputScript.state == PlayerState.dodge
+            || inputScript.playerHitted == PlayerHitted.airborneAttacked 
+            || inputScript.playerHitted == PlayerHitted.airborneAttackedCoolTime
             ) return;
 
         if (other.gameObject.tag == "TrapType1Thorn")
         {
-            inputScript.state = PlayerState.normalAttacked;
+           // inputScript.state = PlayerState.normalAttacked;
 
             playerCamManagerScript.shake();
             playerCurseScript.isplayerCursed(0.2f);

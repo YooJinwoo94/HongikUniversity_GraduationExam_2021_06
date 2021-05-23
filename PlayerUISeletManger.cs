@@ -5,6 +5,8 @@ using UnityEngine.UI;
 public class PlayerUISeletManger : MonoBehaviour
 {
     [SerializeField]
+   public GameObject playerSave;
+    [SerializeField]
     GameObject playerIngameUiSet;
     [SerializeField]
     PlayerAniScript playerAniScript;
@@ -29,6 +31,8 @@ public class PlayerUISeletManger : MonoBehaviour
 
 
     // 무기를 얻었을떄 뜨는 ui용
+    [SerializeField]
+    CoinManager coinManagerScript;
     [SerializeField]
     TutorialStageManger tutorialStageMangerScript;
     [SerializeField]
@@ -170,9 +174,9 @@ public class PlayerUISeletManger : MonoBehaviour
 
 
     //무기에 다가갈경우 혹은 강화내용에 다가갈 경우 E이미지 컨트롤
-    public void turnOnOffImageE()
+    public void turnOnOffImageE(bool isOn = true)
     {
-        if (playerGetWeaponUINo5Script.imageWhenPlayerTouchTheWeapon.activeInHierarchy == false)
+        if (isOn == true)
         {
             playerGetWeaponUINo5Script.imageWhenPlayerTouchTheWeapon.SetActive(true);
 
@@ -244,8 +248,15 @@ public class PlayerUISeletManger : MonoBehaviour
         {    
             if (leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable == true && leftRightButtonToSwitchTheBoxWhenGetWeapon[1].interactable == true) return;
 
-
-
+            for (int i = 0; i < 2; i++)
+            {
+                if (playerGetWeaponUINo5Script.dropedWeaponName.text == playerHaveWeaponUINo4.playerWeaponName[i].text)
+                {
+                    playerShopUINo7Script.alarmUiSet[0].SetTrigger("aniStart");
+                    Debug.Log("sa");
+                    return;
+                }
+            }
 
             if (leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable == false) playerChoose = 0;
             if (leftRightButtonToSwitchTheBoxWhenGetWeapon[1].interactable == false)
@@ -276,12 +287,17 @@ public class PlayerUISeletManger : MonoBehaviour
             playerUIBackGround.SetActive(false);
             playerGetWeaponUINo5Script.bgUiNo5Obj.SetActive(false);
 
+            Animator weaponAni = playerGetWeaponUINo5Script.dropWeaponObj.GetComponent<Animator>();
+            Rigidbody weaponRid = playerGetWeaponUINo5Script.dropWeaponObj.GetComponent<Rigidbody>();
+            weaponAni.enabled = false;
+            weaponRid.useGravity = true;
+            Destroy(playerGetWeaponUINo5Script.dropWeaponObj,2f);
             return;
         }
 
         playerAniScript.playerAniWait();
     }
-
+  
 
 
 
@@ -318,24 +334,133 @@ public class PlayerUISeletManger : MonoBehaviour
 
 
 
-    public void whenPlayerTouchShop()
+    public void whenPlayerTouchShop(int buttonClick = 0)
     {
-        playerPowerDataBaseScript.changeTextToMakeSameWithInven();
-        
-        playerUIBackGround.SetActive(true);
-        playerShopUINo7Script.bg.SetActive(true);
-
-        if (Input.GetKeyDown(KeyCode.Escape))
+        switch (playerShopUINo7Script.uiSet[1].activeInHierarchy)
         {
-            GameObject cam = GameObject.Find("Dwarf_Set").transform.Find("CM vcam1").gameObject;
-            cam.SetActive(false);
+            case true:
+                playerPowerDataBaseScript.changeTextToMakeSameWithInven();
 
-            playerInputScript.playerUIState = PlayerUI.getShopUiOff;
-            playerUIBackGround.SetActive(false);
-            playerShopUINo7Script.bg.SetActive(false);
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    playerShopUINo7Script.uiSet[0].SetActive(true);
+                    playerShopUINo7Script.uiSet[1].SetActive(false);
+                    Debug.Log("aa");
+                    return;
+                }
+                if (Input.GetKeyDown(KeyCode.A) || buttonClick == -1)
+                {
+                    leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable = false;
+                    leftRightButtonToSwitchTheBoxWhenGetWeapon[1].interactable = true;
+
+                    playerUiSetGetWeaponAnimator[0].SetBool("LeftMove_0", true);
+                    playerUiSetGetWeaponAnimator[1].SetBool("LeftMove_0", true);
+                    playerUiSetGetWeaponAnimator[2].SetBool("LeftMove_0", true);
+
+                    playerUiSetGetWeaponAnimator[0].SetBool("RightMove_0", false);
+                    playerUiSetGetWeaponAnimator[1].SetBool("RightMove_0", false);
+                    playerUiSetGetWeaponAnimator[2].SetBool("RightMove_0", false);
+                    return;
+                }
+                if (Input.GetKeyDown(KeyCode.D) || buttonClick == 1)
+                {
+                    leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable = true;
+                    leftRightButtonToSwitchTheBoxWhenGetWeapon[1].interactable = false;
+
+                    playerUiSetGetWeaponAnimator[0].SetBool("LeftMove_0", false);
+                    playerUiSetGetWeaponAnimator[1].SetBool("LeftMove_0", false);
+                    playerUiSetGetWeaponAnimator[2].SetBool("LeftMove_0", false);
+
+                    playerUiSetGetWeaponAnimator[0].SetBool("RightMove_0", true);
+                    playerUiSetGetWeaponAnimator[1].SetBool("RightMove_0", true);
+                    playerUiSetGetWeaponAnimator[2].SetBool("RightMove_0", true);
+                    return;
+                }
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    if (leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable == true && leftRightButtonToSwitchTheBoxWhenGetWeapon[1].interactable == true) return;
+
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if (playerGetWeaponUINo5Script.dropedWeaponName.text == playerHaveWeaponUINo4.playerWeaponName[i].text)
+                        {
+                            playerShopUINo7Script.alarmUiSet[0].SetTrigger("aniStart");
+                            Debug.Log("sa");
+                            return;
+                        }
+                    }
+
+                    if (leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable == false) playerChoose = 0;
+                    if (leftRightButtonToSwitchTheBoxWhenGetWeapon[1].interactable == false)
+                    {
+                        playerChoose = 1;
+                        playerGetWeaponUINo5Script.playersWeaponImage[playerChoose].enabled = true;
+                    }
+
+                    // 플레이어의 무기이미지 및 텍스트 교체
+                    switch (playerGetWeaponUINo5Script.dropedWeaponName.text)
+                    {
+                        case "저주받은 진소의 검":
+                            playerHaveWeaponUINo4.changePlayersWeapon(playerChoose, 0);
+                            playerWeaponInGameUiScript.ifPlayerGetWeaponChangeIngameWeaponImage(0);
+                            break;
+                        case "삼천호검":
+                            playerHaveWeaponUINo4.changePlayersWeapon(playerChoose, 1);
+                            playerWeaponInGameUiScript.ifPlayerGetWeaponChangeIngameWeaponImage(1);
+                            break;
+                        case "최후의 섬광":
+                            playerHaveWeaponUINo4.changePlayersWeapon(playerChoose, 2);
+                            playerWeaponInGameUiScript.ifPlayerGetWeaponChangeIngameWeaponImage(2);
+                            break;
+                    }
+
+                    playerShopUINo7Script.uiSet[0].SetActive(true);
+                    playerShopUINo7Script.uiSet[1].SetActive(false);
+
+                 
+                    coinManagerScript.costCountUpDown();
+                    return;
+                }
+                break;
+
+            case false:
+                playerUIBackGround.SetActive(true);
+                playerShopUINo7Script.bg.SetActive(true);
+
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    GameObject cam = GameObject.Find("Dwarf_Set").transform.Find("CM vcam1").gameObject;
+                    cam.SetActive(false);
+
+                    playerInputScript.playerUIState = PlayerUI.getShopUiOff;
+                    playerUIBackGround.SetActive(false);
+                    playerShopUINo7Script.bg.SetActive(false);
+                    return;
+                }
+                break;
+        }
+        playerAniScript.playerAniWait();
+    }
+
+
+    public void whenPlayerTouchSave ()
+    {
+        if (playerSave.activeInHierarchy == false)
+        {
+            playerSave.SetActive(true);
             return;
         }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            playerInputScript.playerUIState = PlayerUI.getSaveUiOff;
+            playerSave.SetActive(false);
+            return;
+        }
+    }
 
-        playerAniScript.playerAniWait();
+    public void turnOffPlayerSaveUI()
+    {
+        playerInputScript.playerUIState = PlayerUI.getSaveUiOff;
+        playerSave.SetActive(false);
     }
 }

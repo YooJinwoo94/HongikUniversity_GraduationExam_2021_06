@@ -27,7 +27,8 @@ public class PlayerPowerGetUINo2 : MonoBehaviour
     [SerializeField]
     public GameObject bgUiNo2Obj;
 
-
+    [HideInInspector]
+    public GameObject stateObj;
 
     //첫 강화내용 문양 선택시
     public void buttonClick(int num)
@@ -40,11 +41,15 @@ public class PlayerPowerGetUINo2 : MonoBehaviour
     // 2번쨰 강화 내용 선택시
     public void uiClick(int num)
     {
+        BoxCollider col = stateObj.GetComponent<BoxCollider>();
+        col.size = new Vector3(0.1f, 0.1f, 0.1f);
+
         playerPowerDataBaseScript.whenPlayerChoicePower(num);
         playerUISelectManagerScript.resetPlayerPowerGetUiSet();
         //기존에 있는 거 초기화
         for (int i = 0; i< 3; i ++)
         {
+
             playerPowerButtonAni[i].SetTrigger("Normal");
             powerButtonUi[i].SetActive(true);
             playerGetPowerUi[i].SetActive(false);

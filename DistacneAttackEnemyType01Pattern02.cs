@@ -12,9 +12,7 @@ public class DistacneAttackEnemyType01Pattern02 : Action
     DistacneAttackTypeNormalColliderCon colliderConScript;
     DistanceAttackTypeNormalAni ani;
     EnemyHpPostionScript hpPostionScript;
-    //public GameObject fireBall; 
-
-
+  
 
 
 
@@ -28,8 +26,8 @@ public class DistacneAttackEnemyType01Pattern02 : Action
     public override TaskStatus OnUpdate()
     {
         if (hpPostionScript.deadOrLive == 1 ||
-            colliderConScript.IsAttackedState == DistacneAttackTypeNormalColliderCon.DistacneAttackEnemy01IsAttacked.attacked ||
-            CheckPatternForEnemy.numOfPattern.Value != 2) return TaskStatus.Failure;
+            colliderConScript.IsAttackedState == DistacneAttackTypeNormalColliderCon.DistacneAttackEnemy01IsAttacked.attacked)
+            return TaskStatus.Failure;
 
         rotate();
         if (ani.enemyPattern == DistanceAttackEnemyType01AtkPattern.patternIdle) patternStart();
@@ -53,8 +51,6 @@ public class DistacneAttackEnemyType01Pattern02 : Action
     {
         ani.enemyPattern = DistanceAttackEnemyType01AtkPattern.patternFireBallAttack;
         rotate();
-        ani.fireBallAttack();
-
-        //Instantiate(fireBall, firePos.position, firePos.rotation);   
+        ani.aniSet("FireBallAttack");
     }
 }
