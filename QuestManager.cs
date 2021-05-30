@@ -11,7 +11,6 @@ public class QuestManager : MonoBehaviour
 
     void Start()
     {
-
         instance = this;
         if (null == instance)
         {

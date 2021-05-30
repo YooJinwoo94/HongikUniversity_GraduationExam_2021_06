@@ -36,7 +36,7 @@ public class TrapType1Thorn : MonoBehaviour
     {
         //rendererColor.material.color = Color.red;
 
-        gameObject.tag = "TrapType1Thorn";
+       // gameObject.tag = "TrapType1Thorn";
         TrapType1State = TrapType1State.attack;
     }
 
@@ -45,8 +45,8 @@ public class TrapType1Thorn : MonoBehaviour
         //rendererColor.material.color = Color.white;
 
         trapType1AttackAni.SetBool("trapType1Attack", false);
-        TrapType1State = TrapType1State.normal;
-        gameObject.tag = "Untagged";
+       // TrapType1State = TrapType1State.normal;
+       // gameObject.tag = "Untagged";
     }
 
 
@@ -69,7 +69,7 @@ public class TrapType1Thorn : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (TrapType1State != TrapType1State.normal) return;
+      //  if (TrapType1State != TrapType1State.normal) return;
 
         if (other.gameObject.tag == "Player" 
             || other.gameObject.tag == "CloseAttackEnemy01"
@@ -77,7 +77,7 @@ public class TrapType1Thorn : MonoBehaviour
             || other.gameObject.tag == "DistanceAttackEnemy01"
             || other.gameObject.tag == "DistanceAttackEnemy02")
         {
-            TrapType1State = TrapType1State.readyForAttack;
+          //  TrapType1State = TrapType1State.readyForAttack;
             StartCoroutine("StartTrapType1Thorn");
         }
     }

@@ -11,7 +11,12 @@ public class DistacneAttackTypeNormalColliderCon : MonoBehaviour
     }
     public DistacneAttackEnemy01IsAttacked IsAttackedState;
 
-
+    [SerializeField]
+    SkinnedMeshRenderer skinMeshRender;
+    [SerializeField]
+    GameObject[] hitParticle;
+    PlayerCamManager camShackManagerScript;
+    TimeManager timeManagerScript;
 
     EnemyHpPostionScript hpPostionScript;
     DistanceAttackTypeNormalAni aniScript;
@@ -26,6 +31,9 @@ public class DistacneAttackTypeNormalColliderCon : MonoBehaviour
         hpPostionScript = GetComponent<EnemyHpPostionScript>();
 
         IsAttackedState = DistacneAttackEnemy01IsAttacked.idle;
+
+        camShackManagerScript = GameObject.Find("PlayerCamManager").GetComponent<PlayerCamManager>();
+        timeManagerScript = GameObject.Find("TimeManager").GetComponent<TimeManager>();
     }
 
 
@@ -42,6 +50,21 @@ public class DistacneAttackTypeNormalColliderCon : MonoBehaviour
     }
 
 
+    void hitObjOnOff()
+    {
+        if (hitParticle[0].activeInHierarchy == false)
+        {
+            hitParticle[0].SetActive(true);
+            hitParticle[1].SetActive(false);
+        }
+        else
+        {
+            hitParticle[0].SetActive(false);
+            hitParticle[1].SetActive(true);
+        }
+    }
+
+
     private void OnTriggerExit(Collider other)
     {
         if (IsAttackedState == DistacneAttackEnemy01IsAttacked.attacked) return;
@@ -52,14 +75,23 @@ public class DistacneAttackTypeNormalColliderCon : MonoBehaviour
                 hpPostionScript.enemyDamagedAndImageChange(0.2f);
                 hpPostionScript.enemyHpDeadCheck();
 
+                camShackManagerScript.shake();
+                timeManagerScript.playerAttackTime();
+
+                hitObjOnOff();
+
                 if (hpPostionScript.deadOrLive == 1)
                 {
-                    aniScript.deadAniOn();
+                    skinMeshRender.materials[0].color = Color.white;
+
+                    aniScript.aniSet("Dead");
                     Destroy(this.gameObject, 3f);
                 }
                 else
                 {
-                    aniScript.enemyHitted();
+                    skinMeshRender.materials[0].color = Color.white;
+
+                    aniScript.aniSet("Hitted");
                     IsAttackedState = DistacneAttackEnemy01IsAttacked.attacked;
                     Invoke("stateChange", 0.3f);
                 }
@@ -69,14 +101,23 @@ public class DistacneAttackTypeNormalColliderCon : MonoBehaviour
                 hpPostionScript.enemyDamagedAndImageChange(0.5f);
                 hpPostionScript.enemyHpDeadCheck();
 
+                camShackManagerScript.shake();
+                timeManagerScript.playerAttackTime();
+
+                hitObjOnOff();
+
                 if (hpPostionScript.deadOrLive == 1)
                 {
-                    aniScript.deadAniOn();
+                    skinMeshRender.materials[0].color = Color.white;
+
+                    aniScript.aniSet("Dead");
                     Destroy(this.gameObject, 3f);
                 }
                 else
                 {
-                    aniScript.enemyHitted();
+                    skinMeshRender.materials[0].color = Color.white;
+
+                    aniScript.aniSet("Hitted");
                     IsAttackedState = DistacneAttackEnemy01IsAttacked.attacked;
                     Invoke("stateChange", 0.3f);
                 }
@@ -86,14 +127,23 @@ public class DistacneAttackTypeNormalColliderCon : MonoBehaviour
                 hpPostionScript.enemyDamagedAndImageChange(0.8f);
                 hpPostionScript.enemyHpDeadCheck();
 
+                camShackManagerScript.shake();
+                timeManagerScript.playerAttackTime();
+
+                hitObjOnOff();
+
                 if (hpPostionScript.deadOrLive == 1)
                 {
-                    aniScript.deadAniOn();
+                    skinMeshRender.materials[0].color = Color.white;
+
+                    aniScript.aniSet("Dead");
                     Destroy(this.gameObject, 3f);
                 }
                 else
                 {
-                    aniScript.enemyHitted();
+                    skinMeshRender.materials[0].color = Color.white;
+
+                    aniScript.aniSet("Hitted");
                     IsAttackedState = DistacneAttackEnemy01IsAttacked.attacked;
                     Invoke("stateChange", 0.3f);
                 }
@@ -112,12 +162,14 @@ public class DistacneAttackTypeNormalColliderCon : MonoBehaviour
 
                 if (hpPostionScript.deadOrLive == 1)
                 {
-                    aniScript.deadAniOn();
+                    skinMeshRender.materials[0].color = Color.white;
+
+                    aniScript.aniSet("Dead");
                     Destroy(this.gameObject, 3f);
                 }
                 else
                 {
-                    aniScript.enemyHitted();
+                    aniScript.aniSet("Hitted");
                     IsAttackedState = DistacneAttackEnemy01IsAttacked.attacked;
                     Invoke("stateChange", 0.3f);
                 }
@@ -129,12 +181,14 @@ public class DistacneAttackTypeNormalColliderCon : MonoBehaviour
 
                 if (hpPostionScript.deadOrLive == 1)
                 {
-                    aniScript.deadAniOn();
+                    skinMeshRender.materials[0].color = Color.white;
+
+                    aniScript.aniSet("Dead");
                     Destroy(this.gameObject, 3f);
                 }
                 else
                 {
-                    aniScript.enemyHitted();
+                    aniScript.aniSet("Hitted");
                     IsAttackedState = DistacneAttackEnemy01IsAttacked.attacked;
                     Invoke("stateChange", 0.3f);
                 }
@@ -153,13 +207,13 @@ public class DistacneAttackTypeNormalColliderCon : MonoBehaviour
 
             if (hpPostionScript.deadOrLive == 1)
             {
-                aniScript.deadAniOn();
+                skinMeshRender.materials[0].color = Color.white;
+                aniScript.aniSet("Dead");
                 Destroy(this.gameObject, 3f);
             }
-
             else
             {
-                aniScript.enemyHitted();
+                aniScript.aniSet("Hitted");
                 IsAttackedState = DistacneAttackEnemy01IsAttacked.attacked;
                 Invoke("stateChange", 0.3f);
                 Invoke("isTrap01CoolTimeOn", 2f);

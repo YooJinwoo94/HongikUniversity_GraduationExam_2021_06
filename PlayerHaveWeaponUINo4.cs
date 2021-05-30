@@ -67,7 +67,6 @@ public class PlayerHaveWeaponUINo4 : MonoBehaviour
                 playersWeaponType[weaponSlot] = PlayersWeaponType.weaponType3;
                 break;
         }
-
         weaponNameSetting(weaponSlot, weaponNum);
         playersWeaponImage[weaponSlot].sprite = playerItemDataBase.playerWeaponImage[weaponNum];
     }
@@ -81,6 +80,7 @@ public class PlayerHaveWeaponUINo4 : MonoBehaviour
 
     public void ifLoadData()
     {
+        // 닉네임이 있는경우 2번쨰 무기의 스프라이트를 켜준다.
         if (playerWeaponName[1].text != "")
         {
             playersWeaponImage[1].enabled = true;
@@ -110,7 +110,5 @@ public class PlayerHaveWeaponUINo4 : MonoBehaviour
                     break;
             }
         }
-
-
     }
 }

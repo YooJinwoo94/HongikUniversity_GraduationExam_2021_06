@@ -41,7 +41,16 @@ public class TutorialStageClearManager : MonoBehaviour
     //문열기
     public void openDoor(int doorNum)
     {
-        doorOpenAni[doorNum].SetBool("openDoor", true);
+        Animator obj;
+        if (doorNum == 0 )
+        {
+             obj = GameObject.Find("Tutorial_Door2").GetComponent<Animator>();
+        }
+        else
+        {
+             obj = GameObject.Find("Tutorial_Door3").GetComponent<Animator>();
+        }
+        obj.SetBool("openDoor", true);
     }
 
     // 죽으면 이 함수를 호출 함

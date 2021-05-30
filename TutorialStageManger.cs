@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 
 
 public enum TutorialState
@@ -29,6 +29,8 @@ public enum TutorialState
 
 public class TutorialStageManger : MonoBehaviour
 {
+    [SerializeField]
+    GameObject ui;
     [SerializeField]
     PlayerUISeletManger playerUiSelectManagerScript;
     [SerializeField]
@@ -78,8 +80,17 @@ public class TutorialStageManger : MonoBehaviour
     public TutorialState tutorialState = TutorialState.tutorialReady;
 
 
+    private void OnEnable()
+    {
+        if(SceneManager.GetActiveScene().name == "Tutorial_Scene")
+        {
+            ui.SetActive(true);
+            typingTextConScript.typingTextStart(0);
+        }
+    }
 
 
+   
 
     private void Start()
     {
@@ -87,6 +98,10 @@ public class TutorialStageManger : MonoBehaviour
     }
     private void Update()
     {
+        if (SceneManager.GetActiveScene().name != "Tutorial_Scene") return;
+
+
+
         if   ( tutorialState == TutorialState.tutorialEnd || typingTextConScript.textState == TextState.textStart) return;
 
         if (playerGetWeaponUINo5Script.bgUiNo5Obj.activeInHierarchy == true &&
@@ -179,7 +194,10 @@ public class TutorialStageManger : MonoBehaviour
     }
 
 
-
+    public void isTutorial()
+    {
+        tutorialState = TutorialState.tutorialReady;
+    }
 
     void tutorial()
     {
@@ -267,9 +285,6 @@ public class TutorialStageManger : MonoBehaviour
                     }
                     playerKeyButtonAni[0].SetBool("Start", true);
 
-
-
-
                     tutorialState = TutorialState.tutorial02_1;
                 }
                 break;
@@ -347,12 +362,14 @@ public class TutorialStageManger : MonoBehaviour
                     Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.S)||
                     Input.GetKeyDown(KeyCode.Space) && Input.GetKey(KeyCode.W))
                 {
+                    tutorialState = TutorialState.wait;
+
                     for (int i = 0; i < 5; i++)
                     {
                         playerKeyButtonObj[i].SetActive(false);
                         playerKeyButtonAni[i].enabled = false;
                     }
-                    //playerKeyButtonAni[4].enabled = true;
+
                     playerKeyButtonObj[6].SetActive(true);
                     playerKeyButtonAni[6].enabled = true;
 
@@ -362,8 +379,7 @@ public class TutorialStageManger : MonoBehaviour
 
                     uiPanel[0].SetActive(false);
                     uiPanel[1].SetActive(false);
-                    tutorialState = TutorialState.wait;
-
+            
                     Invoke("resetState", 0.5f);
                 }
                 break;
@@ -373,7 +389,8 @@ public class TutorialStageManger : MonoBehaviour
             case TutorialState.tutorial02_6:
                 if (Input.GetMouseButtonDown(0))
                 {
-                    doorAni[0].SetTrigger("OpenDoor");
+                    Animator door = GameObject.Find("TutorialStartDoor").GetComponent<Animator>();
+                    door.SetBool("OpenDoor", true);
 
                     typingTextConScript.typingTextStart(9);
 
@@ -386,7 +403,6 @@ public class TutorialStageManger : MonoBehaviour
                     uiPanel[1].SetActive(false);            
 
                     tutorialState = TutorialState.wait;
-
                 }          
                 break;
 
@@ -568,15 +584,18 @@ public class TutorialStageManger : MonoBehaviour
 
 
 
-
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Player")
-        {
-            doorAni[0].SetBool("Start", true);
-            Invoke("resetState", 0.5f);
+        if (SceneManager.GetActiveScene().name != "Tutorial_Scene") return;
 
+
+
+        if (other.tag == "Player")
+        {
+            Animator door = GameObject.Find("TutorialStartDoor").GetComponent<Animator>();
+            door.SetBool("Start", true);
             boxCollider.enabled = false;
+            Invoke("resetState", 0.5f);
         }
     }
 }

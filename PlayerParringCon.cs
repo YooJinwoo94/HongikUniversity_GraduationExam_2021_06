@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayerParringCon : MonoBehaviour
 {
+    [SerializeField]
+    BoxCollider playerSheildBoxCol;
+
     PlayerSpCon playerSpConScript;
     PlayerInputScript inputScript;
 
@@ -67,7 +70,6 @@ public class PlayerParringCon : MonoBehaviour
             CloseAttackTypeNormalColliderCon con = other.GetComponent<CloseAttackTypeNormalColliderCon>();
 
             isSucess  = con.isStun;
-            Debug.Log(isSucess);
         }
     }
 }

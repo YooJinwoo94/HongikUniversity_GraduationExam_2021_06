@@ -4,17 +4,36 @@ using UnityEngine;
 
 public class TimeManager : MonoBehaviour
 {
+    public void playerAttackTime()
+    {
+        //StartCoroutine("AttackSlowTimeCheck");
+    }
+
+
+
+
     public void playerDodgeTime()
     {
         StartCoroutine("DodgeSlowTimeCheck");
     }
 
-        IEnumerator DodgeSlowTimeCheck()
+
+    IEnumerator AttackSlowTimeCheck()
+    {
+        Time.timeScale = 0.2f;
+        yield return new WaitForSeconds(0.04f);
+        Time.timeScale = 1f;
+        StopAllCoroutines();
+    }
+
+
+
+    IEnumerator DodgeSlowTimeCheck()
     {
         Time.timeScale = 0.2f;
         yield return new WaitForSeconds(0.07f);
         Time.timeScale = 1f;
-        StopCoroutine("DodgeSlowTimeCheck");
+        StopAllCoroutines();
     }
 
 

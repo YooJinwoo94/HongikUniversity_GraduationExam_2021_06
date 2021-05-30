@@ -17,6 +17,8 @@ enum StageState
 
 public class StageManager : MonoBehaviour
 {
+    private static StageManager instance = null;
+
     List<int> nowStageCountList = new List<int>();
 
     [SerializeField]
@@ -43,10 +45,13 @@ public class StageManager : MonoBehaviour
     GameObject []stageMoveMapUI;
     [SerializeField]
     GameObject blurUI;
-    private static StageManager instance = null;
+
     int[] count ;
     [HideInInspector]
     public int dungeonNum = 1;
+
+
+
 
     void Start()
     {
@@ -107,7 +112,8 @@ public class StageManager : MonoBehaviour
                             xImg[1].SetActive(true);
                             xImg[2].SetActive(true);
                             xImg[4].SetActive(true);
-                            SceneManager.LoadScene("Dungeon_Num01_Stage_01");
+                            LoadingManager.loadScene("Dungeon_Num01_Stage_01");
+                            //SceneManager.LoadScene("Dungeon_Num01_Stage_01");
                             break;
                         case 2:
                             for (int a = 0; a < 6; a++)
@@ -125,7 +131,8 @@ public class StageManager : MonoBehaviour
 
                             xImg[0].SetActive(true);
                             xImg[2].SetActive(true);
-                            SceneManager.LoadScene("Dungeon_Num01_Stage_02");
+                            LoadingManager.loadScene("Dungeon_Num01_Stage_02");
+                          //  SceneManager.LoadScene("Dungeon_Num01_Stage_02");
                             break;
                         case 3:
                             for (int a = 0; a < 6; a++)
@@ -144,7 +151,8 @@ public class StageManager : MonoBehaviour
                             xImg[0].SetActive(true);
                             xImg[1].SetActive(true);
                             xImg[3].SetActive(true);
-                            SceneManager.LoadScene("Dungeon_Num01_Stage_03");
+                            LoadingManager.loadScene("Dungeon_Num01_Stage_03");
+                            //SceneManager.LoadScene("Dungeon_Num01_Stage_03");
                             break;
                         case 4:
                             for (int a = 4; a < 6; a++)
@@ -162,7 +170,8 @@ public class StageManager : MonoBehaviour
 
                             xImg[2].SetActive(true);
                             xImg[4].SetActive(true);
-                            SceneManager.LoadScene("Dungeon_Num01_Stage_04");
+                            LoadingManager.loadScene("Dungeon_Num01_Stage_04");
+                          //  SceneManager.LoadScene("Dungeon_Num01_Stage_04");
                             break;
                         case 5:
                             for (int a = 5; a < 6; a++)
@@ -177,10 +186,12 @@ public class StageManager : MonoBehaviour
                             uiButtons[5].interactable = true;
 
                             xImg[3].SetActive(true);
-                            SceneManager.LoadScene("Dungeon_Num01_Stage_05");
+                            LoadingManager.loadScene("Dungeon_Num01_Stage_05");
+                         //   SceneManager.LoadScene("Dungeon_Num01_Stage_05");
                             break;
                         case 6:
-                            SceneManager.LoadScene("Dungeon_Num01_Stage_06");
+                            LoadingManager.loadScene("Dungeon_Num01_Stage_06");
+                            //SceneManager.LoadScene("Dungeon_Num01_Stage_06");
                             break;
                     }
                 }

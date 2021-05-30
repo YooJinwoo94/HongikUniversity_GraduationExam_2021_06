@@ -118,9 +118,13 @@ public class DialogueManager : MonoBehaviour
 
                         GameObject camObj = GameObject.Find("Start_Stage_Cam");
                         camObj.SetActive(false);
+
+                        GameObject dwaf = GameObject.Find("Dwarf_ShopOwner");
+                        dwaf.tag = "Dwarf_ShopOwner";
                         break;
 
                     default:
+                        Debug.Log("aa");
                         typingTextConScript.typingTextStart(count);
                         count++;
                         break;
@@ -166,6 +170,9 @@ public class DialogueManager : MonoBehaviour
 
                 GameObject camObj = GameObject.Find("Start_Stage_Cam");
                 camObj.SetActive(false);
+
+                GameObject dwaf = GameObject.Find("Dwarf_ShopOwner");
+                dwaf.tag = "Dwarf_ShopOwner";
                 return;
             }
         }

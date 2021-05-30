@@ -17,8 +17,12 @@ public class Boss01ColliderCon : MonoBehaviour
 
     bool trap01 = false;
 
-
-
+    [SerializeField]
+    SkinnedMeshRenderer bossSkinMeshRender;
+    [SerializeField]
+    GameObject[] hitParticle;
+    PlayerCamManager camShackManagerScript;
+    TimeManager timeManagerScript;
 
 
 
@@ -29,12 +33,27 @@ public class Boss01ColliderCon : MonoBehaviour
         aniScript = GetComponent<BossAniScript>();
 
         bossState = BossState.idle;
+
+        camShackManagerScript = GameObject.Find("PlayerCamManager").GetComponent<PlayerCamManager>();
+        timeManagerScript = GameObject.Find("TimeManager").GetComponent<TimeManager>();
     }
 
 
 
 
-
+    void hitObjOnOff()
+    {
+        if (hitParticle[0].activeInHierarchy == false)
+        {
+            hitParticle[0].SetActive(true);
+            hitParticle[1].SetActive(false);
+        }
+        else
+        {
+            hitParticle[0].SetActive(false);
+            hitParticle[1].SetActive(true);
+        }
+    }
 
     void stateChange()
     {
@@ -57,14 +76,25 @@ public class Boss01ColliderCon : MonoBehaviour
             hpPostionScript.enemyDamagedAndImageChange(0.1f);
             hpPostionScript.enemyHpDeadCheck();
 
+            StartCoroutine("onDamgeColorChange");
+
+            camShackManagerScript.shake();
+            timeManagerScript.playerAttackTime();
+
+            hitObjOnOff();
+
             if (hpPostionScript.deadOrLive == 1)
             {
-                aniScript.aniSet("Dead");
+                bossSkinMeshRender.materials[0].color = Color.white;
+
+                aniScript.resetAttackPattern();
+                aniScript.dead();
                 Destroy(this.gameObject, 3f);
+                bossSkinMeshRender.materials[0].color = Color.white;
             }
             else
             {
-                aniScript.aniSet("Hitted");
+                aniScript.hitted();
                 bossState = BossState.attacked;
                 Invoke("stateChange", 0.3f);
             }
@@ -75,14 +105,25 @@ public class Boss01ColliderCon : MonoBehaviour
             hpPostionScript.enemyDamagedAndImageChange(0.3f);
             hpPostionScript.enemyHpDeadCheck();
 
+            StartCoroutine("onDamgeColorChange");
+
+            camShackManagerScript.shake();
+            timeManagerScript.playerAttackTime();
+
+            hitObjOnOff();
+
             if (hpPostionScript.deadOrLive == 1)
             {
-                aniScript.aniSet("Dead");
+                bossSkinMeshRender.materials[0].color = Color.white;
+
+                aniScript.resetAttackPattern();
+                aniScript.dead();
                 Destroy(this.gameObject, 3f);
+                bossSkinMeshRender.materials[0].color = Color.white;
             }
             else
             {
-                aniScript.aniSet("Hitted");
+                aniScript.hitted();
                 bossState = BossState.attacked;
                 Invoke("stateChange", 0.3f);
             }
@@ -93,14 +134,25 @@ public class Boss01ColliderCon : MonoBehaviour
             hpPostionScript.enemyDamagedAndImageChange(0.6f);
             hpPostionScript.enemyHpDeadCheck();
 
+            StartCoroutine("onDamgeColorChange");
+
+            camShackManagerScript.shake();
+            timeManagerScript.playerAttackTime();
+
+            hitObjOnOff();
+
             if (hpPostionScript.deadOrLive == 1)
             {
-                aniScript.aniSet("Dead");
+                bossSkinMeshRender.materials[0].color = Color.white;
+
+                aniScript.resetAttackPattern();
+                aniScript.dead();
                 Destroy(this.gameObject, 3f);
+                bossSkinMeshRender.materials[0].color = Color.white;
             }
             else
             {
-                aniScript.aniSet("Hitted");
+                aniScript.hitted();
                 bossState = BossState.attacked;
                 Invoke("stateChange", 0.3f);
             }
@@ -116,15 +168,21 @@ public class Boss01ColliderCon : MonoBehaviour
             hpPostionScript.enemyDamagedAndImageChange(0.2f);
             hpPostionScript.enemyHpDeadCheck();
 
+            StartCoroutine("onDamgeColorChange");
+
             if (hpPostionScript.deadOrLive == 1)
             {
-                aniScript.aniSet("Dead");
+                bossSkinMeshRender.materials[0].color = Color.white;
+
+                aniScript.resetAttackPattern();
+                aniScript.dead();
                 Destroy(this.gameObject, 3f);
+                bossSkinMeshRender.materials[0].color = Color.white;
             }
 
             else
             {
-                aniScript.aniSet("Hitted");
+                aniScript.hitted();
                 bossState = BossState.attacked;
                 Invoke("stateChange", 0.3f);
             }
@@ -141,21 +199,37 @@ public class Boss01ColliderCon : MonoBehaviour
                 hpPostionScript.enemyDamagedAndImageChange(0.2f);
                 hpPostionScript.enemyHpDeadCheck();
 
+                StartCoroutine("onDamgeColorChange");
+
                 if (hpPostionScript.deadOrLive == 1)
                 {
-                    aniScript.aniSet("Dead");
+                    bossSkinMeshRender.materials[0].color = Color.white;
+
+                    aniScript.resetAttackPattern();
+                    aniScript.dead();
                     Destroy(this.gameObject, 3f);
+                    bossSkinMeshRender.materials[0].color = Color.white;
                 }
                 else
                 {
-                    aniScript.aniSet("Hitted");
+                    aniScript.hitted();
                     bossState = BossState.attacked;
                     Invoke("stateChange", 0.3f);
                     Invoke("isTrap01CoolTimeOn", 2f);
                 }
                 break;
         }
+    }
 
 
+
+
+    IEnumerator onDamgeColorChange()
+    {
+        bossSkinMeshRender.materials[0].color = Color.red;
+        yield return new WaitForSeconds(0.2f);
+
+        if (hpPostionScript.deadOrLive != 1) bossSkinMeshRender.materials[0].color = Color.white;
+        StopCoroutine("onDamgeColorChange");
     }
 }

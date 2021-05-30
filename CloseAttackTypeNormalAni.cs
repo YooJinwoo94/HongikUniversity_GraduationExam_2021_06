@@ -102,7 +102,7 @@ public class CloseAttackTypeNormalAni : MonoBehaviour
 
             case "Stuned":
                 aniOff();
-                ani.SetBool("is_Enemy_Stuned", true);
+                ani.SetTrigger("is_Enemy_Stuned");
                 Invoke("aniOff", 1f);
                 break;
         }    
@@ -111,13 +111,13 @@ public class CloseAttackTypeNormalAni : MonoBehaviour
     public void aniOff()
     {
         ani.SetBool("is_Enemy_Damaged", false);
-        ani.SetBool("is_Enemy_Stuned", false);
+      //  ani.SetTrigger("is_Enemy_Stuned");
         ani.SetBool("is_Enemy_Rest", false);
         ani.SetBool("is_Run", false);
         ani.SetBool("Bool_Enemy_PatternClose", false);
         ani.SetBool("Bool_Enemy_PatternFar", false);
         ani.SetBool("Bool_Enemy_PatternFar02", false);
-        ani.SetBool("Bool_Enemy_Waiting", false);
+       // ani.SetBool("Bool_Enemy_Waiting", false);
     }
     public void resetAni()
     {
@@ -149,4 +149,7 @@ public class CloseAttackTypeNormalAni : MonoBehaviour
         ani.SetBool("is_Run", false);
         ani.SetBool("Bool_Enemy_Waiting", true);
     }
+
+
+
 }

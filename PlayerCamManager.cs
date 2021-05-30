@@ -3,56 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-
-enum CamState
-{
-   playerFollow,
-   shake
-}
-
-
 public class PlayerCamManager : MonoBehaviour
 { 
+    float shakeAmount = 1f;
+    float shakeDuration = 0.1f;
+
     [SerializeField]
-    Transform target;
-    [SerializeField]
-     Vector3 offSet;
-    [HideInInspector]
-    public Animator playerCamAni;
-
-   CamState CamState;
-
-
-    float shakeAmount = 2f;
-    float shakeDuration = 0.2f;
-
-    Vector3 camPos;
-    Camera cam;
-
-    private static PlayerCamManager instance = null;
-
-    public static PlayerCamManager Instance
-    {
-        get
-        {
-            if (null == instance) return null;
-            return instance;
-        }
-    }
-    private void Start()
-    {
-        cam = GetComponent<Camera>();
-        playerCamAni = GetComponent<Animator>();
-
-        playerCamAni.enabled = false;
-        CamState = CamState.playerFollow;
-        camPos = cam.transform.position;
-
-        instance = this;
-        if (null == instance) instance = this;
-    }
-
-
+    Transform cam;
 
 
     public void shake()
@@ -77,7 +34,7 @@ public class PlayerCamManager : MonoBehaviour
             yield return null;
         }
 
-        transform.rotation = Quaternion.Euler(new Vector3(37, 0, 0));
+        cam.rotation = Quaternion.Euler(new Vector3(34.055f, 0, 0));
         StopCoroutine(ShakeCam());
     }
 }

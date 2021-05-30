@@ -37,7 +37,7 @@ public class SaveManger : MonoBehaviour
     PlayerPowerDataBase playerPowerDataBaseScript;
     [SerializeField]
     CoinManager coinMangerScript;
-
+    PlayerWeaponObjCon playerWeaponObjConScript;
     string sceneName;
 
 
@@ -83,8 +83,8 @@ public class SaveManger : MonoBehaviour
 
         for (int i = 0; i < playerCurseUIScript.playerCurseCount; i++)
         {
-            playerCurseUIScript.curseSkullAni[playerCurseUIScript.playerCurseCount].SetBool("curseStart", true);
-            playerCurseUIScript.playerCurseImage[playerCurseUIScript.playerCurseCount].color = new Color(123 / 255f, 58 / 255f, 214 / 255f);
+            playerCurseUIScript.curseSkullAni[i].SetBool("curseStart", true);
+            playerCurseUIScript.playerCurseImage[i].color = new Color(123 / 255f, 58 / 255f, 214 / 255f);
         }
 
         playerPos.position = new Vector3(load.playerPos[0], load.playerPos[1], load.playerPos[2]);
@@ -93,17 +93,21 @@ public class SaveManger : MonoBehaviour
         coinMangerScript.coinCountToUi(coinMangerScript.coinCount , true);
         coinMangerScript.loadCost();
 
-        //현재 내 무기의 정보를 가져와서 인벤창과 무기획득 ui 정보 정리.
+        //인벤창에서의 내 무기를 가져옴
         for (int i = 0; i < 2; i++)
         {
             playerHaveWeaponUINo4Script.playerWeaponName[i].text = load.playersWeapon[i];
             playerHaveWeaponUINo4Script.ifLoadData();
         }
+
+        //강화내역 가져오기
         for (int i = 0; i < 3; i++)
         {
             weaponInGameUIScript.playersPowerText[i].text = load.playersPowerCount[i].ToString();
             playerHavePowerUINo3Script.playersPowerCount[i].text = load.playersPowerCount[i].ToString();
-        }  
+        }
+        
+        //퀘스트 내용 가져오기
         for (int i = 0; i < 10; i++)
         {
             for (int j = 0; j < 10; j++)
@@ -111,6 +115,9 @@ public class SaveManger : MonoBehaviour
                 questManagerScript.isQuestEnd[i, j] = load.playerQuest[i, j];
             }
         }
+
+        //플레이어의 무기 Obj를 변경
+        playerWeaponObjConScript.changePlayerWeaponObj();
     }
 
     public void loadScene()
@@ -134,6 +141,7 @@ public class SaveManger : MonoBehaviour
         questManagerScript = GameObject.Find("QuestManager").GetComponent<QuestManager>();
 
         playerPowerDataBaseScript = GameObject.Find("PlayerDataBase").GetComponent<PlayerPowerDataBase>();
+        playerWeaponObjConScript = GameObject.Find("Player").GetComponent<PlayerWeaponObjCon>();
     }
 
     public  void turnOffUI()

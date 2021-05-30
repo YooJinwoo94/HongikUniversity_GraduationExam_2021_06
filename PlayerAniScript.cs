@@ -36,6 +36,41 @@ public class PlayerAniScript : MonoBehaviour
         ani.SetBool("Bool_Player_Walking", true);
     }
 
+    //걷는 경우 
+    public void playerAniWalkFront()
+    {
+        aniReset();
+        ani.SetBool("Bool_Player_Front", true);
+    }
+    public void playerAniWalkBack()
+    {
+        aniReset();
+        ani.SetBool("Bool_Player_Back", true);
+    }
+    public void playerAniWalkLeft()
+    {
+        aniReset();
+        ani.SetBool("Bool_Player_Back_L", true);
+    }
+    public void playerAniWalkRight()
+    {
+        aniReset();
+        ani.SetBool("Bool_Player_Back_R", true);
+    }
+    public void playerAniWalkFrontLeft()
+    {
+        aniReset();
+        ani.SetBool("Bool_Player_Front_L", true);
+    }
+    public void playerAniWalkFrontRight()
+    {
+        aniReset();
+        ani.SetBool("Bool_Player_Front_R", true);
+    }
+
+
+
+
     //  구른 경우 
     //======================================================
     public void playerAniRollFront()
@@ -134,7 +169,14 @@ public class PlayerAniScript : MonoBehaviour
 
     void aniReset()
     {
-        ani.SetBool("Bool_Player_Waiting", false);
+        ani.SetBool("Bool_Player_Back", false);
+        ani.SetBool("Bool_Player_Back_L", false);
+        ani.SetBool("Bool_Player_Back_R", false);
+        ani.SetBool("Bool_Player_Front", false);
+        ani.SetBool("Bool_Player_Front_L", false);
+        ani.SetBool("Bool_Player_Front_R", false);
+
+      //  ani.SetBool("Bool_Player_Waiting", false);
         ani.SetBool("Bool_Player_Walking", false);
 
         ani.SetBool("Bool_Player_Attack_01", false);

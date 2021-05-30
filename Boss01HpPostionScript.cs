@@ -10,7 +10,8 @@ public class Boss01HpPostionScript : MonoBehaviour
     public int deadOrLive = 0;
     [SerializeField]
     Image[] bossHpBarImage;
-    Image uiUse;
+    GameObject bossHpBg;
+    Image bossHpBar;
 
     [SerializeField]
     CapsuleCollider enemyCollider;
@@ -27,29 +28,31 @@ public class Boss01HpPostionScript : MonoBehaviour
 
     private void Start()
     {
-        Instantiate(bossHpBarImage[0], FindObjectOfType<Canvas>().transform);
-        uiUse = Instantiate(bossHpBarImage[1], FindObjectOfType<Canvas>().transform).GetComponent<Image>();
+
+        bossHpBg = Instantiate(bossHpBarImage[0], FindObjectOfType<Canvas>().transform).gameObject;
+        bossHpBar = Instantiate(bossHpBarImage[1], FindObjectOfType<Canvas>().transform).GetComponent<Image>();
+
 
         rid = GetComponent<Rigidbody>();
-        uiUse.fillAmount = 1;
+        bossHpBar.fillAmount = 1;
     }
 
 
 
     public void healthUp(int amount)
     {
-        uiUse.fillAmount += amount;
+        bossHpBar.fillAmount += amount;
     }
 
     public void enemyDamagedAndImageChange(float amount)
     {
-        uiUse.fillAmount -= amount;     
+        bossHpBar.fillAmount -= amount;     
     }
 
 
     public int enemyHpDeadCheck()
     {
-        if (uiUse.fillAmount <= 0.01f && deadIsOnce == false)
+        if (bossHpBar.fillAmount <= 0.01f && deadIsOnce == false)
         {
             deadIsOnce = true;
 
@@ -57,11 +60,11 @@ public class Boss01HpPostionScript : MonoBehaviour
             enemyCollider.enabled = false;
             // 현재 스테이지 값을 가져온다음 스테이지 클리어 여부를 확인 하기위해 값을 전달함.
             StageClearCheckManager.Instance.numMosterCount(StageManager.Instance.dungeonNum, StageManager.Instance.returnNowStageName());
-
             QuestManager.Instance.isQuestEnd[StageManager.Instance.dungeonNum, 0] = true;
 
             deadOrLive = 1;
-            Destroy(uiUse.gameObject, 3f);
+            Destroy(bossHpBar.gameObject, 1f);
+            Destroy(bossHpBg, 1f);
         }
         return deadOrLive;
     }

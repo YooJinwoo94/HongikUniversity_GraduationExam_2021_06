@@ -16,6 +16,7 @@ public class PlayerWeaponInGameUI : MonoBehaviour
     [SerializeField]
     PlayerHaveWeaponUINo4 playerHaveWeaponUINo4Script;
 
+    [Header("플레이어의 무기 이미지칸 _ 인게임UI창 .")]
     [SerializeField]
     GameObject[] playerWeapon;
 
@@ -58,7 +59,6 @@ public class PlayerWeaponInGameUI : MonoBehaviour
                     break;
             }
          }
-
         playerWeaponObjConScript.changePlayerWeaponObj();
     }
 
@@ -73,7 +73,7 @@ public class PlayerWeaponInGameUI : MonoBehaviour
         {
             playerWeapon[0].SetActive(false);
             playerWeapon[1].SetActive(true);
-             checkNowWeaponUISelected = 1;
+            checkNowWeaponUISelected = 1;
         }
         else
         {
@@ -94,8 +94,4 @@ public class PlayerWeaponInGameUI : MonoBehaviour
         isWeaponChangeCoolTime = false;
         StopCoroutine("resetCoolTime");
     }
-
-
-
-
 }

@@ -248,12 +248,12 @@ public class PlayerUISeletManger : MonoBehaviour
         {    
             if (leftRightButtonToSwitchTheBoxWhenGetWeapon[0].interactable == true && leftRightButtonToSwitchTheBoxWhenGetWeapon[1].interactable == true) return;
 
+            // 같은 무기면 불가능!
             for (int i = 0; i < 2; i++)
-            {
+            {           
                 if (playerGetWeaponUINo5Script.dropedWeaponName.text == playerHaveWeaponUINo4.playerWeaponName[i].text)
                 {
                     playerShopUINo7Script.alarmUiSet[0].SetTrigger("aniStart");
-                    Debug.Log("sa");
                     return;
                 }
             }
@@ -287,6 +287,7 @@ public class PlayerUISeletManger : MonoBehaviour
             playerUIBackGround.SetActive(false);
             playerGetWeaponUINo5Script.bgUiNo5Obj.SetActive(false);
 
+            //주운 무기 처리 
             Animator weaponAni = playerGetWeaponUINo5Script.dropWeaponObj.GetComponent<Animator>();
             Rigidbody weaponRid = playerGetWeaponUINo5Script.dropWeaponObj.GetComponent<Rigidbody>();
             weaponAni.enabled = false;

@@ -19,8 +19,8 @@ public class TrapType3Boom : MonoBehaviour
     Transform boomParticleAndBoomAreaPos;
     [SerializeField]
     GameObject boomAreaGameObject;
-
-
+    [SerializeField]
+    GameObject track_03_PartObj;
 
     TrapType3State TrapType3State;
 
@@ -53,9 +53,8 @@ public class TrapType3Boom : MonoBehaviour
         rendererColor.material.color = Color.red;
         yield return new WaitForSeconds(0.5f);
         boom();
-      //  Instantiate(track_03_PartObj);
         boomAreaGameObject.SetActive(false);
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.2f);
        
         Destroy(gameObject);
 
@@ -66,8 +65,10 @@ public class TrapType3Boom : MonoBehaviour
     {
         if (TrapType3State != TrapType3State.normal) return;
 
-        if (other.gameObject.tag == "PlayerSword" 
-            || other.gameObject.tag == "enemyWeapon")
+        if ((other.tag != "PlayerSword03") || (other.tag != "PlayerSword02") || (other.tag != "PlayerSword01")
+            || (other.tag != "DistanceAttackTypeFireAttack01")
+            || (other.tag != "enemyWeapon")
+            || (other.tag != "TrapType2FireAttack"))
         {
             boomAreaGameObject.SetActive(true);
             TrapType3State = TrapType3State.boomReady;

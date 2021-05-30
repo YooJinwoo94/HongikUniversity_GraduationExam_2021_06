@@ -39,11 +39,22 @@ public class TrapType2FireAttackLeft : MonoBehaviour
     }
 
 
+    void off()
+    {
+        particleSys.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        boxCollider.enabled = false;
+        meshRenderer.enabled = false;
+        rid.velocity = gameObject.transform.forward * 0;
 
+        boomParticle.SetActive(true);
+        Destroy(gameObject, 3);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "TrapType2FireAttack" || other.gameObject.tag == "TrapType02") return;
+        if (other.gameObject.tag == "TrapType2FireAttack" || other.gameObject.tag == "TrapType02" || other.gameObject.tag == null) return;
+
+
 
         if (other.gameObject.tag == "Player")
         {
@@ -59,12 +70,20 @@ public class TrapType2FireAttackLeft : MonoBehaviour
 
             return;
         }
-        particleSys.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        boxCollider.enabled = false;
-        meshRenderer.enabled = false;
-        rid.velocity = gameObject.transform.forward * 0;
+        if (other.gameObject.tag == "Wall")
+        {
+            if (PlayerInputScript.Instance.isDodge == true) return;
 
-        boomParticle.SetActive(true);
-        Destroy(gameObject, 3);
+            particleSys.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            boxCollider.enabled = false;
+            meshRenderer.enabled = false;
+            rid.velocity = gameObject.transform.forward * 0;
+
+            boomParticle.SetActive(true);
+            Destroy(gameObject, 3);
+
+            return;
+        }
+        Invoke("off", 3f);
     }
 }

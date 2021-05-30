@@ -55,6 +55,8 @@ public class DistanceAttackTypeFireAttack : MonoBehaviour
         {
             if (PlayerInputScript.Instance.isDodge == true) return;
 
+            isStop = true;
+
             particleSys.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             boxCollider.enabled = false;
             meshRenderer.enabled = false;

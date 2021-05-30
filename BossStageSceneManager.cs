@@ -18,8 +18,8 @@ public class BossStageSceneManager : MonoBehaviour
 
     [SerializeField]
     GameObject bossGameObj;
-
-
+    [SerializeField]
+    GameObject camObj;
 
     // 페이드 인 아웃
     //=========================================
@@ -49,8 +49,6 @@ public class BossStageSceneManager : MonoBehaviour
         blackPanel.enabled = false;
     }
 
-
-
     IEnumerator FadeStart()
     {
         blackPanel.enabled = true;
@@ -73,8 +71,8 @@ public class BossStageSceneManager : MonoBehaviour
             yield return null;
         }
         blackPanel.enabled = false;
-        PlayerCamManager.Instance.playerCamAni.enabled = false;
-        PlayerCamManager.Instance.playerCamAni.SetBool("bossStage01Start", false);
+        camObj.SetActive(false);
+       // Destroy(camObj);
         StopCoroutine(FadeStart());
     }
 
@@ -83,6 +81,7 @@ public class BossStageSceneManager : MonoBehaviour
 
     IEnumerator stageBoss01Opening()
     {
+        camObj.SetActive(true);
         yield return new WaitForSeconds(0.5f);
         bossDoorAni.SetBool("doorClose", true);
         yield return new WaitForSeconds(2.5f);
@@ -107,11 +106,11 @@ public class BossStageSceneManager : MonoBehaviour
         if (other.tag == "Player")
         {
             playerDoorAni.SetBool("isPlayerDoorClose", true);
-            PlayerCamManager.Instance.playerCamAni.enabled = true;
-            PlayerCamManager.Instance.playerCamAni.SetBool("bossStage01Start", true);
-            
-            boxCollider.enabled = false;
             StartCoroutine("stageBoss01Opening");
+
+            boxCollider.enabled = false;
         }
     }
+ 
 }
+ 

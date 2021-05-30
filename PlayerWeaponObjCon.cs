@@ -16,6 +16,7 @@ public class PlayerWeaponObjCon : MonoBehaviour
     //호출 시기 =>
     // 마우스로 무기를 바꿀때랑
     // 무기를 얻었을때랑 
+    // 데이터 로드시 
    public void changePlayerWeaponObj ()
     {
         switch (playerHaveWeaponUiNo4Script.playersWeaponType[playerWeaponInGameUiScript.checkNowWeaponUISelected])

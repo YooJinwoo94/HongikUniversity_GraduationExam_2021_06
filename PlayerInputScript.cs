@@ -162,9 +162,9 @@ public class PlayerInputScript : MonoBehaviour
             return;
         }
 
-        if (state == PlayerState.idle || state == PlayerState.dodge ||
-           state == PlayerState.attack 
-           || playerHitted == PlayerHitted.normalAttacked
+        if ((state == PlayerState.idle || state == PlayerState.dodge ||
+           state == PlayerState.attack) 
+           && playerHitted == PlayerHitted.none
            ) lookAtCam();
 
         inputProcessInven();
@@ -184,6 +184,16 @@ public class PlayerInputScript : MonoBehaviour
         {
             animationScript.playerAniWait();
             return;
+        }
+
+        switch (playerHitted)
+        {
+         //   case PlayerHitted.normalAttacked:
+         //       return;
+            case PlayerHitted.airborneAttacked:
+                return;
+            case PlayerHitted.stunAttacked:
+                return;
         }
 
         switch (state)
@@ -211,15 +221,6 @@ public class PlayerInputScript : MonoBehaviour
             case PlayerState.stopForCutSceen:
                 break;              
         }
-        switch (playerHitted)
-        {
-            case PlayerHitted.normalAttacked:
-                break;
-            case PlayerHitted.airborneAttacked:
-                break;
-            case PlayerHitted.stunAttacked:
-                break;
-        }
     }
     #endregion
 
@@ -230,25 +231,70 @@ public class PlayerInputScript : MonoBehaviour
     {
         checkRotationAndKeyDownToAniCon();
 
+        // 오른쪽 마우스 클릭시 무기 바꿈
         if (Input.GetMouseButtonDown(1))
         {
             if (weaponInGameUIScript.isWeaponChangeCoolTime == true) return;
             weaponInGameUIScript.playerWeaponUISelect();
         }
 
-        // 그냥 이동함? 
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
+
+        // 가만히 있음? 
+        if (Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S)) animationScript.playerAniWait();
+        else
         {
             hAxis = Input.GetAxisRaw("Horizontal");
             vAxis = Input.GetAxisRaw("Vertical");
-
             transform.position += new Vector3(hAxis, 0, vAxis) * speed * Time.deltaTime;
-            animationScript.playerAniWalk();
-
-            SoundManager.Instance.playerWalkSound();
         }
-        // 가만히 있음? 
-        else if (Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S)) animationScript.playerAniWait();
+        // 그냥 이동함? 
+        if (Input.GetKey(KeyCode.A))
+        {
+            SoundManager.Instance.playerWalkSound();
+            walkAndGetKeyA();
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            SoundManager.Instance.playerWalkSound();
+            walkAndGetKeyD();
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            SoundManager.Instance.playerWalkSound();
+            walkAndGetKeyS();
+        }
+        else if (Input.GetKey(KeyCode.W))
+        {
+            SoundManager.Instance.playerWalkSound();
+            walkAndGetKeyW();
+        }
+
+        if ((Input.GetKey(KeyCode.W)) 
+                &&(Input.GetKey(KeyCode.A)))
+        {
+            SoundManager.Instance.playerWalkSound();
+            walkAndGetKeyWA();
+        }
+        else if ((Input.GetKey(KeyCode.W))
+                && (Input.GetKey(KeyCode.D)))
+        {
+            SoundManager.Instance.playerWalkSound();
+            walkAndGetKeyWD();
+        }
+        else if ((Input.GetKey(KeyCode.S))
+                && (Input.GetKey(KeyCode.D)))
+        {
+            SoundManager.Instance.playerWalkSound();
+            walkAndGetKeySD();
+        }
+        else if ((Input.GetKey(KeyCode.S))
+               && (Input.GetKey(KeyCode.A)))
+        {
+            SoundManager.Instance.playerWalkSound();
+            walkAndGetKeySA();
+        }
+
+
 
         // 기력은 충분하니? 
         if (spConScript.isPlayerSpZero == true) return;
@@ -258,6 +304,7 @@ public class PlayerInputScript : MonoBehaviour
         {
             if (attackConScript.isCool == true) return;
 
+          //  if (playerHitted != PlayerHitted.none) return;
             attackConScript.whenAttackCheckWeapon();
         }
 
@@ -265,7 +312,7 @@ public class PlayerInputScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C))
         {
             if (playerParringConScript.isCool == true) return;
-
+            Debug.Log("aa");
             playerParringConScript.parringStart();
         }
 
@@ -396,5 +443,127 @@ public class PlayerInputScript : MonoBehaviour
         else if (transform.rotation.y <= 0f && transform.rotation.y >= -0.8f) mousePlace = MousePlace.left;
     }
     #endregion
+
+
+
+
+
+
+
+
+
+
+    //
+    //=====================
+    public void walkAndGetKeyW()
+    {
+        switch (mousePlace)
+        {
+            case MousePlace.top:
+                animationScript.playerAniWalkFront();
+                break;
+            case MousePlace.bot:
+                animationScript.playerAniWalkBack();
+                break;
+            case MousePlace.right:
+                animationScript.playerAniWalkLeft();
+                break;
+            case MousePlace.left:
+                animationScript.playerAniWalkRight();
+                break;
+        }
+    }
+    public void walkAndGetKeyS()
+    {
+        switch (mousePlace)
+        {
+            case MousePlace.top:
+                animationScript.playerAniWalkBack();
+                break;
+            case MousePlace.bot:
+                animationScript.playerAniWalkFront();
+                break;
+            case MousePlace.right:
+                animationScript.playerAniWalkRight();
+                break;
+            case MousePlace.left:
+                animationScript.playerAniWalkLeft();
+                break;
+        }
+    }
+    public void walkAndGetKeyD()
+    {
+        switch (mousePlace)
+        {
+            case MousePlace.top:
+                animationScript.playerAniWalkRight();
+                break;
+            case MousePlace.bot:
+                animationScript.playerAniWalkLeft();
+                break;
+            case MousePlace.right:
+                animationScript.playerAniWalkFront();
+                break;
+            case MousePlace.left:
+                animationScript.playerAniWalkBack();
+                break;
+        }
+    }
+    public void walkAndGetKeyA()
+    {
+        switch (mousePlace)
+        {
+            case MousePlace.top:
+                animationScript.playerAniWalkLeft();
+                break;
+            case MousePlace.bot:
+                animationScript.playerAniWalkRight();
+                break;
+            case MousePlace.right:
+                animationScript.playerAniWalkBack();
+                break;
+            case MousePlace.left:
+                animationScript.playerAniWalkFront();
+                break;
+        }
+    }
+
+    public void walkAndGetKeyWA()
+    {
+        switch (mousePlace)
+        {
+            case MousePlace.top:
+                animationScript.playerAniWalkFrontLeft();
+                break;
+        }
+    }
+    public void walkAndGetKeyWD()
+    {
+        switch (mousePlace)
+        {
+            case MousePlace.top:
+                animationScript.playerAniWalkFrontRight();
+                break;
+        }
+    }
+
+    public void walkAndGetKeySA()
+    {
+        switch (mousePlace)
+        {
+            case MousePlace.bot:
+                animationScript.playerAniWalkFrontRight();
+                break;
+        }
+    }
+    public void walkAndGetKeySD()
+    {
+        switch (mousePlace)
+        {
+            case MousePlace.bot:
+                animationScript.playerAniWalkFrontLeft();
+                break;
+        }
+    }
 }
 

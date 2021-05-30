@@ -33,19 +33,41 @@ public class DistanceAttackTypeNormalAni : MonoBehaviour
     }
 
 
+    public void aniSet(string name)
+    {
+        switch (name)
+        {
+            case "Reset_Ani":
+                enemyAni.SetBool("is_Run", false);
+                enemyAni.SetBool("is_Enemy_Rest", false);
 
+                enemyAni.SetBool("Bool_Enemy_Waiting", true);
+                break;
 
-    public void enemyHitted()
-    {
-        enemyAni.SetTrigger("is_Enemy_Damaged");
-    }
-    public void fireBallAttack()
-    {
-        Instantiate(enemyParticleConScript.fireBall, fireAttackPos.position,transform.rotation);
-        enemyAni.SetTrigger("is_Enemy_Attack_FireBall");
-    }
-    public void deadAniOn()
-    {
-        enemyAni.SetBool("is_Enemy_Dead", true);
+            case "Run":
+                enemyAni.SetBool("is_Enemy_Rest", false);
+                enemyAni.SetBool("is_Run", true);
+                break;
+
+            case "Hitted":
+                enemyAni.SetBool("is_Enemy_Rest", false);
+                enemyAni.SetTrigger("is_Enemy_Damaged");
+                break;
+
+            case "Dead":
+                enemyAni.SetBool("is_Enemy_Rest", false);
+                enemyAni.SetBool("is_Enemy_Dead", true);
+                break;
+
+            case "Rest":
+                enemyAni.SetBool("is_Enemy_Rest", false);
+                enemyAni.SetBool("is_Enemy_Rest", true);
+                break;
+
+            case "FireBallAttack":
+                Instantiate(enemyParticleConScript.fireBall, fireAttackPos.position, transform.rotation);
+                enemyAni.SetTrigger("is_Enemy_Attack_FireBall");
+                break;
+        }
     }
 }

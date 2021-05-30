@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public class PlayerColliderCon : MonoBehaviour
 {
     [SerializeField]
+    GameObject[] hitParticle;
+    [SerializeField]
     PlayerParringCon playerParringConScript;
     [SerializeField]
     Animator camAni;
@@ -19,7 +21,7 @@ public class PlayerColliderCon : MonoBehaviour
     [SerializeField]
     CoinManager coinManagerScript;
     [SerializeField]
-    PlayerCamManager playerCamManagerScript;
+    PlayerCamManager camShackManagerScript;
     [SerializeField]
     PlayerPowerGetUINo2 playerPowerGetUINo2Script;
     [SerializeField]
@@ -53,7 +55,6 @@ public class PlayerColliderCon : MonoBehaviour
 
 
 
-
     //  공격 받은 경우
     #region
     void resetStateToidle()
@@ -74,17 +75,17 @@ public class PlayerColliderCon : MonoBehaviour
         switch (inputScript.playerHitted)
         {
             case PlayerHitted.normalAttacked:
-                aniConScript.attackedAni(1);
+             //   aniConScript.attackedAni(1);
                 yield return new WaitForSeconds(0.3f);
-                aniConScript.attackedAniReset();
+              //  aniConScript.attackedAniReset();
                 yield return new WaitForSeconds(0.7f);
                 resetStateToidle();
                 break;
 
             case PlayerHitted.airborneAttacked:
-                aniConScript.attackedAni(2);
+              //  aniConScript.attackedAni(2);
                 yield return new WaitForSeconds(0.3f);
-                aniConScript.attackedAniReset();
+             //   aniConScript.attackedAniReset();
                 yield return new WaitForSeconds(0.3f);
                 resetStateToidle();
                 break;
@@ -123,6 +124,53 @@ public class PlayerColliderCon : MonoBehaviour
     }
 
 
+
+
+
+
+    void hitParticleOn(string tagName = "" )
+    {
+        switch (tagName)
+        {
+            case "":
+                Debug.Log("Err");
+                break;
+
+            case "enemyWeapon":
+                hitParticle[0].SetActive(true);
+                break;
+
+            case "pattern08":
+                hitParticle[0].SetActive(true);
+                break;
+//========================================================
+            case "TrapType2FireAttack":
+                hitParticle[1].SetActive(true);
+                break;
+
+            case "TrapType3BoomAttack":
+                hitParticle[1].SetActive(true);
+                break;
+
+            case "DistanceAttackTypeFireAttack01":
+                hitParticle[1].SetActive(true);
+                break;
+            //========================================================
+            case "TrapType1Thorn":
+                hitParticle[2].SetActive(true);
+                break;
+        }
+    }
+
+    void hitParticleOff()
+    {
+       for (int i =0; i<3; i++)
+        {
+            if (hitParticle[i].activeInHierarchy == true) hitParticle[i].SetActive(false);
+        }
+    }
+
+
     // 골드 획득만 예외적으로 다른 스크립트에서 처리한다.
     private void OnTriggerEnter(Collider other)
     {
@@ -152,17 +200,24 @@ public class PlayerColliderCon : MonoBehaviour
             || other.gameObject.tag == "DistanceAttackTypeFireAttack01"
             || other.gameObject.tag == "TrapType2FireAttack"
             || other.gameObject.tag == "TrapType3BoomAttack"
+            || other.gameObject.tag == "pattern08"
             || other.gameObject.tag == "TrapType1Thorn")
         {
+            hitParticleOn(other.gameObject.tag);
+            Invoke("hitParticleOff", 1f);
+
             inputScript.playerHitted = PlayerHitted.normalAttacked;
 
-            playerCamManagerScript.shake();
+            camShackManagerScript.shake();
+
             playerHpManagerScript.isPlayerDamaged(0.1f);
             playerCurseScript.isplayerCursed(0.2f);
 
             StartCoroutine(PlayerAttackedCoroutine());
             return;
         }
+
+        /*
         if (other.gameObject.tag == "pattern08")
         {
             inputScript.playerHitted = PlayerHitted.airborneAttacked;
@@ -171,13 +226,14 @@ public class PlayerColliderCon : MonoBehaviour
             playerCurseScript.isplayerCursed(0.2f);
             playerHpManagerScript.isPlayerDamaged(0.1f);
 
-            StartCoroutine(PlayerAttackedCoroutine());
+           StartCoroutine(PlayerAttackedCoroutine());
             return;
         }
+        */
         if (other.gameObject.tag == "enemyStun")
         {
             inputScript.playerHitted = PlayerHitted.stunAttacked;
-
+            camShackManagerScript.shake();
             StartCoroutine(PlayerAttackedCoroutine());
             return;
         }
@@ -227,7 +283,7 @@ public class PlayerColliderCon : MonoBehaviour
 
             aniConScript.playerAniWait();
             playerUISeletMangerScript.turnOnOffIngameUi();
-            Invoke("waitForBossStage", 6.5f);
+            Invoke("waitForBossStage", 8.2f);
             return;
         }
         if (other.gameObject.tag == "Dwarf_ShopOwner")
@@ -286,9 +342,10 @@ public class PlayerColliderCon : MonoBehaviour
 
         if (other.gameObject.tag == "TrapType1Thorn")
         {
-           // inputScript.state = PlayerState.normalAttacked;
+            inputScript.playerHitted = PlayerHitted.normalAttacked;
 
-            playerCamManagerScript.shake();
+            camShackManagerScript.shake();
+
             playerCurseScript.isplayerCursed(0.2f);
             playerHpManagerScript.isPlayerDamaged(0.1f);
 
