@@ -68,6 +68,7 @@ public class TutorialManagerVer2 : MonoBehaviour
     PlayerGetWeaponUINNo5 playerGetWeaponUINo5Script;
     PlayerPowerGetUINo2 playerPowerGetUiNo2Script;
 
+    bool[] stage00Check = new bool[4];
     bool startOnce = false;
     int textCount = 0;
     int detailTextCount = 0;
@@ -242,6 +243,7 @@ public class TutorialManagerVer2 : MonoBehaviour
     {
         if (SceneManager.GetActiveScene().name != "Tutorial_Scene_Ver2") return;
 
+        Debug.Log(tutorial);
 
         if ((playerGetWeaponUINo5Script.bgUiNo5Obj.activeInHierarchy == true)
           && (tutorial == TutorialStateVer2.step04_1)) tutorial = TutorialStateVer2.step04_2;
@@ -255,6 +257,7 @@ public class TutorialManagerVer2 : MonoBehaviour
         switch (tutorial)
         {    
             case TutorialStateVer2.step00:
+
                 if (((Input.GetKeyDown(KeyCode.W))
                     || Input.GetKeyDown(KeyCode.A)
                     || Input.GetKeyDown(KeyCode.S)
@@ -263,13 +266,49 @@ public class TutorialManagerVer2 : MonoBehaviour
                 {      
                     startOnce = true;
                     StopAllCoroutines();
-                    uiSet[0].SetActive(false);
-                    //¸ØÃç
+                    uiSet[4].SetActive(false);
+                    //¿òÁ÷¿©
                     makePlayerWait = MakePlayerWait.play;
-                    Invoke("takeTimeForNextLevel", 0.5f);
+
+                    for (int i = 0; i<4; i++) wsadButtonAni[i].SetBool("Start", false);
+                }
+                if (Input.GetKey(KeyCode.W) && (startOnce == true)) wsadButtonAni[0].SetTrigger("StartButton");
+                if (Input.GetKey(KeyCode.A) && (startOnce == true)) wsadButtonAni[1].SetTrigger("StartButton");
+                if (Input.GetKey(KeyCode.S) && (startOnce == true)) wsadButtonAni[2].SetTrigger("StartButton");
+                if (Input.GetKey(KeyCode.D) && (startOnce == true)) wsadButtonAni[3].SetTrigger("StartButton");
+
+                if (Input.GetKeyUp(KeyCode.W) && (startOnce == true))
+                {
+                    uiSet[5].SetActive(false);
+                    stage00Check[0] = true;
+                    wsadButtonAni[0].SetBool("Start", false);
+                }
+                if (Input.GetKeyUp(KeyCode.A) && (startOnce == true))
+                {
+                    uiSet[6].SetActive(false);
+                    stage00Check[1] = true;
+                    wsadButtonAni[1].SetBool("Start", false);
+                }
+                if (Input.GetKeyUp(KeyCode.S) && (startOnce == true))
+                {
+                    uiSet[7].SetActive(false);
+                    stage00Check[2] = true;
+                    wsadButtonAni[2].SetBool("Start", false);
+                }
+                if (Input.GetKeyUp(KeyCode.D) && (startOnce == true))
+                {
+                    uiSet[8].SetActive(false);
+                    stage00Check[3] = true;
+                    wsadButtonAni[3].SetBool("Start", false);
+                }
+
+                if (stage00Check[0] && stage00Check[1] && stage00Check[2] && stage00Check[3])
+                {
+                    uiSet[0].SetActive(false);
+                    takeTimeForNextLevel();
                 }
                 break;
-
+       
             case TutorialStateVer2.step01_1:
                 if (startOnce == false)
                 {
