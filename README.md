@@ -25,5 +25,11 @@ UI : ugui
 기획적/ 기술적 특징 : ui적인 작업 및 카메라 엑션, 구르기할떄 잔상을 보여주는 등 사용자에게 보여주는 시각적인 효과에 대해 신경을 많이 했습니다. 
 
 유트브 링크 : https://www.youtube.com/watch?v=4xmh4m-P2ls               
-에셋 및 ui, 도움받은 사이트 링크 : 유트브 설명란에 올려놨습니다.          
+에셋 및 ui, 도움받은 사이트 링크 : 유트브 설명란에 올려놨습니다.      
+기획서 링크 : https://drive.google.com/drive/folders/1-EddLoAJnW8ulfRjBlt6G1ZB_3aVNHI1?usp=sharing            
+기술보고서 링크 : https://drive.google.com/drive/folders/1h4jMQvuzFicbBVkw83HsnToon6R2g3Il?usp=sharing    
 이메일 주소 : realnolboo2@naver.com
+
+
+
+
