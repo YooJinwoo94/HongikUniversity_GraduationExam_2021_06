@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerParringCon : MonoBehaviour
 {
-    [SerializeField]
-    BoxCollider playerSheildBoxCol;
+//    [SerializeField]
+ //   BoxCollider playerSheildBoxCol;
 
     PlayerSpCon playerSpConScript;
     PlayerInputScript inputScript;
@@ -27,6 +29,8 @@ public class PlayerParringCon : MonoBehaviour
 
     private void Start()
     {
+        forTutorialMonsterCheckOnce = false;
+
         isCool = false;
         isSucess = false;
 
@@ -63,6 +67,7 @@ public class PlayerParringCon : MonoBehaviour
     }
 
 
+    bool forTutorialMonsterCheckOnce;
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.name == "CloseAttackEnemy01")
@@ -70,6 +75,42 @@ public class PlayerParringCon : MonoBehaviour
             CloseAttackTypeNormalColliderCon con = other.GetComponent<CloseAttackTypeNormalColliderCon>();
 
             isSucess  = con.isStun;
+            return;
+        }
+
+        // 튜토리얼용
+        if ((other.gameObject.name == "TutorialEnemy01(Clone)")
+            && (SceneManager.GetActiveScene().name == "Tutorial_Scene_Ver2")
+            && (forTutorialMonsterCheckOnce == false))
+        {
+            TutorialManagerVer2 tutorialManagerScript = GameObject.Find("TutorialManagerVer2").GetComponent<TutorialManagerVer2>();
+
+            if (tutorialManagerScript.tutorial != TutorialStateVer2.step03_6) return;
+
+            CloseAttackTypeNormalColliderCon con = other.GetComponent<CloseAttackTypeNormalColliderCon>();
+            isSucess = con.isStun;
+            switch (isSucess)
+            {
+                case true: 
+                    tutorialManagerScript.tutorial = TutorialStateVer2.step03_7;
+
+                    TutorialTypeMonsterMove tutorialMonsterMoveScript = other.GetComponent<TutorialTypeMonsterMove>();
+                    tutorialMonsterMoveScript.state = TutorialEnemyState.getWait;
+
+                    forTutorialMonsterCheckOnce = true;
+                    break;
+            }
+            return;
+        }
+
+        // 튜토리얼 + 일반 전투용
+        if ((other.gameObject.name == "TutorialEnemy01(Clone)")
+          && (SceneManager.GetActiveScene().name == "Tutorial_Scene_Ver2"))
+        {
+            CloseAttackTypeNormalColliderCon con = other.GetComponent<CloseAttackTypeNormalColliderCon>();
+            isSucess = con.isStun;
+
+            return;
         }
     }
 }

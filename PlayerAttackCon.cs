@@ -23,7 +23,7 @@ public class PlayerAttackCon : MonoBehaviour
 
     [Header("평타를 때릴시 콤보완성을 위한 딜레이")]
     [SerializeField]
-    float maxComboDelay = 2f;
+    float maxComboDelay = 1f;
     bool attackCoolTime = false;
 
     [Header("플래이어의 무기 콜라이더")]
@@ -65,6 +65,8 @@ public class PlayerAttackCon : MonoBehaviour
 
     private void Update()
     {
+       // Debug.Log(isCool);
+
         switch (WeaponStateEnum)
         {
             case WeaponState.normalSword:
@@ -117,25 +119,7 @@ public class PlayerAttackCon : MonoBehaviour
 
     void normalSwordAttackCoolTimeCount(int coolTime = 0)
     {
-        if (inputScript.state != PlayerState.attack)
-        {
-            isCool = false;
-            onceCheck[2] = false;
-            onceCheck[3] = false;
-
-            noOfClicks = 0;
-            for (int i = 0; i < 3; i++)
-            {
-                playerSwordBoxCollider[i].enabled = false;
-            }
-
-            attackCoolTime = false;
-            //  playerAnimationScript.playerAniAttackLeftCombo(0);
-            maxComboDelay = 0.8f;
-            return;
-        }
-
-        if (Time.time - lastClickedTime > maxComboDelay)
+        if (Time.time - lastClickedTime > maxComboDelay && noOfClicks != 0 )
         {
             onceCheck[2] = false;
             onceCheck[3] = false;
@@ -147,12 +131,13 @@ public class PlayerAttackCon : MonoBehaviour
             }
             attackCoolTime = false;
             playerAnimationScript.playerAniAttackLeftCombo(0);
-            maxComboDelay = 0.8f;
+            maxComboDelay = 1f;
+            isCool = false;
 
             inputScript.state = PlayerState.idle;
             return;
         }
-              
+
         if (noOfClicks >= 2 && onceCheck[2] == false)
         {
             onceCheck[2] = true;
@@ -170,15 +155,15 @@ public class PlayerAttackCon : MonoBehaviour
         if (noOfClicks == 3 && onceCheck[3] == false)
         {
              playerSpConScript.spDown();
-
-             isCool = true;
+            maxComboDelay = 1f;
+            isCool = true;
              onceCheck[3] = true;
-            for (int i = 0; i < 3; i++)
+             for (int i = 0; i < 3; i++)
             {
                 playerSwordBoxCollider[i].enabled = true;
             }
 
-            playerAnimationScript.playerAniAttackLeftCombo(3);
+             playerAnimationScript.playerAniAttackLeftCombo(3);
              SoundManager.Instance.playerAttackSound(1);
              return;
         }

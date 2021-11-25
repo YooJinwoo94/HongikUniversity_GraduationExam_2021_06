@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 [HideInInspector]
 public enum PlayerUI
@@ -60,14 +61,13 @@ public enum MousePlace
 public class PlayerInputScript : MonoBehaviour
 {
     #region
+    TutorialManagerVer2 tutorialManagerVer2Script;
     [SerializeField]
     PlayerParringCon playerParringConScript;
     [SerializeField]
     TypingTextCon typingTextConScript;
     [SerializeField]
     DialogueManager dialogueManagerScript;
-    [SerializeField]
-    TutorialStageManger tutorialStageMangerScript;
     [SerializeField]
     PlayerGetWeaponUINNo5 playerGetWeaponUINo5Script;
     [SerializeField]
@@ -95,7 +95,7 @@ public class PlayerInputScript : MonoBehaviour
 
     // 상태 관련 
     [HideInInspector]
-   public PlayerHitted playerHitted;
+    public PlayerHitted playerHitted;
     [HideInInspector]
     public MousePlace mousePlace;
     [HideInInspector]
@@ -114,6 +114,11 @@ public class PlayerInputScript : MonoBehaviour
 
     private void Start()
     {
+        if (SceneManager.GetActiveScene().name == "Tutorial_Scene_Ver2")
+        {
+            tutorialManagerVer2Script = GameObject.Find("TutorialManagerVer2").GetComponent<TutorialManagerVer2>();
+        }
+
         playerColliderConScript = GetComponent<PlayerColliderCon>();
         rectTransform = GetComponent<RectTransform>();
         rigid = GetComponent<Rigidbody>();
@@ -136,7 +141,7 @@ public class PlayerInputScript : MonoBehaviour
     }
 
 
- 
+
     public static PlayerInputScript Instance
     {
         get
@@ -156,43 +161,61 @@ public class PlayerInputScript : MonoBehaviour
 
     void Update()
     {
+        //현재 에어본 상태는 패기되었습니다.
         if (playerHitted == PlayerHitted.airborneAttacked)
         {
             rigid.AddForce(Vector3.up * 0.35f, ForceMode.Impulse);
             return;
         }
 
+        
         if ((state == PlayerState.idle || state == PlayerState.dodge ||
-           state == PlayerState.attack) 
+           state == PlayerState.attack)
            && playerHitted == PlayerHitted.none
            ) lookAtCam();
 
-        inputProcessInven();
-        inputProcessE();
+
+
+
+        if (SceneManager.GetActiveScene().name == "Tutorial_Scene_Ver2")
+        {
+            switch (tutorialManagerVer2Script.makePlayerWait)
+            {
+                case MakePlayerWait.wait:
+                    animationScript.playerAniWait();
+                    inputProcessInven();
+                    inputProcessE();
+                    return;
+            }
+        }
+
 
         if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn || playerUIState == PlayerUI.getShopUiOn
-       || playerUIState == PlayerUI.getPowerUiOn || playerUIState == PlayerUI.getSaveUiOn
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorialReady
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial01
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_1
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_2 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_3
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_4 
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03_1
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial05_0
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial06_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial07_0
-       || dialogueManagerScript.dialogueState == DialogueState.DialogueStart)
+         || playerUIState == PlayerUI.getPowerUiOn || playerUIState == PlayerUI.getSaveUiOn)
+        {
+            animationScript.playerAniWait();
+            inputProcessInven();
+            inputProcessE();
+            return;
+        }
+        else if (dialogueManagerScript.dialogueState == DialogueState.DialogueStart)
         {
             animationScript.playerAniWait();
             return;
         }
 
+
         switch (playerHitted)
         {
-         //   case PlayerHitted.normalAttacked:
-         //       return;
+            //   case PlayerHitted.normalAttacked:
+            //       return;
             case PlayerHitted.airborneAttacked:
+                inputProcessInven();
+                inputProcessE();
                 return;
             case PlayerHitted.stunAttacked:
+                inputProcessInven();
+                inputProcessE();
                 return;
         }
 
@@ -200,26 +223,37 @@ public class PlayerInputScript : MonoBehaviour
         {
             case PlayerState.idle:
                 inputProcessWhenPlayerIsIdle();
+
+                inputProcessInven();
+                inputProcessE();
                 break;
 
             case PlayerState.dodge:
                 isDodge = true;
-                inputProcessDodge();          
+                inputProcessDodge();
+
+                inputProcessInven();
+                inputProcessE();
                 break;
 
             case PlayerState.attack:
                 inputProcessAttack();
+
+                inputProcessInven();
+                inputProcessE();
                 break;
-  
+
             case PlayerState.parring:
+                inputProcessInven();
+                inputProcessE();
                 break;
 
             //=========================================이동 불가 
-           
+
             case PlayerState.waitForMoveNextStage:
                 break;
             case PlayerState.stopForCutSceen:
-                break;              
+                break;
         }
     }
     #endregion
@@ -269,8 +303,8 @@ public class PlayerInputScript : MonoBehaviour
             walkAndGetKeyW();
         }
 
-        if ((Input.GetKey(KeyCode.W)) 
-                &&(Input.GetKey(KeyCode.A)))
+        if ((Input.GetKey(KeyCode.W))
+                && (Input.GetKey(KeyCode.A)))
         {
             SoundManager.Instance.playerWalkSound();
             walkAndGetKeyWA();
@@ -299,20 +333,21 @@ public class PlayerInputScript : MonoBehaviour
         // 기력은 충분하니? 
         if (spConScript.isPlayerSpZero == true) return;
 
-        // 공격 함? 
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (attackConScript.isCool == true) return;
 
-          //  if (playerHitted != PlayerHitted.none) return;
-            attackConScript.whenAttackCheckWeapon();
+        // 공격 함? 
+        switch (Input.GetMouseButtonDown(0))
+        {
+            case true:
+                if (attackConScript.isCool == true) return;
+
+                attackConScript.whenAttackCheckWeapon();
+                break;
         }
 
         // 패링함?
         if (Input.GetKeyDown(KeyCode.C))
         {
             if (playerParringConScript.isCool == true) return;
-            Debug.Log("aa");
             playerParringConScript.parringStart();
         }
 
@@ -330,11 +365,13 @@ public class PlayerInputScript : MonoBehaviour
         if (spConScript.isPlayerSpZero == true || state == PlayerState.dodge) return;
 
         // 공격 함? 
-        if (Input.GetMouseButtonDown(0))
+        switch (Input.GetMouseButtonDown(0))
         {
-            if (attackConScript.isCool == true) return;
+            case true:
+                if (attackConScript.isCool == true) return;
 
-            attackConScript.whenAttackCheckWeapon();
+                attackConScript.whenAttackCheckWeapon();
+                break;
         }
 
         //구르기 위한 조건을 만족 하니? 
@@ -410,16 +447,19 @@ public class PlayerInputScript : MonoBehaviour
     //  필수 요소
     void lookAtCam()
     {
+
+        if (SceneManager.GetActiveScene().name == "Tutorial_Scene_Ver2")
+        {
+            switch(tutorialManagerVer2Script.makePlayerWait)
+            {
+                case MakePlayerWait.wait:
+                    return;
+            }
+        }
+
+
         if (playerUIState == PlayerUI.invenOn || playerUIState == PlayerUI.getWeaponUiOn || playerUIState == PlayerUI.getShopUiOn
            || playerUIState == PlayerUI.getPowerUiOn || playerUIState == PlayerUI.getSaveUiOn
-           || tutorialStageMangerScript.tutorialState == TutorialState.tutorialReady
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial01
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_1
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_2 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_3
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial02_4 
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial03_1
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial04_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial05_0
-       || tutorialStageMangerScript.tutorialState == TutorialState.tutorial06_0 || tutorialStageMangerScript.tutorialState == TutorialState.tutorial07_0
            || dialogueManagerScript.dialogueState == DialogueState.DialogueStart) return;
 
         Ray rayCam = cam.ScreenPointToRay(Input.mousePosition);

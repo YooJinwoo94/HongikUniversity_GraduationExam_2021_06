@@ -72,6 +72,7 @@ public class PlayerColliderCon : MonoBehaviour
     }
     IEnumerator PlayerAttackedCoroutine()
     {
+        Debug.Log("safdasdasd");
         switch (inputScript.playerHitted)
         {
             case PlayerHitted.normalAttacked:
@@ -120,6 +121,7 @@ public class PlayerColliderCon : MonoBehaviour
          yield return waitForSeconds;
 
         spConScript.dodgeSpUp();
+      
         StopCoroutine("dodgeSuccess");
     }
 

@@ -21,6 +21,7 @@ public class PlayerAniScript : MonoBehaviour
         aniReset();
 
         ani.SetTrigger("Trigger_PlayerParring");
+        playerAniWait();
     }
 
     public void playerAniWait()
@@ -113,25 +114,22 @@ public class PlayerAniScript : MonoBehaviour
         {
             case 1 :
                 aniReset();
-
                 ani.SetBool("Bool_Player_Attack_01", true);
                 break;
 
             case 2:
-                aniReset();
-               
+                aniReset();            
                 ani.SetBool("Bool_Player_Attack_02", true);
                 break;
 
             case 3:
                 aniReset();
-
                 ani.SetBool("Bool_Player_Attack_03", true);
+                ani.SetBool("Bool_Player_Waiting", true);
                 break;
 
             case 0:
                 aniReset();
-
                 ani.SetBool("Bool_Player_Waiting", true);
                 break;
         }
@@ -176,7 +174,7 @@ public class PlayerAniScript : MonoBehaviour
         ani.SetBool("Bool_Player_Front_L", false);
         ani.SetBool("Bool_Player_Front_R", false);
 
-      //  ani.SetBool("Bool_Player_Waiting", false);
+        ani.SetBool("Bool_Player_Waiting", false);
         ani.SetBool("Bool_Player_Walking", false);
 
         ani.SetBool("Bool_Player_Attack_01", false);

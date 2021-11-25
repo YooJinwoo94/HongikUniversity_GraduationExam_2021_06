@@ -9,8 +9,8 @@ public class SaveManger : MonoBehaviour
     [HideInInspector]
     public static int num = 0;
 
-    [SerializeField]
-    GameObject playerObj;
+   // [SerializeField]
+  //  GameObject playerObj;
 
     [SerializeField]
     PlayerInputScript playerInputScript;
