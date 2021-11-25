@@ -9,3 +9,9 @@ UI : ugui
 플랫폼 : pc                              
 타겟 플레이어 : 2~30대 로그라이크 장르를 좋아하는 사람들          
 기획적/ 기술적 특징 : ui적인 작업 및 카메라 엑션, 구르기할떄 잔상을 보여주는 등 사용자에게 보여주는 시각적인 효과에 대해 신경을 많이 했습니다. 
+
+
+
+![qwdqdqw](https://user-images.githubusercontent.com/71114491/143435442-41a48b81-86e3-4540-b031-9c572d5e099d.PNG)
+
+![d1d1d1](https://user-images.githubusercontent.com/71114491/143436399-da0de6ab-3637-4316-bcf6-4d5123c282d6.PNG)
