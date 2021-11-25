@@ -24,5 +24,6 @@ UI : ugui
 타겟 플레이어 : 2~30대 로그라이크 장르를 좋아하는 사람들          
 기획적/ 기술적 특징 : ui적인 작업 및 카메라 엑션, 구르기할떄 잔상을 보여주는 등 사용자에게 보여주는 시각적인 효과에 대해 신경을 많이 했습니다. 
 
-유트브 링크 : https://www.youtube.com/watch?v=4xmh4m-P2ls
+유트브 링크 : https://www.youtube.com/watch?v=4xmh4m-P2ls               
+에셋 및 ui, 도움받은 사이트 링크 : 유트브 설명란에 올려놨습니다.          
 이메일 주소 : realnolboo2@naver.com
